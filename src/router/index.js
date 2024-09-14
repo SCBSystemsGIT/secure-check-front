@@ -30,6 +30,7 @@ const routes = [
     path: "/request-meeting",
     name: "RequestMeeting",
     component: RequestMeetingView,
+    alias: "/"
   },
   {
     path: "/waiting-validation/:id",

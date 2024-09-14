@@ -5,7 +5,6 @@ import axios from "axios";
 import apiClient from "@/plugins/axios";
 import { toast } from "vue3-toastify";
 import { useRouter } from "vue-router";
-const router = useRouter();
 
 export const useUserStore = defineStore(
   "user",
@@ -57,6 +56,7 @@ export const useUserStore = defineStore(
       }
     };
 
+    const router = useRouter();
     const logout = () => {
       token.value = null;
       userInfo.value = null;
