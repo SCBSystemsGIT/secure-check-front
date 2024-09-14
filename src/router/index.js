@@ -8,12 +8,13 @@ import MenuView from "@/views/MenuView.vue";
 import RequestMeetingView from "@/views/RequestMeetingView.vue";
 import WaitingValidationView from "@/views/waitingValidationView.vue";
 import ListQrCodeView from "@/views/QRcode/ListQrCodeView.vue";
+import ManalCheckView from "@/views/QRcode/ManalCheckView.vue";
 
 const routes = [
   {
     path: "/sign-in",
     name: "Login",
-    component: Login
+    component: Login,
   },
   {
     path: "/meeting",
@@ -34,22 +35,27 @@ const routes = [
     path: "/waiting-validation/:id",
     name: "waitingValidationView",
     component: WaitingValidationView,
-  }, 
+  },
   {
     path: "/list-qrcode",
     name: "listQrcode",
     component: ListQrCodeView,
+  },
+  {
+    path: "/list-manuel",
+    name: "ManalCheck",
+    component: ManalCheckView,
   },
   // {
   //   path: "/request-meeting",
   //   name: "RequestMeeting",
   //   component: RequestMeeting,
   //   alias: "/",
-  // }, 
+  // },
   {
     path: "/menu",
     name: "menu",
-    component: MenuView
+    component: MenuView,
   },
 ];
 

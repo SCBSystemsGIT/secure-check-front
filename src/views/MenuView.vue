@@ -22,7 +22,7 @@ const { goToRoute } = useNavigation();
           </div>
         </div>
       </div>
-      <div class="col-md-4 col-xl-3" @click="goToRoute('/meeting')">
+      <div class="col-md-4 col-xl-3" @click="goToRoute('/list-qrcode')">
         <div class="card bg-c-green order-card py-5">
           <div class="card-block">
             <h2 class="text-center">
@@ -31,7 +31,7 @@ const { goToRoute } = useNavigation();
           </div>
         </div>
       </div>
-      <div class="col-md-4 col-xl-3" @click="goToRoute('/meeting')">
+      <div class="col-md-4 col-xl-3" @click="goToRoute('/list-manuel')">
         <div class="card bg-c-green order-card py-5">
           <div class="card-block">
             <h2 class="text-center">

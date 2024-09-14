@@ -65,8 +65,8 @@ watch(statusCode, (newStatus) => {
     case 200:
       toast.success("OK - Visiteur créé avec succès.");
 
-      console.log(">------------>")
-      console.log(requestId.value)
+      console.log(">------------>");
+      console.log(requestId.value);
 
       setTimeout(() => {
         router.push("/waiting-validation/" + requestId.value);
@@ -78,9 +78,8 @@ watch(statusCode, (newStatus) => {
 
       // router.push("/waiting-validation");
 
-
-      console.log(">------------>")
-      console.log(requestId.value)
+      console.log(">------------>");
+      console.log(requestId.value);
       setTimeout(() => {
         router.push("/waiting-validation/" + requestId.value);
       }, 1500);
@@ -107,119 +106,119 @@ watch(statusCode, (newStatus) => {
 </script>
 
 <template>
-  <section class="background-gradi request-meeting meeting-form">
-    <div class="container">
-      <!-- <section class="request-meeting meeting-form"> -->
-      <div class="row align-items-center">
-        <div class="col col-12 col-md-12 col-sm-12">
-          <form @submit.prevent="submitForm">
-            <div>
-              <label for="visitor_type">Type de visiteur</label><br />
-              <select
-                name="visitor_type"
-                id="visitor_type"
-                class="form-control"
-                v-model="visitor.visitor_type"
-              >
-                <option value="1">Permanent</option>
-                <option value="2">Temporaire</option>
-              </select>
-            </div>
+  <section class=" request-meeting">
+    <div class="background-gradi">
+      <section class="request-meeting meeting-form">
+        <div class="row align-items-center">
+          <div class="col col-12 col-md-12 col-sm-12">
+            <form @submit.prevent="submitForm">
+              <div>
+                <label for="visitor_type">Type de visiteur</label><br />
+                <select
+                  name="visitor_type"
+                  id="visitor_type"
+                  class="form-control"
+                  v-model="visitor.visitor_type"
+                >
+                  <option value="1">Permanent</option>
+                  <option value="2">Temporaire</option>
+                </select>
+              </div>
 
-            <div>
-              <label for="firstname">Prénom</label><br />
-              <input
-                type="text"
-                id="firstname"
-                v-model="visitor.firstname"
-                required
-              /><br />
-            </div>
+              <div>
+                <label for="firstname">Prénom</label><br />
+                <input
+                  type="text"
+                  id="firstname"
+                  v-model="visitor.firstname"
+                  required
+                /><br />
+              </div>
 
-            <div>
-              <label for="lastname">Nom</label><br />
-              <input
-                type="text"
-                id="lastname"
-                v-model="visitor.lastname"
-                required
-              /><br />
-            </div>
+              <div>
+                <label for="lastname">Nom</label><br />
+                <input
+                  type="text"
+                  id="lastname"
+                  v-model="visitor.lastname"
+                  required
+                /><br />
+              </div>
 
-            <div>
-              <label for="email">Email</label><br />
-              <input
-                type="email"
-                id="email"
-                v-model="visitor.email"
-                required
-              /><br />
-            </div>
+              <div>
+                <label for="email">Email</label><br />
+                <input
+                  type="email"
+                  id="email"
+                  v-model="visitor.email"
+                  required
+                /><br />
+              </div>
 
-            <div>
-              <label for="id_number">Numéro de pièce d’identité</label><br />
-              <input
-                type="text"
-                id="id_number"
-                v-model="visitor.id_number"
-                required
-              /><br />
-            </div>
+              <div>
+                <label for="id_number">Numéro de pièce d’identité</label><br />
+                <input
+                  type="text"
+                  id="id_number"
+                  v-model="visitor.id_number"
+                  required
+                /><br />
+              </div>
 
-            <div>
-              <label for="file"> Pièce d’identité</label><br />
-              <input type="file" id="file" @change="uploadFile" /><br />
-            </div>
+              <div>
+                <label for="file"> Pièce d’identité</label><br />
+                <input type="file" id="file" @change="uploadFile" /><br />
+              </div>
 
-            <div>
-              <label for="organisation_name">Employeur</label><br />
-              <input
-                type="text"
-                id="organisation_name"
-                v-model="visitor.organisation_name"
-                required
-              /><br />
-            </div>
+              <div>
+                <label for="organisation_name">Employeur</label><br />
+                <input
+                  type="text"
+                  id="organisation_name"
+                  v-model="visitor.organisation_name"
+                  required
+                /><br />
+              </div>
 
-            <div>
-              <label for="contact">Contact</label><br />
-              <input
-                type="text"
-                id="contact"
-                v-model="visitor.contact"
-                required
-              /><br />
-            </div>
+              <div>
+                <label for="contact">Contact</label><br />
+                <input
+                  type="text"
+                  id="contact"
+                  v-model="visitor.contact"
+                  required
+                /><br />
+              </div>
 
-            <div>
-              <label for="address">Adresse</label><br />
-              <input
-                type="text"
-                id="address"
-                v-model="visitor.address"
-                required
-              /><br />
-            </div>
+              <div>
+                <label for="address">Adresse</label><br />
+                <input
+                  type="text"
+                  id="address"
+                  v-model="visitor.address"
+                  required
+                /><br />
+              </div>
 
-            <div>
-              <label for="h-name">Nom d’hôte</label><br />
-              <input
-                type="text"
-                id="h-name"
-                name="h-name"
-                v-model="visitRequest.host"
-              /><br />
-            </div>
+              <div>
+                <label for="h-name">Nom d’hôte</label><br />
+                <input
+                  type="text"
+                  id="h-name"
+                  name="h-name"
+                  v-model="visitRequest.host"
+                /><br />
+              </div>
 
-            <div class="submit-button">
-              <input type="submit" value="Soumettre" :disabled="loading" />
-            </div>
+              <div class="submit-button">
+                <input type="submit" value="Soumettre" :disabled="loading" />
+              </div>
 
-            <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-          </form>
+              <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+            </form>
+          </div>
         </div>
-      </div>
+      </section>
     </div>
-    <!-- </section> -->
   </section>
 </template>
