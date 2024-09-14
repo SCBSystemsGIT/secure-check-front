@@ -1,4 +1,5 @@
 <script setup>
+import { useNavigation } from "@/composables/useNavigation";
 import { useUpdateRequest } from "@/services/useUpdateRequest";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
@@ -12,6 +13,7 @@ const request = ref({
 });
 
 const { isLoading, error, uidn, updateRequest } = useUpdateRequest();
+const {goToRoute} = useNavigation();
 
 const submitForm = async (state) => {
   request.value.status = state;
@@ -43,15 +45,21 @@ const submitForm = async (state) => {
             </div>
             <div class="popup-logo" v-if="isSuccess">
                 <router-link to="/">
-                <img
-                    :src="`http://localhost:9999/qrcode/qrcode-${uidn}.png`"
-                    class=""
-                    alt="secure-check-logo"
-                /></router-link>
+                  <img
+                      :src="`http://localhost:9999/qrcode/qrcode-${uidn}.png`"
+                      class=""
+                      alt="secure-check-logo"
+                  />
+                </router-link>
 
                 <div class="text-center py-2">
-                <h3>QRCode Généré</h3>
+                  <h3>QRCode Généré</h3>
                 </div>
+
+                <div class="request-btn" @click="goToRoute('/')">
+                  <a>Accueil </a>
+                </div>
+
             </div>
             <div v-if="!isSuccess">
                 <h3 class="text-center py-3">

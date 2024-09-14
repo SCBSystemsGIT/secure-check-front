@@ -1,6 +1,6 @@
 import apiClient from "@/plugins/axios";
 import { ref } from "vue";
-import { useUserStore } from '@/stores/useUserStore';
+import { useUserStore } from "@/stores/useUserStore";
 
 export function useLogin() {
   const username = ref("");
@@ -10,12 +10,10 @@ export function useLogin() {
   const statusCode = ref(null);
   const userStore = useUserStore();
 
-
   const login = async () => {
     loading.value = true;
     errorMessage.value = null;
     statusCode.value = null; // Réinitialiser le code de statut
-
 
     try {
       const response = await apiClient.post("/login_check", {
@@ -23,11 +21,25 @@ export function useLogin() {
         password: password.value,
       });
 
-      statusCode.value = response.status; // Récupérer le code de statut en cas de succès
-      // Gérer la réponse ici (enregistrer le token, rediriger l'utilisateur, etc.)
+      statusCode.value = response.status;
+
       localStorage.setItem("token", response.data.token);
-      userStore.setToken(response.data.token)
-    
+      userStore.setToken(response.data.token);
+      let fetchResult = userStore.fetchUserInfo();
+
+      console.log({ fetchResult: fetchResult });
+
+      // localStorage.setItem(
+      //   "roles",
+      //   JSON.stringify([
+      //     "ROLE_USER",
+      //     "ROLE_EMPLOYEE",
+      //     "ROLE_SUPERVISOR",
+      //     "ROLE_ADMIN",
+      //     "ROLE_SUPER_ADMIN",
+      //   ])
+      // );
+
       return response.data;
     } catch (error) {
       errorMessage.value =

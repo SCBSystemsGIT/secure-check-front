@@ -10,19 +10,21 @@ const logout = () => {
 
 const isAuthenticated = userStore.isAuthenticated();
 const roles = userStore.roles;
+
 </script>
+
 <template>
   <section class="top-bar">
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-6 col-md-6 top-bar-left">
           <div>
-            <a href="#"
+            <router-link to="/"
               ><img
                 src="@/assets/secure-check-logo.png"
                 class=""
                 alt="secure-check-logo"
-            /></a>
+            /></router-link>
           </div>
         </div>
         <div class="col col-6 col-md-6 top-bar-right">

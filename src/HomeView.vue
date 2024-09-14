@@ -8,7 +8,7 @@ import Footer from "@/components/_partials/FooterComponent.vue";
 <template>
   <div>
     <Navbar></Navbar>
-      <router-view></router-view>
+    <router-view></router-view>
     <Footer></Footer>
   </div>
 </template>

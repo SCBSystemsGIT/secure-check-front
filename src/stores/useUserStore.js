@@ -11,7 +11,21 @@ export const useUserStore = defineStore(
   () => {
     // State
     const token = ref(localStorage.getItem("token") || null);
-    const roles = ref(JSON.parse(localStorage.getItem("roles") || "[]"));
+    // const roles = ref(JSON.parse(localStorage.getItem("roles") || "[]"));
+
+    localStorage.setItem(
+      "roles_list",
+      JSON.stringify([
+        "ROLE_USER",
+        "ROLE_EMPLOYEE",
+        "ROLE_SUPERVISOR",
+        "ROLE_ADMIN",
+        "ROLE_SUPER_ADMIN",
+      ])
+    );
+
+    const roles = ref(JSON.parse(localStorage.getItem("roles_list")));
+    // const roles = ref(JSON.parse(localStorage.getItem("roles") || "[]"));
     const userInfo = ref(null);
 
     // Getters
@@ -26,13 +40,23 @@ export const useUserStore = defineStore(
     };
 
     const fetchRoles = async () => {
-      try {
-        const response = await apiClient.get("/api/user/roles");
-        roles.value = response.data.roles;
-        localStorage.setItem("roles", JSON.stringify(response.data.roles));
-      } catch (error) {
-        console.error("Failed to fetch roles:", error);
-      }
+      // localStorage.setItem(
+      //   "roles",
+      //   JSON.stringify([
+      //     "ROLE_USER",
+      //     "ROLE_EMPLOYEE",
+      //     "ROLE_SUPERVISOR",
+      //     "ROLE_ADMIN",
+      //     "ROLE_SUPER_ADMIN",
+      //   ])
+      // );
+      // try {
+      //   const response = await apiClient.get("/api/user/roles");
+      //   roles.value = response.data.roles;
+      //   localStorage.setItem("roles", JSON.stringify(response.data.roles));
+      // } catch (error) {
+      //   console.error("Failed to fetch roles:", error);
+      // }
     };
 
     const fetchUserInfo = async () => {
@@ -56,6 +80,12 @@ export const useUserStore = defineStore(
       }
     };
 
+    const isAdmin = (role) => role == "ROLE_ADMIN";
+    const isSuperAdmin = (role) => role == "ROLE_SUPER_ADMIN";
+    const isSupervisor = (role) => role == "ROLE_SUPERVISOR";
+    const isEmployee = (role) => role == "ROLE_EMPLOYEE";
+    const isUser = (role) => role == "ROLE_USER";
+
     const router = useRouter();
     const logout = () => {
       token.value = null;
@@ -66,6 +96,7 @@ export const useUserStore = defineStore(
       //   axios.defaults.headers.common["Authorization"] = "";
       toast.info("Déconnecté");
       router.push("/sign-in");
+      window.location = "/sign-in";
     };
 
     return {
@@ -78,6 +109,11 @@ export const useUserStore = defineStore(
       login,
       logout,
       fetchUserInfo,
+      isAdmin,
+      isSuperAdmin,
+      isSupervisor,
+      isEmployee,
+      isUser,
     };
   },
   {
