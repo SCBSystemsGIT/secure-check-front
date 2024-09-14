@@ -13,6 +13,7 @@ watch(statusCode, (newStatus) => {
       toast.success("Connexion réussie.");
       setTimeout(() => {
         router.push("/menu");
+        window.location='/menu';
       }, 1500);
       break;
     case 201:
