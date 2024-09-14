@@ -93,6 +93,8 @@ export const useUserStore = defineStore(
       roles.value = [];
       localStorage.removeItem("token");
       localStorage.removeItem("roles");
+      localStorage.removeItem("userInfo");
+      localStorage.removeItem("roles_list");
       //   axios.defaults.headers.common["Authorization"] = "";
       toast.info("Déconnecté");
       router.push("/sign-in");

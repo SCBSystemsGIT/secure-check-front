@@ -7,9 +7,18 @@ roles.value = JSON.parse(localStorage.getItem("userInfo"));
 
 const userStore = useUserStore();
 const currentRole = ref();
-currentRole.value = roles.value.roles[0];
+currentRole.value = roles?.value?.roles ? roles?.value?.roles[0] : "";
 onMounted(() => {
-  console.log(roles.value.roles[0]);
+  localStorage.setItem(
+    "roles_list",
+    JSON.stringify([
+      "ROLE_USER",
+      "ROLE_EMPLOYEE",
+      "ROLE_SUPERVISOR",
+      "ROLE_ADMIN",
+      "ROLE_SUPER_ADMIN",
+    ])
+  );
 });
 </script>
 <template>

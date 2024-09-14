@@ -63,7 +63,7 @@ onBeforeMount(async () => {
 watch(statusCode, (newStatus) => {
   switch (newStatus) {
     case 200:
-      toast.success("OK - Visiteur créé avec succès.");
+      toast.success("Visiteur créé avec succès.");
 
       console.log(">------------>");
       console.log(requestId.value);
@@ -74,39 +74,36 @@ watch(statusCode, (newStatus) => {
 
       break;
     case 201:
-      toast.success("Created - Visiteur a été créé avec succès.");
+      toast.success("Visiteur a été créé avec succès.");
 
-      // router.push("/waiting-validation");
-
-      console.log(">------------>");
-      console.log(requestId.value);
       setTimeout(() => {
         router.push("/waiting-validation/" + requestId.value);
       }, 1500);
+
       break;
     case 400:
-      toast.info("Bad Request - La requête est mal formée.");
+      toast.info("La requête est mal formée.");
       break;
     case 401:
-      toast.info("Unauthorized - Vous devez être authentifié.");
+      toast.info("Vous devez être authentifié.");
       break;
     case 403:
-      toast.info("Forbidden - Vous n'avez pas la permission.");
+      toast.info("Vous n'avez pas la permission.");
       break;
     case 404:
-      toast.info("Not Found - La ressource demandée n'existe pas.");
+      toast.info("La ressource demandée n'existe pas.");
       break;
     case 500:
-      toast.info("Internal Server Error - Une erreur interne est survenue.");
+      toast.info("Une erreur interne est survenue.");
       break;
     default:
-      toast.info(`Erreur inconnue - Code : ${newStatus}`);
+      toast.info(`Code : ${newStatus}`);
   }
 });
 </script>
 
 <template>
-  <section class=" request-meeting">
+  <section class="request-meeting">
     <div class="background-gradi">
       <section class="request-meeting meeting-form">
         <div class="row align-items-center">
