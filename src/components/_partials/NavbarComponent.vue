@@ -37,7 +37,7 @@ const roles = userStore.roles;
               {{ isAuthenticated }}
             </p> -->
 
-            <a @click="logout" class="login-button" v-if="isAuthenticated">
+            <a @click="logout" class="login-button" v-if="isAuthenticated" role="button">
               Logout
             </a>
 

@@ -67,38 +67,21 @@ onBeforeMount(async () => {
 watch(statusCode, (newStatus) => {
   switch (newStatus) {
     case 201:
-
       console.log(">------------>");
       console.log(requestId.value);
 
-      if(isAuthenticated){
-
+      if (isAuthenticated) {
         toast.success("Visiteur créé avec succès.");
+
         setTimeout(() => {
           router.push("/waiting-validation/" + requestId.value);
         }, 1500);
-
-      }else{
-
+      } else {
         toast.success("Demande créé avec succès.");
-        visitor.value = ref({
-          user_id: userInfo?.value?.id,
-          firstname: "",
-          lastname: "",
-          email: "",
-          contact: "",
-          address: "",
-          id_number: "",
-          organisation_name: "",
-          visitor_type: "",
-        });
 
-        visitRequest.value = ref({
-          user_id: userInfo?.value?.id,
-          visitor_id: "",
-          host: "",
-        });
-
+        setTimeout(() => {
+          router.push("/");
+        }, 1500);
       }
 
       break;
