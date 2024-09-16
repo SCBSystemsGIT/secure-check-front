@@ -1,10 +1,12 @@
 <script setup>
 import { useNavigation } from "@/composables/useNavigation";
 import { useUpdateRequest } from "@/services/useUpdateRequest";
+import { useUserStore } from "@/stores/useUserStore";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { toast } from "vue3-toastify";
 
+const userStore = useUserStore();
 const route = useRoute();
 const isSuccess = ref(false);
 const request = ref({
@@ -15,6 +17,7 @@ const request = ref({
 const { isLoading, error, uidn, updateRequest } = useUpdateRequest();
 const {goToRoute} = useNavigation();
 
+const isAuthenticated = userStore.isAuthenticated();
 const submitForm = async (state) => {
   request.value.status = state;
   request.value.confirmed = state;
@@ -35,14 +38,16 @@ const submitForm = async (state) => {
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
+            
             <div class="popup-logo" v-if="!isSuccess">
-                <router-link to="/">
-                <img
-                    src="@/assets/secure-check-logo.png"
-                    class=""
-                    alt="secure-check-logo"
-                /></router-link>
+              <router-link to="/">
+              <img
+                  src="@/assets/secure-check-logo.png"
+                  class=""
+                  alt="secure-check-logo"
+              /></router-link>
             </div>
+
             <div class="popup-logo" v-if="isSuccess">
                 <router-link to="/">
                   <img
@@ -56,11 +61,18 @@ const submitForm = async (state) => {
                   <h3>QRCode Généré</h3>
                 </div>
 
-                <div class="request-btn" @click="goToRoute('/')">
+                <div class="request-btn" @click="goToRoute('/menu')" v-if="isAuthenticated">
                   <a>Menu </a>
                 </div>
 
+                <div v-else>
+                  <h3>
+                    Votre QRCode a été envoyé par e-mail, Merci 
+                  </h3>
+                </div>
+
             </div>
+
             <div v-if="!isSuccess">
                 <h3 class="text-center py-3">
                 En attente de la confirmation de l'hôte ...
@@ -82,6 +94,7 @@ const submitForm = async (state) => {
                 <a>Annuler </a>
                 </div>
             </div>
+
         </div>
       </div>
     </div>

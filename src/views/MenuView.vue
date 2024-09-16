@@ -20,7 +20,7 @@ onMounted(() => {
 <template>
   <section class="background-gradi request-meeting">
     <div
-      class="d-flex justify-content-center align-items-center vh-100 gap-2 mx-5"
+      class="d-flex justify-content-center align-items-center vh-100 gap-2 mx-5 px-3"
     >
       <div class="col-md-4 col-xl-3" @click="goToRoute('/meeting')">
         <div class="card bg-c-green order-card py-5">
