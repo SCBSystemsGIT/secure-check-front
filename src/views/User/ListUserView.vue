@@ -1,56 +1,44 @@
 <script setup>
-import { onMounted } from "vue";
-import DataTable from "datatables.net-vue3"; // Importation de DataTables Vue 3
+import { onMounted, ref } from "vue";
 import { useUserList } from "@/services/useUserList";
 
-const { fetchUsers, users } = useUserList();
+const { fetchUsers, users, loading, error } = useUserList();
 
 onMounted(() => {
-
-  setTimeout(() => {
-    new DataTable("#userTable", {
-      paging: true,
-      pageLength: 10, // Par défaut, 10 entrées par page
-      searching: true,
-      ordering: true,
-      language: {
-        url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json", // Exemple pour la traduction française
-      },
-    });
-  }, 1500);
-
   fetchUsers();
 });
 
 const formatDate = (dateString) => {
-  const date = new Date(dateString);
+  const date ="hello "+ new Date(dateString);
   return date.toLocaleDateString("fr-FR", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 };
+
+// Définitions des colonnes pour le tableau
+const thead = ref(["ID", "Nom", "Email", "Role", "Date de Création"]);
+
+// Correspondance des propriétés de l'utilisateur
+const tbody = ref(["id", "name", "email", "role", "create_at"]);
 </script>
 
 <template>
-  <div class="container mt-3">
-    <h3>Liste des Utilisateurs</h3>
-    <table id="userTable" class="table table-striped">
-      <thead>
-        <tr>
-          <th>Nom</th>
-          <th>Email</th>
-          <th>Date de création</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="user in users" :key="user.id">
-          <td>{{ user.name }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ formatDate(user.create_at) }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="container">
+    <h3 class="text-center">Liste des Utilisateurs</h3>
+
+    <div class="d-flex justify-content-center py-3">
+      <ui-table :data="users" :thead="thead" :tbody="tbody">
+        <!-- Utilisation d'un slot personnalisé pour formater la date -->
+        <template #create_at="{ row }">
+          {{ formatDate(row.create_at) }}
+        </template>
+      </ui-table>
+    </div>
+
+    <div v-if="loading">Chargement des utilisateurs...</div>
+    <div v-if="error">{{ error }}</div>
   </div>
 </template>
 

@@ -12,6 +12,7 @@ export function useUserList() {
     try {
       const response = await apiClient.get("/user/list");
       users.value = response.data;
+      console.log()
     } catch (err) {
       error.value = "Erreur lors de la récupération des utilisateurs.";
     } finally {

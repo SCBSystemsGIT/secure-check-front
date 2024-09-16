@@ -1,116 +1,131 @@
 <script setup>
+import { ref, computed } from "vue";
 import { useRequestsList } from "@/services/useRequestsList";
-const { requests /*error*/ } = useRequestsList();
+import { useRouter } from "vue-router";
 
+const { requests, error } = useRequestsList();
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleDateString("fr-FR", {
     year: "numeric",
     month: "long",
     day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
   });
+};
+
+const router = useRouter();
+// Pagination variables
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
+const show = (id) => {
+  router.push(`/waiting-validation/${id}`)
+};
+
+// Computed property for paginated data
+const paginatedRequests = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return requests.value.slice(start, end);
+});
+
+// Calculate the total number of pages
+const totalPages = computed(() =>
+  Math.ceil(requests.value.length / itemsPerPage.value)
+);
+
+// Function to change page
+const changePage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
 };
 </script>
 
 <template>
-  <section class="background-gradi request-meeting">
-    <!-- <div class="container"> -->
-
-    <!-- <div class="row align-items-center">
-      </div> -->
-    <!-- </div> -->
-    <div class="container">
-      <div class="text-center py-4">
-        <h3>Liste des Visites</h3>
-      </div>
-
-      <!-- <div class="row align-items-center"> -->
-      <div class="col col-12 col-md-12 col-sm-12">
-        <table id="example" class="display" cellspacing="0" width="100%">
-          <thead>
-            <tr>
-              <th>Visiteur</th>
-              <th>Host</th>
-              <!-- <th>Titre</th> -->
-              <th>Statut</th>
-              <th>Date Création</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr v-for="request in requests" :key="request.id">
-              <td>
-                {{ request.visitor.firstname }} {{ request.visitor.lastname }}
-              </td>
-              <td>{{ request.host }}</td>
-              <!-- <td>{{ request.title ?? "---------" }}</td> -->
-              <td>{{ request.confirmed ? "Confirmé" : "En attente" }}</td>
-              <td>{{ formatDate(request.request_date) }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <!-- </div> -->
+  <div class="container">
+    <div class="text-center py-4">
+      <h3>Liste des demandes</h3>
     </div>
-  </section>
+
+    <div class="d-flex justify-content-center py-3">
+      <ui-table
+        :data="paginatedRequests"
+        :thead="['Visiteur', 'Host', 'Statut', 'Date Création', 'Action']"
+        :tbody="[
+          {
+            slot: 'visitor',
+          },
+          'host',
+          { slot: 'confirmed' },
+          {
+            slot: 'request_date',
+          },
+          {
+            slot: 'actions',
+          },
+        ]"
+      >
+        <!-- Utilisation des slots si supportés -->
+        <template #visitor="{ data }">
+          {{ data.visitor.firstname }}
+          {{ data.visitor.lastname }}
+        </template>
+
+        <template #request_date="{ data }">
+          {{ formatDate(data.request_date) }}
+        </template>
+
+        <template #confirmed="{ data }">
+          {{ data.confirmed ? "Confirmé" : "En attente" }}
+        </template>
+
+        <template #actions="{ data }">
+          <ui-icon @click="show(data.id)" role="button"> edit </ui-icon>
+        </template>
+
+        <!-- <ui-pagination
+          v-model="page"
+          :total="10"
+          show-total
+          @update:model-value="onPage"
+        ></ui-pagination> -->
+      </ui-table>
+    </div>
+
+    <div v-if="error">{{ error }}</div>
+
+    <!-- Pagination Control -->
+    <div class="pagination mb-3">
+      <button
+        class="btn btn-secondary"
+        @click="changePage(currentPage - 1)"
+        :disabled="currentPage === 1"
+      >
+        Précédent
+      </button>
+      <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+      <button
+        class="btn btn-secondary"
+        @click="changePage(currentPage + 1)"
+        :disabled="currentPage === totalPages"
+      >
+        Suivant
+      </button>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-.request-btn-cannel {
-  margin: 10px auto 0px auto;
-  display: inline-block;
-  text-align: center;
-  width: 100%;
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
-.request-btn-cannel a {
-  background: #b92b00;
-  color: #ffffff;
-  border-radius: 10px;
-  padding: 20px 100px;
-  font-weight: 600;
-  overflow: hidden;
-  margin: 0 auto;
-  float: left;
-  width: 100%;
-  font-size: 20px;
-}
-
-.request-btn a {
-  /*background: #b92b00;*/
-  color: #ffffff;
-  border-radius: 10px;
-  padding: 20px 100px;
-  font-weight: 600;
-  overflow: hidden;
-  margin: 0 auto;
-  float: left;
-  width: 100%;
-  font-size: 20px;
-}
-
-.request-btn-cannel a:hover {
-  background: #000000;
-  color: #ffffff;
-}
-
-.col {
-  width: 100%;
-  max-width: 80% !important;
-  background: #ffffff;
-  padding: 15px;
-}
-
-.request-meeting .col.col-12.col-md-12.col-sm-12 {
-  text-align: center;
-  margin: 0px auto 0px auto !important;
-  max-width: 550px;
-  background: #ffffff;
-  padding: 80px 40px;
-  border-radius: 15px;
-  transform: translate(-50%, -50%);
-  top: 50%;
-  position: absolute;
-  left: 50%;
+button {
+  margin: 0 10px;
+  padding: 5px 10px;
 }
 </style>

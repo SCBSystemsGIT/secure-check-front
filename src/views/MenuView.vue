@@ -1,8 +1,8 @@
 <script setup>
-import { useNavigation } from "@/composables/useNavigation";
+// import { useNavigation } from "@/composables/useNavigation";
 import { useUserStore } from "@/stores/useUserStore";
 import { onMounted, ref } from "vue";
-const { goToRoute } = useNavigation();
+// const { goToRoute } = useNavigation();
 
 const userStore = useUserStore();
 const currentRole = ref();
@@ -18,7 +18,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="background-gradi request-meeting">
+  <!-- <section class="background-gradi request-meeting">
     <div
       class="d-flex justify-content-center align-items-center vh-100 gap-2 mx-5 px-3"
     >
@@ -84,6 +84,34 @@ onMounted(() => {
               <i class="fa fa-rocket f-left"></i
               ><span>Liste d'Utilisateur</span>
             </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section> -->
+
+  <section class="background-gradi selectcheckintype">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col col-12 col-md-12 col-sm-12">
+          <div class="popup-logo">
+            <a href="#"
+              ><img
+                src="@/assets/secure-check-logo.png"
+                class=""
+                alt="secure-check-logo"
+            /></a>
+          </div>
+          <div class="selectcheck-all">
+            <h5><span>Veuillez sélectionner </span></h5>
+            <div class="selectcheckintype-btns">
+              <router-link to="/meeting">Meetings</router-link>
+              <router-link to="/list-qrcode">QR-Code</router-link>
+              <router-link to="/list-manuel">Manual Code</router-link>
+              <router-link to="/list-users" class="mt-2" v-if="userStore.isAdmin(currentRole)"
+                >Liste Utilisateurs</router-link
+              >
+            </div>
           </div>
         </div>
       </div>

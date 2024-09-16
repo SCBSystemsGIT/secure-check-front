@@ -1,7 +1,7 @@
 <script setup>
 import { onBeforeMount, ref, watch } from "vue";
 import { useCreateVisitor } from "@/services/useCreateVisitor";
-// import { useUserStore } from "@/stores/useUserStore";
+import { useUserStore } from "@/stores/useUserStore";
 import { useUserInfo } from "@/services/useUserInfo";
 import { toast } from "vue3-toastify";
 import { useRouter } from "vue-router";
@@ -10,6 +10,9 @@ import { useVisitRequest } from "@/services/useVisitRequest";
 const { userInfo, fetchUserInfo } = useUserInfo();
 const { createVisitor, statusCode, visitorId } = useCreateVisitor();
 const { createVisitRequest, requestId } = useVisitRequest();
+
+const userStore = useUserStore();
+const isAuthenticated = userStore.isAuthenticated();
 
 const router = useRouter();
 
@@ -63,18 +66,43 @@ onBeforeMount(async () => {
 // Watcher pour réagir aux changements du statusCode
 watch(statusCode, (newStatus) => {
   switch (newStatus) {
-    case 200:
-      toast.success("Visiteur créé avec succès.");
+    case 201:
 
       console.log(">------------>");
       console.log(requestId.value);
 
-      setTimeout(() => {
-        router.push("/waiting-validation/" + requestId.value);
-      }, 1500);
+      if(isAuthenticated){
+
+        toast.success("Visiteur créé avec succès.");
+        setTimeout(() => {
+          router.push("/waiting-validation/" + requestId.value);
+        }, 1500);
+
+      }else{
+
+        toast.success("Demande créé avec succès.");
+        visitor.value = ref({
+          user_id: userInfo?.value?.id,
+          firstname: "",
+          lastname: "",
+          email: "",
+          contact: "",
+          address: "",
+          id_number: "",
+          organisation_name: "",
+          visitor_type: "",
+        });
+
+        visitRequest.value = ref({
+          user_id: userInfo?.value?.id,
+          visitor_id: "",
+          host: "",
+        });
+
+      }
 
       break;
-    case 201:
+    case 200:
       toast.success("Visiteur a été créé avec succès.");
 
       setTimeout(() => {
