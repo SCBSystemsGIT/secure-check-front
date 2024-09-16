@@ -28,6 +28,7 @@ const submitForm = async () => {
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
+
           <div class="popup-logo" v-if="!isSuccess">
             <router-link to="/">
               <img
@@ -66,7 +67,13 @@ const submitForm = async () => {
             >
               <a>Valider </a>
             </div>
+
+            <div class="request-btn" @click="goToRoute('/menu')">
+              <a>Menu </a>
+            </div>
+
           </div>
+          
         </div>
       </div>
     </div>

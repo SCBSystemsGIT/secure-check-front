@@ -14,6 +14,12 @@ importers:
       core-js:
         specifier: ^3.8.3
         version: 3.38.1
+      datatables.net-bs5:
+        specifier: ^2.1.6
+        version: 2.1.6
+      datatables.net-vue3:
+        specifier: ^3.0.2
+        version: 3.0.2(datatables.net@2.1.6)(vue@3.5.3)
       pinia:
         specifier: ^2.2.2
         version: 2.2.2(vue@3.5.3)
@@ -1706,6 +1712,19 @@ packages:
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
 
+  datatables.net-bs5@2.1.6:
+    resolution: {integrity: sha512-GLp98kE2lJI6cBgLaCA1he+KhD3pcVJLK4QU8oD3Zb8uHAduX0BA2JPndFZqXJs4CS0L16fel8Xs3+0wGzFxSg==}
+
+  datatables.net-vue3@3.0.2:
+    resolution: {integrity: sha512-UJs3IrKS+gsaPSy3CeL5ny/hGWm8xs77DZLYSW8QXPpDhMS7ZZfC4AGKNvXa2C9J1OllWhiR20dScpi0lKdCvQ==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      datatables.net: ^2
+      vue: ^3.0.5
+
+  datatables.net@2.1.6:
+    resolution: {integrity: sha512-ziX0Wz91oDJ4o7gQNuGxQiVK91OUu/bRcXyxa6EZtDwLObmaGKpkCNS59QpzrGtIytQIVFtLfF1EDdYid5RVog==}
+
   debounce@1.2.1:
     resolution: {integrity: sha512-XRRe6Glud4rd/ZGQfiV1ruXSfbvfJedlV9Y6zOlP+2K04vBYiJEte6stfFkCP03aMnY5tsipamumUjL14fofug==}
 
@@ -2425,6 +2444,9 @@ packages:
 
   joi@17.13.3:
     resolution: {integrity: sha512-otDA4ldcIx+ZXsKHWmp0YizCweVRZG96J10b0FevjfuncLO1oX59THoAmHkNubYJ+9gWsYsp5k8v4ib6oDv1fA==}
+
+  jquery@3.7.1:
+    resolution: {integrity: sha512-m4avr8yL8kmFN8psrbFFFmB/If14iN5o9nw/NgnnM+kybDJpRsAynV2BsfpTYrTRysYUdADVD7CkUUizgkpLfg==}
 
   js-message@1.0.7:
     resolution: {integrity: sha512-efJLHhLjIyKRewNS9EGZ4UpI8NguuL6fKkhRxVuMmrGV2xN/0APGdQYwLFky5w9naebSZ0OwAGp0G6/2Cg90rA==}
@@ -5978,6 +6000,20 @@ snapshots:
 
   csstype@3.1.3: {}
 
+  datatables.net-bs5@2.1.6:
+    dependencies:
+      datatables.net: 2.1.6
+      jquery: 3.7.1
+
+  datatables.net-vue3@3.0.2(datatables.net@2.1.6)(vue@3.5.3):
+    dependencies:
+      datatables.net: 2.1.6
+      vue: 3.5.3
+
+  datatables.net@2.1.6:
+    dependencies:
+      jquery: 3.7.1
+
   debounce@1.2.1: {}
 
   debug@2.6.9:
@@ -6716,6 +6752,8 @@ snapshots:
       '@sideway/address': 4.1.5
       '@sideway/formula': 3.0.1
       '@sideway/pinpoint': 2.0.0
+
+  jquery@3.7.1: {}
 
   js-message@1.0.7: {}
 

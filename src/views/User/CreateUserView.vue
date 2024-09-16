@@ -23,10 +23,15 @@ watch(statusCode, (newStatus) => {
     case 200:
       toast.success("OK - Utilisateur créé avec succès.");
       toast.info(successMessage);
-      router.push("");
+      router.push("/menu");
       break;
     case 201:
       toast.success("Created - L'utilisateur a été créé avec succès.");
+
+      setTimeout(()=>{
+        router.push("/menu");
+      }, 1400);
+
       break;
     case 400:
       toast.info("Bad Request - La requête est mal formée.");

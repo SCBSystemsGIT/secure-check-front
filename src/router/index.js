@@ -2,13 +2,14 @@ import { createRouter, createWebHistory } from "vue-router";
 import Login from "@/views/LoginView.vue";
 // import Meeting from "@/views/MeetingView.vue";
 // import RequestMeeting from "@/views/RequestMeetingView.vue";
-import CreateUserView from "@/views/CreateUserView.vue";
+import CreateUserView from "@/views/User/CreateUserView.vue";
 import CreateVisitorView from "@/views/CreateVisitorView.vue";
 import MenuView from "@/views/MenuView.vue";
 import RequestMeetingView from "@/views/RequestMeetingView.vue";
 import WaitingValidationView from "@/views/waitingValidationView.vue";
 import ListQrCodeView from "@/views/QRcode/ListQrCodeView.vue";
 import ManalCheckView from "@/views/QRcode/ManalCheckView.vue";
+import ListUserView from "@/views/User/ListUserView.vue";
 
 const routes = [
   {
@@ -25,6 +26,11 @@ const routes = [
     path: "/create-user",
     name: "CreateUser",
     component: CreateUserView,
+  },
+  {
+    path: "/list-users",
+    name: "listUser",
+    component: ListUserView,
   },
   {
     path: "/request-meeting",

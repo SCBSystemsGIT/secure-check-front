@@ -1,26 +1,15 @@
 <script setup>
-// import { useNavigation } from "@/composables/useNavigation";
-// import { useQrCode } from "@/services/useManualCheck";
-// import { ref } from "vue";
-// import { useRoute } from "vue-router";
-// import { toast } from "vue3-toastify";
+import { useRequestsList } from "@/services/useRequestsList";
+const { requests /*error*/ } = useRequestsList();
 
-// const route = useRoute();
-// const isSuccess = ref(false);
-// const { goToRoute } = useNavigation();
-// const { getQrData, status } = useQrCode();
-// const uidn = ref();
-
-// const submitForm = async () => {
-//   try {
-//     await getQrData(uidn.value);
-//     isSuccess.value = status.value == 200 ? true : false;
-//     // toast.success("Mise à jour éffectué");
-//     console.log(route);
-//   } catch (err) {
-//     console.error("Failed to update request:", err);
-//   }
-// };
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("fr-FR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
 </script>
 
 <template>
@@ -31,11 +20,8 @@
       </div> -->
     <!-- </div> -->
     <div class="container">
-
       <div class="text-center py-4">
-        <h3>
-          Liste des Visites
-        </h3>
+        <h3>Liste des Visites</h3>
       </div>
 
       <!-- <div class="row align-items-center"> -->
@@ -45,32 +31,21 @@
             <tr>
               <th>Visiteur</th>
               <th>Host</th>
-              <th>Titre</th>
-              <th>Organisation</th>
+              <!-- <th>Titre</th> -->
+              <th>Statut</th>
               <th>Date Création</th>
             </tr>
           </thead>
 
-          <!--
-            <tfoot>
-              <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Office</th>
-                <th>Age</th>
-                <th>Start date</th>
-                <th>Salary</th>
-              </tr>
-            </tfoot>
-            -->
-
           <tbody>
-            <tr>
-              <td>-------------</td>
-              <td>-------------</td>
-              <td>-------------</td>
-              <td>-------------</td>
-              <td>-------------</td>
+            <tr v-for="request in requests" :key="request.id">
+              <td>
+                {{ request.visitor.firstname }} {{ request.visitor.lastname }}
+              </td>
+              <td>{{ request.host }}</td>
+              <!-- <td>{{ request.title ?? "---------" }}</td> -->
+              <td>{{ request.confirmed ? "Confirmé" : "En attente" }}</td>
+              <td>{{ formatDate(request.request_date) }}</td>
             </tr>
           </tbody>
         </table>
@@ -134,7 +109,7 @@
   padding: 80px 40px;
   border-radius: 15px;
   transform: translate(-50%, -50%);
-  top: 20%;
+  top: 50%;
   position: absolute;
   left: 50%;
 }

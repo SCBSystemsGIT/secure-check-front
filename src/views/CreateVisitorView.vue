@@ -46,6 +46,7 @@ const submitForm = async () => {
     await createVisitor(visitor.value);
 
     visitRequest.value.visitor_id = visitorId.value;
+    visitRequest.value.user_id = userInfo?.value?.id;
     await createVisitRequest(visitRequest.value);
     // Réinitialiser le formulaire ou rediriger si nécessaire
   } catch (error) {

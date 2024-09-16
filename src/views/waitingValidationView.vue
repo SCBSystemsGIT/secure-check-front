@@ -57,7 +57,7 @@ const submitForm = async (state) => {
                 </div>
 
                 <div class="request-btn" @click="goToRoute('/')">
-                  <a>Accueil </a>
+                  <a>Menu </a>
                 </div>
 
             </div>

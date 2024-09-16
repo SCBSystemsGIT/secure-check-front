@@ -25,47 +25,74 @@ onMounted(() => {
       <div class="col-md-4 col-xl-3" @click="goToRoute('/meeting')">
         <div class="card bg-c-green order-card py-5">
           <div class="card-block">
-            <h2 class="text-center">
+            <h4 class="text-center">
               <i class="fa fa-rocket f-left"></i><span>Visite</span>
-            </h2>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4 col-xl-3" @click="goToRoute('/list-qrcode')">
-        <div class="card bg-c-green order-card py-5">
-          <div class="card-block">
-            <h2 class="text-center">
-              <i class="fa fa-rocket f-left"></i><span>QRCode</span>
-            </h2>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4 col-xl-3" @click="goToRoute('/list-manuel')">
-        <div class="card bg-c-green order-card py-5">
-          <div class="card-block">
-            <h2 class="text-center">
-              <i class="fa fa-rocket f-left"></i><span>Manuel</span>
-            </h2>
+            </h4>
           </div>
         </div>
       </div>
 
       <div
-        class="col-md-4 col-xl-3"
+        class="menu-item col-md-4 col-xl-3"
+        @click="goToRoute('/list-qrcode')"
+      >
+        <div class="card bg-c-green order-card py-5">
+          <div class="card-block">
+            <h4 class="text-center">
+              <i class="fa fa-rocket f-left"></i><span>QRCode</span>
+            </h4>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="menu-item col-md-4 col-xl-3"
+        @click="goToRoute('/list-manuel')"
+      >
+        <div class="card bg-c-green order-card py-5">
+          <div class="card-block">
+            <h4 class="text-center">
+              <i class="fa fa-rocket f-left"></i><span>Manuel</span>
+            </h4>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="menu-item col-md-4 col-xl-3"
         @click="goToRoute('/create-user')"
         v-if="userStore.isAdmin(currentRole)"
       >
         <div class="card bg-c-green order-card py-5">
           <div class="card-block">
-            <h2 class="text-center">
+            <h4 class="text-center">
               <i class="fa fa-rocket f-left"></i
               ><span>Création d'Utilisateur</span>
-            </h2>
+            </h4>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="menu-item col-md-4 col-xl-3"
+        @click="goToRoute('/list-users')"
+        v-if="userStore.isAdmin(currentRole)"
+      >
+        <div class="card bg-c-green order-card py-5">
+          <div class="card-block">
+            <h4 class="text-center">
+              <i class="fa fa-rocket f-left"></i
+              ><span>Liste d'Utilisateur</span>
+            </h4>
           </div>
         </div>
       </div>
     </div>
   </section>
 </template>
+
+<style scoped>
+.menu-item {
+  width: 20%;
+}
+</style>
