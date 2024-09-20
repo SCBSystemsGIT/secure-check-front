@@ -15,7 +15,7 @@ const request = ref({
 });
 
 const { isLoading, error, uidn, updateRequest } = useUpdateRequest();
-const {goToRoute} = useNavigation();
+const { goToRoute } = useNavigation();
 
 const isAuthenticated = userStore.isAuthenticated();
 const submitForm = async (state) => {
@@ -38,63 +38,62 @@ const submitForm = async (state) => {
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
-            
-            <div class="popup-logo" v-if="!isSuccess">
-              <router-link to="/">
+          <div class="popup-logo" v-if="!isSuccess">
+            <router-link to="/">
               <img
-                  src="@/assets/secure-check-logo.png"
-                  class=""
-                  alt="secure-check-logo"
-              /></router-link>
+                src="@/assets/secure-check-logo.png"
+                class=""
+                alt="secure-check-logo"
+            /></router-link>
+          </div>
+
+          <div class="popup-logo" v-if="isSuccess">
+            <router-link to="/">
+              <img
+                :src="`http://localhost:9999/qrcode/qrcode-${uidn}.png`"
+                class=""
+                alt="secure-check-logo"
+              />
+            </router-link>
+
+            <div class="text-center py-2">
+              <h3>QRCode Généré</h3>
             </div>
 
-            <div class="popup-logo" v-if="isSuccess">
-                <router-link to="/">
-                  <img
-                      :src="`http://localhost:9999/qrcode/qrcode-${uidn}.png`"
-                      class=""
-                      alt="secure-check-logo"
-                  />
-                </router-link>
-
-                <div class="text-center py-2">
-                  <h3>QRCode Généré</h3>
-                </div>
-
-                <div class="request-btn" @click="goToRoute('/menu')" v-if="isAuthenticated">
-                  <a>Menu </a>
-                </div>
-
-                <div v-else>
-                  <h3>
-                    Votre QRCode a été envoyé par e-mail, Merci 
-                  </h3>
-                </div>
-
+            <div
+              class="request-btn"
+              @click="goToRoute('/menu')"
+              v-if="isAuthenticated"
+            >
+              <a>Menu </a>
             </div>
 
-            <div v-if="!isSuccess">
-                <h3 class="text-center py-3">
-                En attente de la confirmation de l'hôte ...
-                </h3>
+            <div v-else>
+              <h3>Votre QRCode a été envoyé par e-mail, Merci</h3>
+            </div>
+          </div>
 
-                <div
-                class="request-btn"
-                @click.prevent="submitForm(1)"
-                v-if="!isLoading"
-                >
-                <a>Valider </a>
-                </div>
+          <div v-if="!isSuccess">
+            <h3 class="text-center py-3">
+              En attente de la confirmation de l'hôte ...
+            </h3>
 
-                <div class="text-center" v-else>
-                <h3>Chargement .....</h3>
-                </div>
-
-                <div class="request-btn-cannel" @click.prevent="submitForm(0)">
-                <a>Annuler </a>
-                </div>
+            <div
+              class="request-btn"
+              @click.prevent="submitForm(1)"
+              v-if="!isLoading"
+            >
+              <a>Valider </a>
             </div>
 
+            <div class="text-center" v-else>
+              <h3>Chargement .....</h3>
+            </div>
+
+            <div class="request-btn-cannel" @click.prevent="submitForm(0)">
+              <a>Annuler </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>

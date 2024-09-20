@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRequestsList } from "@/services/useRequestsList";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const { requests, error } = useRequestsList();
 const formatDate = (dateString) => {
@@ -16,11 +16,12 @@ const formatDate = (dateString) => {
 };
 
 const router = useRouter();
+const route = useRoute();
 // Pagination variables
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 const show = (id) => {
-  router.push(`/waiting-validation/${id}`)
+  router.push(`/waiting-validation/${id}`);
 };
 
 // Computed property for paginated data
@@ -41,6 +42,18 @@ const changePage = (page) => {
     currentPage.value = page;
   }
 };
+
+onMounted(() => {
+  if (route?.params?.event) {
+    
+    console.log({ requests: requests });
+
+    // requests.value.find(function (item) {
+    //   alert(item.evenement_id);
+    //   return item.evenement_id == event;
+    // });
+  }
+});
 </script>
 
 <template>

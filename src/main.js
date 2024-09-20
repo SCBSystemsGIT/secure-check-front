@@ -15,10 +15,13 @@ import UiTable from 'balm-ui/components/table';
 import BalmUI from "balm-ui"; // Official Google Material Components
 import BalmUIPlus from "balm-ui/dist/balm-ui-plus"; // BalmJS Team Material Components
 import 'balm-ui-css';
+//import UiDialogComponents from 'balm-ui/components/dialog';
+
 // import 'balm-ui-css';
 
 const app = createApp(App);
 app.use(router);
+//app.use(UiDialogComponents);
 
 app.use(BalmUI);
 app.use(BalmUIPlus);

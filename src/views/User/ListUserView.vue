@@ -9,7 +9,7 @@ onMounted(() => {
 });
 
 const formatDate = (dateString) => {
-  const date ="hello "+ new Date(dateString);
+  const date = "hello " + new Date(dateString);
   return date.toLocaleDateString("fr-FR", {
     year: "numeric",
     month: "long",
@@ -18,10 +18,14 @@ const formatDate = (dateString) => {
 };
 
 // Définitions des colonnes pour le tableau
-const thead = ref(["ID", "Nom", "Email", "Role", "Date de Création"]);
+const thead = ref(["ID", "Nom", "Email", "Role", 
+// "Date de Création"
+]);
 
 // Correspondance des propriétés de l'utilisateur
-const tbody = ref(["id", "name", "email", "role", "create_at"]);
+const tbody = ref(["id", "name", "email", "role",
+//  { slot: "create_at" }
+ ]);
 </script>
 
 <template>
@@ -32,7 +36,7 @@ const tbody = ref(["id", "name", "email", "role", "create_at"]);
       <ui-table :data="users" :thead="thead" :tbody="tbody">
         <!-- Utilisation d'un slot personnalisé pour formater la date -->
         <template #create_at="{ row }">
-          {{ formatDate(row.create_at) }}
+          {{ formatDate(row?.create_at) }}
         </template>
       </ui-table>
     </div>

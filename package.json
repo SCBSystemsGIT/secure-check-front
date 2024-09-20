@@ -16,12 +16,14 @@
     "pinia": "^2.2.2",
     "pinia-plugin-persist": "^1.0.0",
     "vue": "^3.2.13",
+    "vue-barcode-reader": "^1.0.3",
     "vue-router": "4",
     "vue3-toastify": "^0.2.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
+    "@types/vue-barcode-reader": "^0.0.3",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-service": "~5.0.0",

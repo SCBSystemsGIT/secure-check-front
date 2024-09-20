@@ -108,7 +108,16 @@ onMounted(() => {
               <router-link to="/meeting">Meetings</router-link>
               <router-link to="/list-qrcode">QR-Code</router-link>
               <router-link to="/list-manuel">Manual Code</router-link>
-              <router-link to="/list-users" class="mt-2" v-if="userStore.isAdmin(currentRole)"
+              <router-link to="/create-event" class="mt-2"
+                >Créer Event</router-link
+              >
+              <router-link to="/list-events" class="mt-2"
+                >Liste Event</router-link
+              >
+              <router-link
+                to="/list-users"
+                class="mt-2"
+                v-if="userStore.isAdmin(currentRole)"
                 >Liste Utilisateurs</router-link
               >
             </div>

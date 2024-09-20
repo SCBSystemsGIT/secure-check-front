@@ -4,20 +4,32 @@ import { useCreateVisitor } from "@/services/useCreateVisitor";
 import { useUserStore } from "@/stores/useUserStore";
 import { useUserInfo } from "@/services/useUserInfo";
 import { toast } from "vue3-toastify";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useVisitRequest } from "@/services/useVisitRequest";
+import { useEvent } from "@/services/useEvent";
+// import { useCompanies } from "@/services/useCompanies";
+
+const currentRole = ref();
+const roles = ref();
+roles.value = JSON.parse(localStorage.getItem("userInfo"));
+currentRole.value = roles.value.roles[0];
 
 const { userInfo, fetchUserInfo } = useUserInfo();
 const { createVisitor, statusCode, visitorId } = useCreateVisitor();
 const { createVisitRequest, requestId } = useVisitRequest();
+// const { showCompany, company } = useCompanies();
+
+const { showEvent, event } = useEvent();
 
 const userStore = useUserStore();
 const isAuthenticated = userStore.isAuthenticated();
 
 const router = useRouter();
+const route = useRoute();
 
 const visitor = ref({
   user_id: userInfo?.value?.id,
+  evenements_id: event?.value?.id ?? null,
   firstname: "",
   lastname: "",
   email: "",
@@ -27,11 +39,6 @@ const visitor = ref({
   organisation_name: "",
   visitor_type: "",
 });
-
-const uploadFile = () => {
-  const file = ref();
-  console.log(file);
-};
 
 const visitRequest = ref({
   user_id: userInfo?.value?.id,
@@ -46,10 +53,12 @@ const submitForm = async () => {
   visitor.value.user_id = userInfo?.value?.id;
 
   try {
+    visitor.value.evenements_id = event?.value?.id;
     await createVisitor(visitor.value);
 
     visitRequest.value.visitor_id = visitorId.value;
     visitRequest.value.user_id = userInfo?.value?.id;
+
     await createVisitRequest(visitRequest.value);
     // Réinitialiser le formulaire ou rediriger si nécessaire
   } catch (error) {
@@ -59,7 +68,13 @@ const submitForm = async () => {
   }
 };
 
+const title = ref("");
 onBeforeMount(async () => {
+  if (route.params.slug) {
+    await showEvent(route.params.slug);
+    title.value = event.value.name;
+  }
+
   await fetchUserInfo();
 });
 
@@ -73,9 +88,17 @@ watch(statusCode, (newStatus) => {
       if (isAuthenticated) {
         toast.success("Visiteur créé avec succès.");
 
-        setTimeout(() => {
-          router.push("/waiting-validation/" + requestId.value);
-        }, 1500);
+        if (userStore.isEmployee(currentRole.value)) {
+          console.log("employee");
+
+          setTimeout(() => {
+            router.push("/menu");
+          }, 1500);
+        } else {
+          setTimeout(() => {
+            router.push("/waiting-validation/" + requestId.value);
+          }, 1500);
+        }
       } else {
         toast.success("Demande créé avec succès.");
 
@@ -86,18 +109,35 @@ watch(statusCode, (newStatus) => {
 
       break;
     case 200:
-      toast.success("Visiteur a été créé avec succès.");
+      if (isAuthenticated) {
+        toast.success("Visiteur créé avec succès.");
 
-      setTimeout(() => {
-        router.push("/waiting-validation/" + requestId.value);
-      }, 1500);
+        if (userStore.isEmployee(currentRole.value)) {
+          console.log("employee");
+          router.push("/menu");
+        } else {
+          setTimeout(() => {
+            router.push("/waiting-validation/" + requestId.value);
+          }, 1500);
+        }
+      } else {
+        toast.success("Demande créé avec succès.");
 
+        setTimeout(() => {
+          router.push("/");
+        }, 1500);
+      }
       break;
     case 400:
       toast.info("La requête est mal formée.");
       break;
     case 401:
       toast.info("Vous devez être authentifié.");
+
+      setTimeout(() => {
+        router.push("/");
+      }, 1500);
+
       break;
     case 403:
       toast.info("Vous n'avez pas la permission.");
@@ -120,6 +160,10 @@ watch(statusCode, (newStatus) => {
       <section class="request-meeting meeting-form">
         <div class="row align-items-center">
           <div class="col col-12 col-md-12 col-sm-12">
+            <h3 class="text-center pb-3" v-if="title">
+              {{ title }}
+            </h3>
+
             <form @submit.prevent="submitForm">
               <div>
                 <label for="visitor_type">Type de visiteur</label><br />

@@ -10,6 +10,9 @@ import WaitingValidationView from "@/views/waitingValidationView.vue";
 import ListQrCodeView from "@/views/QRcode/ListQrCodeView.vue";
 import ManalCheckView from "@/views/QRcode/ManalCheckView.vue";
 import ListUserView from "@/views/User/ListUserView.vue";
+import EventView from "@/views/Event/EventView.vue";
+import EventListView from "@/views/Event/EventListView.vue";
+import TestView from "@/views/TestView.vue";
 
 const routes = [
   {
@@ -36,7 +39,7 @@ const routes = [
     path: "/request-meeting",
     name: "RequestMeeting",
     component: RequestMeetingView,
-    alias: "/"
+    alias: "/",
   },
   {
     path: "/waiting-validation/:id",
@@ -49,20 +52,39 @@ const routes = [
     component: ListQrCodeView,
   },
   {
+    path: "/list-qrcode-events/:event",
+    name: "listQrcodeEvent",
+    component: ListQrCodeView,
+  },
+  {
     path: "/list-manuel",
     name: "ManalCheck",
     component: ManalCheckView,
   },
-  // {
-  //   path: "/request-meeting",
-  //   name: "RequestMeeting",
-  //   component: RequestMeeting,
-  //   alias: "/",
-  // },
   {
     path: "/menu",
     name: "menu",
     component: MenuView,
+  },
+  {
+    path: "/create-event",
+    name: "CreateEvent",
+    component: EventView,
+  },
+  {
+    path: "/company/:company_slug/event/:slug",
+    name: "JoinEvent",
+    component: CreateVisitorView,
+  },
+  {
+    path: "/list-events",
+    name: "EventList",
+    component: EventListView,
+  },
+  {
+    path: "/test",
+    name: "Test",
+    component: TestView,
   },
 ];
 

@@ -10,7 +10,6 @@ const logout = () => {
 
 const isAuthenticated = userStore.isAuthenticated();
 const roles = userStore.roles;
-
 </script>
 
 <template>
@@ -37,8 +36,13 @@ const roles = userStore.roles;
               {{ isAuthenticated }}
             </p> -->
 
-            <a @click="logout" class="login-button" v-if="isAuthenticated" role="button">
-              Logout
+            <a
+              @click="logout"
+              class="login-button"
+              v-if="isAuthenticated"
+              role="button"
+            >
+              Se Déconnecter
             </a>
 
             <router-link
@@ -46,7 +50,7 @@ const roles = userStore.roles;
               to="/sign-in"
               class="login-button"
             >
-              Login In
+              Se Connecter
             </router-link>
 
             <router-link v-else to="/request-meeting" class="login-button">
