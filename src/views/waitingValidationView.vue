@@ -64,6 +64,7 @@ const submitForm = async (state) => {
               class="request-btn"
               @click="goToRoute('/menu')"
               v-if="isAuthenticated"
+              role="button"
             >
               <a>Menu </a>
             </div>

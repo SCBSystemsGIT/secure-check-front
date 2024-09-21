@@ -52,7 +52,7 @@ const routes = [
     component: ListQrCodeView,
   },
   {
-    path: "/list-qrcode-events/:event",
+    path: "/list-qrcode-events/:slug",
     name: "listQrcodeEvent",
     component: ListQrCodeView,
   },

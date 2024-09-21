@@ -11,7 +11,6 @@ import { toast } from "vue3-toastify";
 const { events, loading, error } = useEventList();
 const { formatDate, /*formatDateHour*/ formatTime } = useDate();
 
-
 // Définitions des colonnes pour le tableau
 const thead = ref([
   "ID",
@@ -58,10 +57,8 @@ open.value = ref(true);
 const visitorsList = ref([]);
 const showUserEvent = ref(false);
 
-const showVisitors = (visitors, id) => {
-
-  router.push('list-qrcode-events/'+id);
-
+const showVisitors = (slug) => {
+  router.push("list-qrcode-events/" + slug);
   // console.log(visitors);
   // showUserEvent.value = true;
   // visitorsList.value = visitors;
@@ -146,7 +143,10 @@ const copyContent = (dataLink) => {
         </template>
 
         <template #visiteurs="{ data }">
-          <ui-icon role="button" @click="showVisitors(data.visitors, data.id)">
+          <ui-icon
+            role="button"
+            @click="showVisitors(data.slug)"
+          >
             groups
           </ui-icon>
         </template>

@@ -13,7 +13,7 @@ watch(statusCode, (newStatus) => {
       toast.success("Connexion réussie.");
       setTimeout(() => {
         router.push("/menu");
-        window.location='/menu';
+        window.location = "/menu";
       }, 1500);
       break;
     case 201:
@@ -35,7 +35,7 @@ watch(statusCode, (newStatus) => {
       toast.error("Internal Server Error - Une erreur interne est survenue.");
       break;
     default:
-      toast.info(`Erreur inconnue - Code : ${newStatus}`);
+      console.log(`Erreur inconnue - Code : ${newStatus}`);
   }
 });
 </script>
@@ -47,10 +47,7 @@ watch(statusCode, (newStatus) => {
         <div class="col col-12 col-md-12 col-sm-12">
           <div class="popup-logo">
             <a href="#"
-              ><img
-                src="@/assets/secure-check-logo.png"
-                class=""
-                alt="secure-check-logo"
+              ><img src="@/assets/secure-check-logo.png" class="" alt="secure-check-logo"
             /></a>
           </div>
           <form action="">
@@ -64,11 +61,11 @@ watch(statusCode, (newStatus) => {
               /><br />
             </div>
             <div>
-              <label for="pwd">Password</label>
+              <label for="pwd">Mot de passe</label>
               <input type="password" id="pwd" name="pwd" v-model="password" />
             </div>
             <div class="submit-button">
-              <input type="submit" value="Submit" @click.prevent="login" />
+              <input type="submit" value="Soumettre" @click.prevent="login" />
             </div>
           </form>
         </div>

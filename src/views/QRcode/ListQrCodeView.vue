@@ -1,7 +1,8 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onBeforeMount } from "vue";
 import { useRequestsList } from "@/services/useRequestsList";
 import { useRoute, useRouter } from "vue-router";
+import { useEvent } from "@/services/useEvent";
 
 const { requests, error } = useRequestsList();
 const formatDate = (dateString) => {
@@ -28,7 +29,9 @@ const show = (id) => {
 const paginatedRequests = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
   const end = start + itemsPerPage.value;
-  return requests.value.slice(start, end);
+  return route.params.slug
+    ? filteredRequests.value.slice(start, end)
+    : requests.value.slice(start, end);
 });
 
 // Calculate the total number of pages
@@ -43,15 +46,25 @@ const changePage = (page) => {
   }
 };
 
-onMounted(() => {
-  if (route?.params?.event) {
-    
-    console.log({ requests: requests });
+const { showEvent, event } = useEvent();
 
-    // requests.value.find(function (item) {
-    //   alert(item.evenement_id);
-    //   return item.evenement_id == event;
-    // });
+const filteredRequests = computed(() => {
+  return requests.value.filter(
+    (request) => request.visitor.evenements?.id === event.value.id
+  );
+});
+
+onBeforeMount(async () => {
+  requests.value = filteredRequests.value;
+});
+
+onMounted(async () => {
+  console.log({ req: typeof requests.value });
+
+  if (route?.params?.slug) {
+    await showEvent(route?.params?.slug);
+    console.log({ requests: requests });
+    console.log({ event: event.value });
   }
 });
 </script>
@@ -60,6 +73,7 @@ onMounted(() => {
   <div class="container">
     <div class="text-center py-4">
       <h3>Liste des demandes</h3>
+      <h4>Evenements : {{ event?.name }}</h4>
     </div>
 
     <div class="d-flex justify-content-center py-3">
@@ -118,7 +132,9 @@ onMounted(() => {
       >
         Précédent
       </button>
-      <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+      <span v-if="!route.params.slug"
+        >Page {{ currentPage }} sur {{ totalPages }}</span
+      >
       <button
         class="btn btn-secondary"
         @click="changePage(currentPage + 1)"
