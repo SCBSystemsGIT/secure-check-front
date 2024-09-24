@@ -9,9 +9,9 @@ const currentRole = ref();
 
 const roles = ref();
 roles.value = JSON.parse(localStorage.getItem("userInfo"));
-currentRole.value = roles.value.roles[0];
+currentRole.value = roles.value?.roles[0];
 onMounted(() => {
-  console.log(roles.value.roles[0]);
+  console.log(roles.value?.roles[0]);
 });
 
 // const { isAdmin, isSuperAdmin, isSupervisor, isEmployee, isUser } = useUserStore();

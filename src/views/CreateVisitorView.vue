@@ -12,7 +12,7 @@ import { useEvent } from "@/services/useEvent";
 const currentRole = ref();
 const roles = ref();
 roles.value = JSON.parse(localStorage.getItem("userInfo"));
-currentRole.value = roles.value.roles[0];
+currentRole.value = roles.value?.roles[0];
 
 const { userInfo, fetchUserInfo } = useUserInfo();
 const { createVisitor, statusCode, visitorId } = useCreateVisitor();

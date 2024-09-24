@@ -73,7 +73,7 @@ onMounted(async () => {
   <div class="container">
     <div class="text-center py-4">
       <h3>Liste des demandes</h3>
-      <h4>Evenements : {{ event?.name }}</h4>
+      <h4 v-if="route?.params?.slug">Evenements : {{ event?.name }}</h4>
     </div>
 
     <div class="d-flex justify-content-center py-3">
@@ -112,12 +112,14 @@ onMounted(async () => {
           <ui-icon @click="show(data.id)" role="button"> edit </ui-icon>
         </template>
 
-        <!-- <ui-pagination
+        <!-- 
+        <ui-pagination
           v-model="page"
           :total="10"
           show-total
           @update:model-value="onPage"
-        ></ui-pagination> -->
+        ></ui-pagination>
+        -->
       </ui-table>
     </div>
 

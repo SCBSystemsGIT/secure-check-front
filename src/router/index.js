@@ -13,6 +13,9 @@ import ListUserView from "@/views/User/ListUserView.vue";
 import EventView from "@/views/Event/EventView.vue";
 import EventListView from "@/views/Event/EventListView.vue";
 import TestView from "@/views/TestView.vue";
+import SuccessCheckoutView from "@/views/SuccessCheckoutView.vue";
+import SuccessCheckinView from "@/views/SuccessCheckinView.vue";
+import CreateCompanyView from "@/views/CreateCompanyView.vue";
 
 const routes = [
   {
@@ -80,6 +83,21 @@ const routes = [
     path: "/list-events",
     name: "EventList",
     component: EventListView,
+  },
+  {
+    path: "/success-checkout/:uidn",
+    name: "successCheckout",
+    component: SuccessCheckoutView,
+  },
+  {
+    path: "/success-checkin/:uidn",
+    name: "successCheckin",
+    component: SuccessCheckinView,
+  },
+  {
+    path: "/create-company",
+    name: "createCompany",
+    component: CreateCompanyView
   },
   {
     path: "/test",

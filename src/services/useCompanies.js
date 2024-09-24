@@ -6,6 +6,7 @@ export function useCompanies() {
   const company = ref();
   const loading = ref(false);
   const errorMessage = ref(null);
+  const statusCode = ref(null);
 
   const fetchCompanies = async () => {
     loading.value = true;
@@ -39,11 +40,30 @@ export function useCompanies() {
     }
   };
 
+  const postCompany = async (data) => {
+    loading.value = true;
+    errorMessage.value = null;
+
+    try {
+      const response = await apiClient.post(`/company`, data); // Remplacez par l'URL correcte de votre API
+      company.value = response.data.data;
+      statusCode.value = response.status;
+    } catch (error) {
+      errorMessage.value =
+        "Une erreur est survenue lors du chargement des entreprises.";
+      console.error(error);
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     companies,
     loading,
     errorMessage,
     fetchCompanies,
     showCompany,
+    postCompany,
+    statusCode
   };
 }

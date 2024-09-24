@@ -11,10 +11,10 @@ import DataTable from "datatables.net-vue3";
 import DataTablesLib from "datatables.net";
 DataTable.use(DataTablesLib);
 
-import UiTable from 'balm-ui/components/table';
+import UiTable from "balm-ui/components/table";
 import BalmUI from "balm-ui"; // Official Google Material Components
 import BalmUIPlus from "balm-ui/dist/balm-ui-plus"; // BalmJS Team Material Components
-import 'balm-ui-css';
+import "balm-ui-css";
 //import UiDialogComponents from 'balm-ui/components/dialog';
 
 // import 'balm-ui-css';

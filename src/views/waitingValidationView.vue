@@ -5,6 +5,7 @@ import { useUserStore } from "@/stores/useUserStore";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { toast } from "vue3-toastify";
+import { useGlobalStore } from "@/stores/globalStore";
 
 const userStore = useUserStore();
 const route = useRoute();
@@ -14,6 +15,7 @@ const request = ref({
   confirmed: "",
 });
 
+const { publicDir } = useGlobalStore();
 const { isLoading, error, uidn, updateRequest } = useUpdateRequest();
 const { goToRoute } = useNavigation();
 
@@ -50,7 +52,7 @@ const submitForm = async (state) => {
           <div class="popup-logo" v-if="isSuccess">
             <router-link to="/">
               <img
-                :src="`http://localhost:9999/qrcode/qrcode-${uidn}.png`"
+                :src="`${publicDir}/qrcode/qrcode-${uidn}.png`"
                 class=""
                 alt="secure-check-logo"
               />
