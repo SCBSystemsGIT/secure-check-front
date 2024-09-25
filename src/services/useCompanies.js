@@ -11,7 +11,7 @@ export function useCompanies() {
   const fetchCompanies = async () => {
     loading.value = true;
     errorMessage.value = null;
-
+    
     try {
       const response = await apiClient.get("/companies"); // Remplacez par l'URL correcte de votre API
       companies.value = response.data.data;
@@ -40,17 +40,47 @@ export function useCompanies() {
     }
   };
 
+  // const postCompany = async (data) => {
+  //   loading.value = true;
+  //   errorMessage.value = null;
+
+  //   try {
+  //     const response = await apiClient.post(`/company`,data); // Remplacez par l'URL correcte de votre API
+  //     company.value = response.data.data;
+  //     statusCode.value = response.status;
+  //   } catch (error) {
+  //     errorMessage.value =
+  //       "Une erreur est survenue lors du chargement des entreprises.";
+  //     console.error(error);
+  //   } finally {
+  //     loading.value = false;
+  //   }
+  // };
+
   const postCompany = async (data) => {
+
     loading.value = true;
     errorMessage.value = null;
 
     try {
-      const response = await apiClient.post(`/company`, data); // Remplacez par l'URL correcte de votre API
+      // Crée un objet FormData
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("description", data.description);
+      formData.append("logo", data.logo); // Assurez-vous que `data.logo` est un fichier (Blob)
+
+      // Envoyer la requête POST avec formData
+      const response = await apiClient.post("/company", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       company.value = response.data.data;
       statusCode.value = response.status;
     } catch (error) {
       errorMessage.value =
-        "Une erreur est survenue lors du chargement des entreprises.";
+        "Une erreur est survenue lors de l'enregistrement de l'entreprise.";
       console.error(error);
     } finally {
       loading.value = false;
@@ -64,6 +94,7 @@ export function useCompanies() {
     fetchCompanies,
     showCompany,
     postCompany,
-    statusCode
+    statusCode,
+    company
   };
 }

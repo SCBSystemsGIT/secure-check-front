@@ -2,10 +2,12 @@
 import { useNavigation } from "@/composables/useNavigation";
 import { useQrCode } from "@/services/useManualCheck";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 // import { toast } from "vue3-toastify";
 
 const route = useRoute();
+const router = useRouter();
 const isSuccess = ref(false);
 const { goToRoute } = useNavigation();
 const { getQrData, status } = useQrCode();
@@ -13,7 +15,7 @@ const uidn = ref();
 
 const submitForm = async () => {
   try {
-    await getQrData(uidn.value);
+    await getQrData(uidn.value, 1);
     isSuccess.value = status.value == 200 ? true : false;
     // toast.success("Mise à jour éffectué");
     console.log(route);
@@ -28,7 +30,6 @@ const submitForm = async () => {
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
-
           <div class="popup-logo" v-if="!isSuccess">
             <router-link to="/">
               <img
@@ -49,7 +50,16 @@ const submitForm = async () => {
           </div>
 
           <div v-if="!isSuccess">
-            <h3 class="text-center py-3">Validation Manuelle UIDN</h3>
+            <div class="d-flex justify-content-center align-items-center">
+              <div
+                class="d-flex justify-content-start mb-4 gap-3 align-items-center"
+              >
+                <button class="back" @click="router.push('/menu')">
+                  Retour
+                </button>
+                <h3 class="text-center py-3">Validation Manuelle UIDN</h3>
+              </div>
+            </div>
 
             <input
               type="text"
@@ -71,9 +81,7 @@ const submitForm = async () => {
             <div class="request-btn" @click="goToRoute('/menu')">
               <a>Menu </a>
             </div>
-
           </div>
-          
         </div>
       </div>
     </div>

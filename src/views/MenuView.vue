@@ -106,19 +106,44 @@ onMounted(() => {
             <h5><span>Veuillez sélectionner </span></h5>
             <div class="selectcheckintype-btns">
               <router-link to="/meeting">Meetings</router-link>
-              <router-link to="/list-qrcode">QR-Code</router-link>
+              <router-link to="/list-qrcode">Demandes</router-link>
               <router-link to="/list-manuel">Manual Code</router-link>
-              <router-link to="/create-event" class="mt-2"
+              <router-link
+                to="/create-event"
+                class="mt-2"
+                v-if="
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isSupervisor(currentRole)
+                "
                 >Créer Event</router-link
               >
-              <router-link to="/list-events" class="mt-2"
+              <router-link
+                to="/list-events"
+                class="mt-2"
+                v-if="
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isSupervisor(currentRole)
+                "
                 >Liste Event</router-link
               >
               <router-link
                 to="/list-users"
                 class="mt-2"
                 v-if="userStore.isAdmin(currentRole)"
-                >Liste Utilisateurs</router-link
+              >
+                Utilisateurs</router-link
+              >
+
+              <!-- v-if="userStore.isAdmin(currentRole)" -->
+              <router-link
+                to="/create-company"
+                class="mt-2"
+                v-if="
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isSupervisor(currentRole)
+                "
+              >
+                + Entreprise</router-link
               >
             </div>
           </div>

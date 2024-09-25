@@ -22,7 +22,7 @@ const thead = ref([
   "Département",
   "Date de Création",
   "Lien",
-  "Visiteurs",
+  "Participants",
 ]);
 
 // Correspondance des propriétés de l'utilisateur
@@ -36,7 +36,7 @@ const tbody = ref([
   { slot: "departement" },
   { slot: "created_at" },
   { slot: "link" },
-  { slot: "visiteurs" },
+  { slot: "participants" },
 ]);
 
 // Gestion de la pagination
@@ -96,7 +96,12 @@ const copyContent = (dataLink) => {
 
 <template>
   <div class="container">
-    <h3 class="text-center">Liste des Evenements</h3>
+    <div class="d-flex justify-content-center align-items-center">
+      <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
+        <button class="back" @click="router.push('/menu')">Retour</button>
+        <h3 class="text-center">Liste des Evenements</h3>
+      </div>
+    </div>
 
     <div v-if="showUserEvent">
       <!-- <div class="text-center"></div> -->
@@ -137,18 +142,11 @@ const copyContent = (dataLink) => {
         </template>
 
         <template #link="{ data }">
-          <ui-icon role="button" @click="copyContent(data)">
-            content_copy
-          </ui-icon>
+          <ui-icon role="button" @click="copyContent(data)"> content_copy </ui-icon>
         </template>
 
-        <template #visiteurs="{ data }">
-          <ui-icon
-            role="button"
-            @click="showVisitors(data.slug)"
-          >
-            groups
-          </ui-icon>
+        <template #participants="{ data }">
+          <ui-icon role="button" @click="showVisitors(data.slug)"> groups </ui-icon>
         </template>
       </ui-table>
     </div>

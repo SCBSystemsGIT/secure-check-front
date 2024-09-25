@@ -35,16 +35,16 @@ const paginatedRequests = computed(() => {
 });
 
 // Calculate the total number of pages
-const totalPages = computed(() =>
-  Math.ceil(requests.value.length / itemsPerPage.value)
-);
+// const totalPages = computed(() =>
+//   Math.ceil(requests.value.length / itemsPerPage.value)
+// );
 
 // Function to change page
-const changePage = (page) => {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page;
-  }
-};
+// const changePage = (page) => {
+//   if (page >= 1 && page <= totalPages.value) {
+//     currentPage.value = page;
+//   }
+// };
 
 const { showEvent, event } = useEvent();
 
@@ -71,8 +71,18 @@ onMounted(async () => {
 
 <template>
   <div class="container">
-    <div class="text-center py-4">
+    <!-- <div class="text-center py-4">
       <h3>Liste des demandes</h3>
+      <h4 v-if="route?.params?.slug">Evenements : {{ event?.name }}</h4>
+    </div> -->
+    <div class="d-flex justify-content-center align-items-center">
+      <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
+        <button class="back" @click="router.push('/menu')">Retour</button>
+        <h3 class="mt-3">Liste des demandes</h3>
+      </div>
+    </div>
+
+    <div class="text-center">
       <h4 v-if="route?.params?.slug">Evenements : {{ event?.name }}</h4>
     </div>
 
@@ -112,21 +122,20 @@ onMounted(async () => {
           <ui-icon @click="show(data.id)" role="button"> edit </ui-icon>
         </template>
 
-        <!-- 
         <ui-pagination
-          v-model="page"
-          :total="10"
+          v-if="!route?.params?.slug"
+          v-model="currentPage" 
+          :total="requests.length"
           show-total
           @update:model-value="onPage"
         ></ui-pagination>
-        -->
       </ui-table>
     </div>
 
     <div v-if="error">{{ error }}</div>
 
     <!-- Pagination Control -->
-    <div class="pagination mb-3">
+    <!-- <div class="pagination mb-3">
       <button
         class="btn btn-secondary"
         @click="changePage(currentPage - 1)"
@@ -144,7 +153,7 @@ onMounted(async () => {
       >
         Suivant
       </button>
-    </div>
+    </div> -->
   </div>
 </template>
 

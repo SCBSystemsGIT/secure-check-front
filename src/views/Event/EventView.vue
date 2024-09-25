@@ -7,7 +7,8 @@ import { useCompanies } from "@/services/useCompanies";
 import { useEvent } from "@/services/useEvent";
 import { useDepartement } from "@/services/useDepartement";
 
-const { fetchCompanies, errorMessage, companies } = useCompanies();
+const { fetchCompanies, showCompany, errorMessage, companies, company } =
+  useCompanies();
 const { createEvent, statusCode } = useEvent();
 const { departements, fetchDepartements } = useDepartement();
 
@@ -16,6 +17,11 @@ const isAuthenticated = userStore.isAuthenticated();
 
 const router = useRouter();
 const loading = ref(false);
+
+const onChangeCompany = async (id) => {
+  await showCompany(id);
+  console.log({ company });
+};
 
 const event = ref({
   company_id: "",
@@ -48,6 +54,11 @@ onBeforeMount(async () => {
     }, 1500);
   }
 });
+
+// watch(event.value.company_id, async (newId) => {
+//   await showCompany(newId);
+//   console.log({ company });
+// });
 
 watch(statusCode, (newStatus) => {
   switch (newStatus) {
@@ -94,12 +105,31 @@ watch(statusCode, (newStatus) => {
       <section class="request-meeting meeting-form">
         <div class="row align-items-center">
           <div class="col col-12 col-md-12 col-sm-12">
+            <div class="d-flex justify-content-center align-items-center">
+              <div
+                class="d-flex justify-content-start mb-4 gap-3 align-items-center"
+              >
+                <button class="back" @click="router.push('/menu')">
+                  Retour
+                </button>
+                <h3 class="mt-3">Création Évènement</h3>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-center" v-if="company?.logo">
+              <img :src="`${publicDir}/logo/${company.logo}`" />
+            </div>
 
             <form @submit.prevent="submitForm">
               <div>
                 <label for="company_id">Entreprise</label><br />
 
-                <select class="form-control" id="company_id" v-model="event.company_id">
+                <select
+                  class="form-control"
+                  id="company_id"
+                  v-model="event.company_id"
+                  @change="onChangeCompany(event.company_id)"
+                >
                   <option
                     v-for="(company, index) in companies"
                     :key="index"
@@ -177,7 +207,6 @@ watch(statusCode, (newStatus) => {
 
               <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
             </form>
-            
           </div>
         </div>
       </section>

@@ -28,7 +28,7 @@ watch(statusCode, (newStatus) => {
     case 201:
       toast.success("Created - L'utilisateur a été créé avec succès.");
 
-      setTimeout(()=>{
+      setTimeout(() => {
         router.push("/menu");
       }, 1400);
 
@@ -60,6 +60,18 @@ watch(statusCode, (newStatus) => {
       <div class="container">
         <div class="row align-items-center">
           <div class="col col-12 col-md-12 col-sm-12">
+            
+            <div class="d-flex justify-content-center align-items-center">
+              <div
+                class="d-flex justify-content-start mb-4 gap-3 align-items-center"
+              >
+                <button class="back" @click="router.push('/menu')">
+                  Retour
+                </button>
+                <h3>Création Utilisateur</h3>
+              </div>
+            </div>
+
             <form @submit.prevent="submitForm">
               <div>
                 <label for="name">Nom</label><br />

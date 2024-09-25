@@ -19,15 +19,30 @@ const isAuthenticated = userStore.isAuthenticated();
 
 const router = useRouter();
 // const route = useRoute();
+const fileName = ref();
+const errorMessage = ref("");
 
 const companyReq = ref({
   name: "",
   description: "",
 });
 
-const errorMessage = ref("");
-const loading = ref(false);
+const onFileChange = (event) => {
+  const selectedFile = event.target.files[0];
+  // console.log(selectedFile);
+  if (selectedFile) {
+    companyReq.value.logo = selectedFile;
+    // pdfUrl.value = URL.createObjectURL(selectedFile);
+    fileName.value = selectedFile.name;
+    // this.isValidFile = true;
+    // this.errorMessage = '';
+  } else {
+    // this.isValidFile = false;
+    errorMessage.value = "Veuillez selectionnez un fichier valide";
+  }
+};
 
+const loading = ref(false);
 const submitForm = async () => {
   try {
     await postCompany(companyReq.value);
@@ -98,22 +113,42 @@ watch(statusCode, (newStatus) => {
       <section class="request-meeting meeting-form">
         <div class="row align-items-center">
           <div class="col col-12 col-md-12 col-sm-12">
-            <form @submit.prevent="submitForm">
+            <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
+              <button class="back" @click="router.push('/menu')">Retour</button>
+              <h3>Création Entreprise</h3>
+            </div>
+            
+            <form @submit.prevent="submitForm" enctype="multipart/form-data">
               <div>
-                <label for="lastname">Nom</label><br />
+                <label for="logo">Logo</label><br />
+                <input
+                  type="file"
+                  id="logo"
+                  @change="onFileChange"
+                  required
+                  :class="{ error: errorMessage }"
+                /><br />
+              </div>
+
+              <!-- <p>
+                {{ fileName }}
+              </p> -->
+
+              <div>
+                <label for="name">Nom</label><br />
                 <input
                   type="text"
-                  id="lastname"
+                  id="name"
                   v-model="companyReq.name"
                   required
                 /><br />
               </div>
 
               <div>
-                <label for="email">Description </label><br />
+                <label for="description">Description </label><br />
                 <input
-                  type="email"
-                  id="email"
+                  type="description"
+                  id="description"
                   v-model="companyReq.description"
                   required
                 /><br />
@@ -131,3 +166,9 @@ watch(statusCode, (newStatus) => {
     </div>
   </section>
 </template>
+
+<style scoped>
+.error {
+  border-color: red;
+}
+</style>

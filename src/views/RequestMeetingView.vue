@@ -37,7 +37,13 @@ onMounted(() => {
             <router-link to="/meeting">Request-meeting</router-link>
           </div>
 
-          <div class="request-btn" v-if="userStore.isAdmin(currentRole)">
+          <div
+            class="request-btn"
+            v-if="
+              userStore.isAdmin(currentRole) ||
+              userStore.isEmployee(currentRole)
+            "
+          >
             <router-link to="/menu">Menu</router-link>
           </div>
         </div>

@@ -160,6 +160,10 @@ watch(statusCode, (newStatus) => {
       <section class="request-meeting meeting-form">
         <div class="row align-items-center">
           <div class="col col-12 col-md-12 col-sm-12">
+            <div class="d-flex justify-content-start mb-4">
+              <button class="back" @click="router.push('/')">Retour</button>
+            </div>
+
             <h3 class="text-center pb-3" v-if="title">
               {{ title }}
             </h3>
@@ -173,8 +177,10 @@ watch(statusCode, (newStatus) => {
                   class="form-control"
                   v-model="visitor.visitor_type"
                 >
-                  <option value="1">Permanent</option>
                   <option value="2">Temporaire</option>
+                  <option value="1" v-if="userStore.isAuthenticated()">
+                    Permanent
+                  </option>
                 </select>
               </div>
 
@@ -275,3 +281,17 @@ watch(statusCode, (newStatus) => {
     </div>
   </section>
 </template>
+
+<style>
+.back {
+  border-radius: 10px;
+  padding: 0.4rem;
+  background-color: #fff;
+  background: #0097b9;
+  color: #ffffff;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-color: #0097b9;
+  margin-left: 4px;
+}
+</style>

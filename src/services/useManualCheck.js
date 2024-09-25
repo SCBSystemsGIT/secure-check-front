@@ -12,11 +12,16 @@ export function useQrCode() {
 
   const router = useRouter();
 
-  const getQrData = async (uidn) => {
+  const getQrData = async (uidn, type) => {
+    //type 1 manual
     loading.value = true;
     try {
       let host = "http://127.0.0.1:9999";
-      const response = await axios.get(`${host}/get-qr-data/${uidn}`);
+      const response = await axios.get(`${host}/get-qr-data/${uidn}`, {
+        params: {
+          type: type,
+        },
+      });
       status.value = response.data.status;
       message.value = response.data.message;
 
