@@ -16,7 +16,7 @@ currentRole.value = roles.value?.roles[0];
 
 const { userInfo, fetchUserInfo } = useUserInfo();
 const { createVisitor, statusCode, visitorId } = useCreateVisitor();
-const { createVisitRequest, requestId } = useVisitRequest();
+const { createVisitRequest, requestId, statusCodeReq } = useVisitRequest();
 // const { showCompany, company } = useCompanies();
 
 const { showEvent, event } = useEvent();
@@ -60,7 +60,6 @@ const submitForm = async () => {
     visitRequest.value.user_id = userInfo?.value?.id;
 
     await createVisitRequest(visitRequest.value);
-    // Réinitialiser le formulaire ou rediriger si nécessaire
   } catch (error) {
     errorMessage.value = `Erreur: ${error.message}`;
   } finally {
@@ -82,22 +81,21 @@ onBeforeMount(async () => {
 watch(statusCode, (newStatus) => {
   switch (newStatus) {
     case 201:
-      console.log(">------------>");
-      console.log(requestId.value);
-
       if (isAuthenticated) {
         toast.success("Visiteur créé avec succès.");
 
         if (userStore.isEmployee(currentRole.value)) {
-          console.log("employee");
-
           setTimeout(() => {
             router.push("/menu");
           }, 1500);
         } else {
-          setTimeout(() => {
-            router.push("/waiting-validation/" + requestId.value);
-          }, 1500);
+          // if (requestId?.value) {
+          //   setTimeout((requestId) => {
+          //     router.push("/waiting-validation/" + requestId.value);
+          //   }, 1500);
+          // } else {
+          //   console.error("requestId est null ou undefined.");
+          // }
         }
       } else {
         toast.success("Demande créé avec succès.");
@@ -150,6 +148,23 @@ watch(statusCode, (newStatus) => {
       break;
     default:
       toast.info(`Code : ${newStatus}`);
+  }
+});
+
+watch(statusCodeReq, (newStatusReq) => {
+  switch (newStatusReq) {
+    case 201:
+      if (requestId?.value) {
+        setTimeout(() => {
+          router.push("/waiting-validation/" + requestId.value);
+        }, 1500);
+      } else {
+        console.error("requestId est null ou undefined.");
+      }
+      break;
+
+    default:
+      break;
   }
 });
 </script>

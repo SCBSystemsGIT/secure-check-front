@@ -6,11 +6,13 @@ import { useRouter } from "vue-router";
 import { useCompanies } from "@/services/useCompanies";
 import { useEvent } from "@/services/useEvent";
 import { useDepartement } from "@/services/useDepartement";
+import { useGlobalStore } from "@/stores/globalStore";
 
 const { fetchCompanies, showCompany, errorMessage, companies, company } =
   useCompanies();
 const { createEvent, statusCode } = useEvent();
 const { departements, fetchDepartements } = useDepartement();
+const { publicDir } = useGlobalStore();
 
 const userStore = useUserStore();
 const isAuthenticated = userStore.isAuthenticated();
@@ -34,7 +36,7 @@ const event = ref({
 
 const submitForm = async () => {
   try {
-    createEvent(event.value);
+    await createEvent(event.value);
   } catch (error) {
     errorMessage.value = `Erreur: ${error.message}`;
   } finally {
@@ -117,17 +119,25 @@ watch(statusCode, (newStatus) => {
             </div>
 
             <div class="d-flex justify-content-center" v-if="company?.logo">
-              <img :src="`${publicDir}/logo/${company.logo}`" />
+              <!-- {{ company }} -->
+              <!-- {{ `${publicDir}/logo/${company?.logo}` }} -->
+
+              <img
+                :src="`${publicDir}/logo/${company?.logo}`"
+                height="100"
+                width="100"
+              />
             </div>
 
             <form @submit.prevent="submitForm">
+
               <div>
                 <label for="company_id">Entreprise</label><br />
 
                 <select
                   class="form-control"
                   id="company_id"
-                  v-model="event.company_id"
+                  v-model.lazy="event.company_id"
                   @change="onChangeCompany(event.company_id)"
                 >
                   <option
@@ -206,6 +216,7 @@ watch(statusCode, (newStatus) => {
               </div>
 
               <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+              
             </form>
           </div>
         </div>

@@ -12,6 +12,7 @@ import DataTablesLib from "datatables.net";
 DataTable.use(DataTablesLib);
 
 import UiTable from "balm-ui/components/table";
+// import VueQrcodeReader from 'vue-qrcode-reader'
 import BalmUI from "balm-ui"; // Official Google Material Components
 import BalmUIPlus from "balm-ui/dist/balm-ui-plus"; // BalmJS Team Material Components
 import "balm-ui-css";
@@ -27,6 +28,7 @@ app.use(BalmUI);
 app.use(BalmUIPlus);
 
 app.use(UiTable, {});
+// app.use(VueQrcodeReader);
 
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
