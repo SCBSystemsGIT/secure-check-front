@@ -78,7 +78,14 @@ onMounted(async () => {
     <div class="d-flex justify-content-center align-items-center">
       <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
         <button class="back" @click="router.push('/menu')">Retour</button>
-        <h3 class="mt-3">Liste des demandes</h3>
+        <h3 class="mt-3" v-if="route?.params?.slug">
+          Liste Participants
+        </h3>
+
+        <h3 class="mt-3" v-else>
+          Liste des demandes
+        </h3>
+        
       </div>
     </div>
 

@@ -12,7 +12,7 @@ import ManalCheckView from "@/views/QRcode/ManalCheckView.vue";
 import ListUserView from "@/views/User/ListUserView.vue";
 import EventView from "@/views/Event/EventView.vue";
 import EventListView from "@/views/Event/EventListView.vue";
-import TestView from "@/views/TestView.vue";
+// import TestView from "@/views/TestView.vue";
 import SuccessCheckoutView from "@/views/SuccessCheckoutView.vue";
 import SuccessCheckinView from "@/views/SuccessCheckinView.vue";
 import CreateCompanyView from "@/views/CreateCompanyView.vue";
@@ -99,11 +99,11 @@ const routes = [
     name: "createCompany",
     component: CreateCompanyView
   },
-  {
-    path: "/test",
-    name: "Test",
-    component: TestView,
-  },
+  // {
+  //   path: "/test",
+  //   name: "Test",
+  //   component: TestView,
+  // },
 ];
 
 const router = createRouter({

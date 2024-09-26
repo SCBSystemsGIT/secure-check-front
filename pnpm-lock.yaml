@@ -44,6 +44,9 @@ importers:
       vue3-barcode-qrcode-reader:
         specifier: ^1.0.16
         version: 1.0.16
+      vue3-qr-reader:
+        specifier: ^1.0.0
+        version: 1.0.0
       vue3-toastify:
         specifier: ^0.2.3
         version: 0.2.3(vue@3.5.3)
@@ -2719,6 +2722,9 @@ packages:
   jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
 
+  jsqr@1.4.0:
+    resolution: {integrity: sha512-dxLob7q65Xg2DvstYkRpkYtmKm2sPJ9oFhrhmudT1dZvNFFTlroai3AWSpLey/w5vMcLBXRgOJsbXpdN9HzU/A==}
+
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
 
@@ -4014,6 +4020,9 @@ packages:
 
   vue3-barcode-qrcode-reader@1.0.16:
     resolution: {integrity: sha512-P2m87zcMsVj+ADRNdlZLZ5E/lgjJS71UxGrB4rtRhKe3H8k5FnaLeb5pK6yunHaq3xY/atl53y0ROG4dhd1v0g==}
+
+  vue3-qr-reader@1.0.0:
+    resolution: {integrity: sha512-BRgmR+lDPkNwgL6skSaEOGFg4Aup/FLYnOGFCV0knYHxfbAnliJN/+wr//iqD2G3EOBrXw4TPGNfj/5Wxl7wwQ==}
 
   vue3-toastify@0.2.3:
     resolution: {integrity: sha512-Gsv/wWFYsAzhXFE+JCoL7KAUYvzl9AaGPykkDtT073RWiz1vqtdDFcHENU26ga0tbY42Q51yJr4en/ymQD0OGg==}
@@ -7671,6 +7680,8 @@ snapshots:
     optionalDependencies:
       graceful-fs: 4.2.11
 
+  jsqr@1.4.0: {}
+
   keyv@4.5.4:
     dependencies:
       json-buffer: 3.0.1
@@ -9025,6 +9036,10 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - typescript
+
+  vue3-qr-reader@1.0.0:
+    dependencies:
+      jsqr: 1.4.0
 
   vue3-toastify@0.2.3(vue@3.5.3):
     optionalDependencies:

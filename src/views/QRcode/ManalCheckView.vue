@@ -68,6 +68,7 @@ const submitForm = async () => {
               class="uidn"
               v-model="uidn"
               placeholder="ENTREZ UUID"
+              required
             />
 
             <div
@@ -75,7 +76,7 @@ const submitForm = async () => {
               @click.prevent="submitForm()"
               v-if="!isLoading"
             >
-              <a>Valider </a>
+              <a role="button">Valider </a>
             </div>
 
             <div class="request-btn" @click="goToRoute('/menu')">
