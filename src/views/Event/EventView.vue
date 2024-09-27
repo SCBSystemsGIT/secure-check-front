@@ -2,14 +2,13 @@
 import { onBeforeMount, ref, watch } from "vue";
 import { useUserStore } from "@/stores/useUserStore";
 import { toast } from "vue3-toastify";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useCompanies } from "@/services/useCompanies";
 import { useEvent } from "@/services/useEvent";
 import { useDepartement } from "@/services/useDepartement";
 import { useGlobalStore } from "@/stores/globalStore";
 
-const { fetchCompanies, showCompany, errorMessage, companies, company } =
-  useCompanies();
+const { fetchCompanies, showCompany, errorMessage, companies, company } = useCompanies();
 const { createEvent, statusCode } = useEvent();
 const { departements, fetchDepartements } = useDepartement();
 const { publicDir } = useGlobalStore();
@@ -18,23 +17,38 @@ const userStore = useUserStore();
 const isAuthenticated = userStore.isAuthenticated();
 
 const router = useRouter();
+const route = useRoute();
 const loading = ref(false);
 
-const onChangeCompany = async (id) => {
-  await showCompany(id);
-  console.log({ company });
+const domain = ref(route.params.domain || "scb");
+const goToMenu = () => {
+  router.push({
+    name: "Menu",
+    params: {
+      domain: domain.value
+    },
+  });
 };
 
 const event = ref({
   company_id: "",
-  name: "",
-  location: "",
-  date_event: "",
-  time_event: "",
+  name: "Diner Gala SIKIHHK",  // Valeur par défaut
+  location: "Palace hotel",  // Valeur par défaut
+  date_event: "2024-10-08",  // Valeur par défaut
+  time_event: "14:30",  // Valeur par défaut
   departement_id: "",
 });
 
+// Changement de compagnie
+const onChangeCompany = async (id) => {
+  if (id) {
+    await showCompany(id);
+    console.log({ company });
+  }
+};
+
 const submitForm = async () => {
+  loading.value = true;
   try {
     await createEvent(event.value);
   } catch (error) {
@@ -44,41 +58,27 @@ const submitForm = async () => {
   }
 };
 
+// Appel initial des données
 onBeforeMount(async () => {
-  await fetchCompanies();
-  await fetchDepartements();
+  try {
+    await Promise.all([fetchCompanies(), fetchDepartements()]);
 
-  if (!isAuthenticated) {
-    toast.info("L'utilisateur doit être connecté");
-
-    setTimeout(() => {
-      router.push("/");
-    }, 1500);
+    if (!isAuthenticated) {
+      toast.info("L'utilisateur doit être connecté");
+      setTimeout(() => router.push("/"), 1500);
+    }
+  } catch (error) {
+    toast.error("Erreur lors du chargement des données.");
   }
 });
 
-// watch(event.value.company_id, async (newId) => {
-//   await showCompany(newId);
-//   console.log({ company });
-// });
-
+// Gestion des retours de l'API
 watch(statusCode, (newStatus) => {
   switch (newStatus) {
     case 201:
-      toast.success("Evénements ajouté");
-
-      setTimeout(() => {
-        router.push("/menu");
-      }, 1500);
-
-      break;
     case 200:
       toast.success("Evénements ajouté");
-
-      setTimeout(() => {
-        router.push("/menu");
-      }, 1500);
-
+      setTimeout(() => router.push("/menu"), 1500);
       break;
     case 400:
       toast.info("La requête est mal formée.");
@@ -108,115 +108,69 @@ watch(statusCode, (newStatus) => {
         <div class="row align-items-center">
           <div class="col col-12 col-md-12 col-sm-12">
             <div class="d-flex justify-content-center align-items-center">
-              <div
-                class="d-flex justify-content-start mb-4 gap-3 align-items-center"
-              >
-                <button class="back" @click="router.push('/menu')">
-                  Retour
-                </button>
+              <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
+                <button class="back" @click="goToMenu">Retour</button>
                 <h3 class="mt-3">Création Évènement</h3>
               </div>
             </div>
 
+            <!-- Affichage du logo de la compagnie -->
             <div class="d-flex justify-content-center" v-if="company?.logo">
-              <!-- {{ company }} -->
-              <!-- {{ `${publicDir}/logo/${company?.logo}` }} -->
-
-              <img
-                :src="`${publicDir}/logo/${company?.logo}`"
-                height="100"
-                width="100"
-              />
+              <img :src="`${publicDir}/logo/${company?.logo}`" height="100" width="100" />
             </div>
 
             <form @submit.prevent="submitForm">
-
+              <!-- Sélection de l'entreprise -->
               <div>
                 <label for="company_id">Entreprise</label><br />
-
-                <select
-                  class="form-control"
-                  id="company_id"
-                  v-model.lazy="event.company_id"
-                  @change="onChangeCompany(event.company_id)"
-                >
-                  <option
-                    v-for="(company, index) in companies"
-                    :key="index"
-                    :value="company.id"
-                  >
+                <select class="form-control" id="company_id" v-model="event.company_id" @change="onChangeCompany(event.company_id)">
+                  <option v-for="(company, index) in companies" :key="index" :value="company.id">
                     {{ company.name }}
                   </option>
                 </select>
               </div>
 
+              <!-- Nom de l'événement -->
               <div>
                 <label for="name">Nom de l'événement</label><br />
-                <input
-                  type="text"
-                  id="name"
-                  v-model="event.name"
-                  value="Diner Gala SIKIHHK"
-                  required
-                /><br />
+                <input type="text" id="name" v-model="event.name" required /><br />
               </div>
 
+              <!-- Lieu de l'événement -->
               <div>
                 <label for="location">Lieu de l'événement</label><br />
-                <input
-                  type="text"
-                  id="location"
-                  v-model="event.location"
-                  value="Palace hotel"
-                  required
-                /><br />
+                <input type="text" id="location" v-model="event.location" required /><br />
               </div>
 
+              <!-- Date de l'événement -->
               <div>
                 <label for="date_event">Date de l'événement</label><br />
-                <input
-                  type="date"
-                  id="date_event"
-                  v-model="event.date_event"
-                  value="2024-10-08"
-                  required
-                /><br />
+                <input type="date" id="date_event" v-model="event.date_event" required /><br />
               </div>
 
+              <!-- Heure de l'événement -->
               <div>
                 <label for="time_event">Heure de l'événement</label><br />
-                <input
-                  type="time"
-                  id="time_event"
-                  v-model="event.time_event"
-                  value="14:30"
-                  required
-                /><br />
+                <input type="time" id="time_event" v-model="event.time_event" required /><br />
               </div>
 
+              <!-- Sélection du département -->
               <div>
                 <label for="departement_id">Département</label><br />
-                <select
-                  class="form-control"
-                  id="company_id"
-                  v-model="event.departement_id"
-                >
-                  <option
-                    v-for="(departement, index) in departements"
-                    :key="index"
-                    :value="departement.id"
-                  >
+                <select class="form-control" id="departement_id" v-model="event.departement_id">
+                  <option v-for="(departement, index) in departements" :key="index" :value="departement.id">
                     {{ departement.name }}
                   </option>
                 </select>
               </div>
 
+              <!-- Bouton de soumission -->
               <div class="submit-button">
                 <input type="submit" value="Soumettre" :disabled="loading" />
               </div>
 
+              <!-- Message d'erreur -->
               <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-              
             </form>
           </div>
         </div>

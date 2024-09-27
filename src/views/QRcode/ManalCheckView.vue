@@ -1,7 +1,7 @@
 <script setup>
 import { useNavigation } from "@/composables/useNavigation";
 import { useQrCode } from "@/services/useManualCheck";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 // import { toast } from "vue3-toastify";
@@ -23,6 +23,27 @@ const submitForm = async () => {
     console.error("Failed to update request:", err);
   }
 };
+
+const domain = ref(route.params.domain || "scb");
+const goToMenu = () => {
+  router.push({
+    name: "Menu",
+    params: {
+      domain: domain.value
+    },
+  });
+};
+
+onMounted(() => {
+  if (domain.value) {
+    router.push({
+      name: "ManalCheck",
+      params: {
+        domain: domain.value,
+      },
+    });
+  }
+});
 </script>
 
 <template>
@@ -54,7 +75,7 @@ const submitForm = async () => {
               <div
                 class="d-flex justify-content-start mb-4 gap-3 align-items-center"
               >
-                <button class="back" @click="router.push('/menu')">
+                <button class="back" @click="goToMenu">
                   Retour
                 </button>
                 <h3 class="text-center py-3">Validation Manuelle UIDN</h3>
@@ -79,8 +100,8 @@ const submitForm = async () => {
               <a role="button">Valider </a>
             </div>
 
-            <div class="request-btn" @click="goToRoute('/menu')">
-              <a>Menu </a>
+            <div class="request-btn" @click="goToMenu()">
+              <a role="button">Menu </a>
             </div>
           </div>
         </div>

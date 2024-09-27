@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useUserList } from "@/services/useUserList";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 // import { useUserStore } from "@/stores/useUserStore";
 
 const { fetchUsers, users, loading, error } = useUserList();
@@ -38,6 +38,17 @@ const tbody = ref([
   "role",
   //  { slot: "create_at" }
 ]);
+
+const route = useRoute();
+const domain = ref(route.params.domain || "scb");
+const goToMenu = () => {
+  router.push({
+    name: "Menu",
+    params: {
+      domain: domain.value
+    },
+  });
+};
 </script>
 
 <template>
@@ -45,7 +56,7 @@ const tbody = ref([
     
     <div class="d-flex justify-content-center align-items-center">
       <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
-        <button class="back" @click="router.push('/menu')">Retour</button>
+        <button class="back" @click="goToMenu">Retour</button>
         <h3 class="text-center">Liste des Utilisateurs</h3>
       </div>
     </div>

@@ -1,21 +1,23 @@
 <script setup>
 import { useCreateUser } from "@/services/createUser";
+import { useCompanies } from "@/services/useCompanies";
 import { useDepartement } from "@/services/useDepartement";
-import { onMounted, watch } from "vue";
-import { useRouter } from "vue-router";
+import { onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 
 const { user, loading, errorMessage, successMessage, createUser, statusCode } =
   useCreateUser();
 const { departements, fetchDepartements } = useDepartement();
 const router = useRouter();
-
+const { companies, fetchCompanies } = useCompanies();
 const submitForm = () => {
   createUser();
 };
 
 onMounted(async () => {
   await fetchDepartements();
+  await fetchCompanies();
 });
 // Watcher pour réagir aux changements du statusCode
 watch(statusCode, (newStatus) => {
@@ -52,6 +54,17 @@ watch(statusCode, (newStatus) => {
       toast.info(`Erreur inconnue - Code : ${newStatus}`);
   }
 });
+
+const route = useRoute();
+const domain = ref(route.params.domain || "scb");
+const goToMenu = () => {
+  router.push({
+    name: "Menu",
+    params: {
+      domain: domain.value
+    },
+  });
+};
 </script>
 
 <template>
@@ -60,12 +73,11 @@ watch(statusCode, (newStatus) => {
       <div class="container">
         <div class="row align-items-center">
           <div class="col col-12 col-md-12 col-sm-12">
-            
             <div class="d-flex justify-content-center align-items-center">
               <div
                 class="d-flex justify-content-start mb-4 gap-3 align-items-center"
               >
-                <button class="back" @click="router.push('/menu')">
+                <button class="back" @click="goToMenu">
                   Retour
                 </button>
                 <h3>Création Utilisateur</h3>
@@ -142,6 +154,24 @@ watch(statusCode, (newStatus) => {
                     :value="departement.id"
                   >
                     {{ departement.name }}
+                  </option></select
+                ><br />
+              </div>
+
+              <div>
+                <label for="company">Entreprise</label><br />
+                <select
+                  v-model="user.company_id"
+                  id="company"
+                  name="company"
+                  class="form-control"
+                >
+                  <option
+                    v-for="company in companies"
+                    :key="company.id"
+                    :value="company.id"
+                  >
+                    {{ company.name }}
                   </option></select
                 ><br />
               </div>

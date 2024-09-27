@@ -67,11 +67,21 @@ const submitForm = async () => {
   }
 };
 
+const domain = ref(route.params.domain || "scb");
 const title = ref("");
 onBeforeMount(async () => {
   if (route.params.slug) {
     await showEvent(route.params.slug);
     title.value = event.value.name;
+  }
+
+  if (domain.value) {
+    router.push({
+      name: "CreateVisitor",
+      params: {
+        domain: domain.value,
+      },
+    });
   }
 
   await fetchUserInfo();
@@ -115,14 +125,28 @@ watch(statusCode, (newStatus) => {
           router.push("/menu");
         } else {
           setTimeout(() => {
-            router.push("/waiting-validation/" + requestId.value);
+            // router.push("/waiting-validation/" + requestId.value);
+
+            router.push({
+              name: "WaitingValidation",
+              params: {
+                domain: domain,
+                id: requestId.value,
+              },
+            });
           }, 1500);
         }
       } else {
         toast.success("Demande créé avec succès.");
 
         setTimeout(() => {
-          router.push("/");
+          router.push({
+            name: "RequestMeeting",
+            params: {
+              domain: domain,
+              id: requestId.value,
+            },
+          });
         }, 1500);
       }
       break;
@@ -133,7 +157,13 @@ watch(statusCode, (newStatus) => {
       toast.info("Vous devez être authentifié.");
 
       setTimeout(() => {
-        router.push("/");
+        router.push({
+          name: "RequestMeeting",
+          params: {
+            domain: domain,
+            id: requestId.value,
+          },
+        });
       }, 1500);
 
       break;
@@ -156,7 +186,13 @@ watch(statusCodeReq, (newStatusReq) => {
     case 201:
       if (requestId?.value) {
         setTimeout(() => {
-          router.push("/waiting-validation/" + requestId.value);
+          router.push({
+            name: "WaitingValidation",
+            params: {
+              domain: domain.value,
+              id: requestId.value,
+            },
+          });
         }, 1500);
       } else {
         console.error("requestId est null ou undefined.");
@@ -176,7 +212,9 @@ watch(statusCodeReq, (newStatusReq) => {
         <div class="row align-items-center">
           <div class="col col-12 col-md-12 col-sm-12">
             <div class="d-flex justify-content-start mb-4">
-              <button class="back" @click="router.push('/')">Retour</button>
+              <button class="back" @click="router.push(`/${domain}/request-meeting`)">
+                Retour
+              </button>
             </div>
 
             <h3 class="text-center pb-3" v-if="title">
@@ -193,9 +231,7 @@ watch(statusCodeReq, (newStatusReq) => {
                   v-model="visitor.visitor_type"
                 >
                   <option value="2">Temporaire</option>
-                  <option value="1" v-if="userStore.isAuthenticated()">
-                    Permanent
-                  </option>
+                  <option value="1" v-if="userStore.isAuthenticated()">Permanent</option>
                 </select>
               </div>
 
@@ -221,12 +257,7 @@ watch(statusCodeReq, (newStatusReq) => {
 
               <div>
                 <label for="email">Email</label><br />
-                <input
-                  type="email"
-                  id="email"
-                  v-model="visitor.email"
-                  required
-                /><br />
+                <input type="email" id="email" v-model="visitor.email" required /><br />
               </div>
 
               <div>

@@ -1,5 +1,8 @@
 <script setup>
+import { useCompanies } from "@/services/useCompanies";
+import { useGlobalStore } from "@/stores/globalStore";
 import { useUserStore } from "@/stores/useUserStore";
+import { onBeforeMount /*ref*/ } from "vue";
 import { useRoute } from "vue-router";
 const userStore = useUserStore();
 const route = useRoute();
@@ -10,6 +13,13 @@ const logout = () => {
 
 const isAuthenticated = userStore.isAuthenticated();
 const roles = userStore.roles;
+const { publicDir } = useGlobalStore();
+const { showCompany, company } = useCompanies();
+
+onBeforeMount(async () => {
+  let company_slug = localStorage.getItem("currentCompany");
+  await showCompany(company_slug);
+});
 </script>
 
 <template>
@@ -18,10 +28,17 @@ const roles = userStore.roles;
       <div class="row align-items-center">
         <div class="col col-6 col-md-6 top-bar-left">
           <div>
-            <router-link to="/"
+            <router-link to="/" v-if="route.params.domain == 'scb'"
               ><img
                 src="@/assets/secure-check-logo.png"
                 class=""
+                alt="secure-check-logo"
+            /></router-link>
+
+            <!-- src="@/assets/secure-check-logo.png" -->
+            <router-link to="/" v-if="company"
+              ><img
+                :src="`${publicDir}/logo/${company?.logo}`"
                 alt="secure-check-logo"
             /></router-link>
           </div>
@@ -29,12 +46,9 @@ const roles = userStore.roles;
         <div class="col col-6 col-md-6 top-bar-right">
           <div class="account-login-button">
             <p v-show="false">
-              {{ roles }}
+              {{ `${publicDir}/logo/${company?.logo}` }}
+              {{ `${roles}` }}
             </p>
-
-            <!-- <p>
-              {{ isAuthenticated }}
-            </p> -->
 
             <a
               @click="logout"

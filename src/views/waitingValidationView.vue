@@ -1,9 +1,9 @@
 <script setup>
-import { useNavigation } from "@/composables/useNavigation";
+// import { useNavigation } from "@/composables/useNavigation";
 import { useUpdateRequest } from "@/services/useUpdateRequest";
 import { useUserStore } from "@/stores/useUserStore";
-import { ref } from "vue";
-import { useRoute } from "vue-router";
+import { onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 import { useGlobalStore } from "@/stores/globalStore";
 
@@ -17,7 +17,19 @@ const request = ref({
 
 const { publicDir } = useGlobalStore();
 const { isLoading, error, uidn, updateRequest } = useUpdateRequest();
-const { goToRoute } = useNavigation();
+
+const router = useRouter();
+const goToMenu = () => {
+
+  router.push({
+    name: "WaitingValidation",
+    params: {
+      domain: domain.value,
+      id: route.params.id,
+    },
+  });
+
+};
 
 const isAuthenticated = userStore.isAuthenticated();
 const submitForm = async (state) => {
@@ -33,6 +45,18 @@ const submitForm = async (state) => {
     console.error("Failed to update request:", err);
   }
 };
+
+const domain = ref(route.params.domain || "scb");
+onMounted(() => {
+  if (domain.value) {
+    router.push({
+      name: "Menu",
+      params: {
+        domain: domain.value,
+      },
+    });
+  }
+});
 </script>
 
 <template>
@@ -59,12 +83,13 @@ const submitForm = async (state) => {
             </router-link>
 
             <div class="text-center py-2">
-              <h3>QRCode Généré</h3>
+              <h3>{{ uidn }}</h3>
+              <!-- <h3>QRCode Généré</h3> -->
             </div>
 
             <div
               class="request-btn"
-              @click="goToRoute('/menu')"
+              @click="goToMenu()"
               v-if="isAuthenticated"
               role="button"
             >

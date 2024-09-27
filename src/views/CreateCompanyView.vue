@@ -3,7 +3,7 @@ import { onBeforeMount, ref, watch } from "vue";
 import { useUserStore } from "@/stores/useUserStore";
 import { useUserInfo } from "@/services/useUserInfo";
 import { toast } from "vue3-toastify";
-import { /*useRoute,*/ useRouter } from "vue-router";
+import { /*useRoute,*/ useRoute, useRouter } from "vue-router";
 import { useCompanies } from "@/services/useCompanies";
 
 const currentRole = ref();
@@ -105,6 +105,17 @@ watch(statusCode, (newStatus) => {
       toast.info(`Code : ${newStatus}`);
   }
 });
+
+const route = useRoute();
+const domain = ref(route.params.domain || "scb");
+const goToMenu = () => {
+  router.push({
+    name: "Menu",
+    params: {
+      domain: domain.value
+    },
+  });
+};
 </script>
 
 <template>
@@ -114,7 +125,7 @@ watch(statusCode, (newStatus) => {
         <div class="row align-items-center">
           <div class="col col-12 col-md-12 col-sm-12">
             <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
-              <button class="back" @click="router.push('/menu')">Retour</button>
+              <button class="back" @click="goToMenu">Retour</button>
               <h3>Création Entreprise</h3>
             </div>
             

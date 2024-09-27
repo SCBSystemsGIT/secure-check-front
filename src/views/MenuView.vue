@@ -1,8 +1,11 @@
 <script setup>
-// import { useNavigation } from "@/composables/useNavigation";
 import { useUserStore } from "@/stores/useUserStore";
 import { onMounted, ref } from "vue";
-// const { goToRoute } = useNavigation();
+import { useRoute } from "vue-router";
+
+// Utilisation du routeur pour récupérer le domaine courant
+const route = useRoute();
+const domain = ref(route.params.domain || "scb");
 
 const userStore = useUserStore();
 const currentRole = ref();
@@ -10,141 +13,70 @@ const currentRole = ref();
 const roles = ref();
 roles.value = JSON.parse(localStorage.getItem("userInfo"));
 currentRole.value = roles.value?.roles[0];
-onMounted(() => {
-  console.log(roles.value?.roles[0]);
-});
 
-// const { isAdmin, isSuperAdmin, isSupervisor, isEmployee, isUser } = useUserStore();
+onMounted(() => {
+  console.log("Rôle actuel :", currentRole.value);
+});
 </script>
 
 <template>
-  <!-- <section class="background-gradi request-meeting">
-    <div
-      class="d-flex justify-content-center align-items-center vh-100 gap-2 mx-5 px-3"
-    >
-      <div class="col-md-4 col-xl-3" @click="goToRoute('/meeting')">
-        <div class="card bg-c-green order-card py-5">
-          <div class="card-block">
-            <h4 class="text-center">
-              <i class="fa fa-rocket f-left"></i><span>Visite</span>
-            </h4>
-          </div>
-        </div>
-      </div>
-
-      <div
-        class="menu-item col-md-4 col-xl-3"
-        @click="goToRoute('/list-qrcode')"
-      >
-        <div class="card bg-c-green order-card py-5">
-          <div class="card-block">
-            <h4 class="text-center">
-              <i class="fa fa-rocket f-left"></i><span>QRCode</span>
-            </h4>
-          </div>
-        </div>
-      </div>
-
-      <div
-        class="menu-item col-md-4 col-xl-3"
-        @click="goToRoute('/list-manuel')"
-      >
-        <div class="card bg-c-green order-card py-5">
-          <div class="card-block">
-            <h4 class="text-center">
-              <i class="fa fa-rocket f-left"></i><span>Manuel</span>
-            </h4>
-          </div>
-        </div>
-      </div>
-
-      <div
-        class="menu-item col-md-4 col-xl-3"
-        @click="goToRoute('/create-user')"
-        v-if="userStore.isAdmin(currentRole)"
-      >
-        <div class="card bg-c-green order-card py-5">
-          <div class="card-block">
-            <h4 class="text-center">
-              <i class="fa fa-rocket f-left"></i
-              ><span>Création d'Utilisateur</span>
-            </h4>
-          </div>
-        </div>
-      </div>
-
-      <div
-        class="menu-item col-md-4 col-xl-3"
-        @click="goToRoute('/list-users')"
-        v-if="userStore.isAdmin(currentRole)"
-      >
-        <div class="card bg-c-green order-card py-5">
-          <div class="card-block">
-            <h4 class="text-center">
-              <i class="fa fa-rocket f-left"></i
-              ><span>Liste d'Utilisateur</span>
-            </h4>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section> -->
-
   <section class="background-gradi selectcheckintype">
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
           <div class="popup-logo">
-            <a href="#"
-              ><img
-                src="@/assets/secure-check-logo.png"
-                class=""
-                alt="secure-check-logo"
-            /></a>
+            <router-link :to="{ name: 'RequestMeeting', params: { domain: domain } }">
+              <img src="@/assets/secure-check-logo.png" class="" alt="secure-check-logo" />
+            </router-link>
           </div>
-          <div class="selectcheck-all">
-            <h5><span>Veuillez sélectionner </span></h5>
-            <div class="selectcheckintype-btns">
-              <router-link to="/meeting">Meetings</router-link>
-              <router-link to="/list-qrcode">Demandes</router-link>
-              <router-link to="/list-manuel">Manual Code</router-link>
-              <router-link
-                to="/create-event"
-                class="mt-2"
-                v-if="
-                  userStore.isAdmin(currentRole) ||
-                  userStore.isSupervisor(currentRole)
-                "
-                >Créer Event</router-link
-              >
-              <router-link
-                to="/list-events"
-                class="mt-2"
-                v-if="
-                  userStore.isAdmin(currentRole) ||
-                  userStore.isSupervisor(currentRole)
-                "
-                >Liste Event</router-link
-              >
-              <router-link
-                to="/list-users"
-                class="mt-2"
-                v-if="userStore.isAdmin(currentRole)"
-              >
-                Utilisateurs</router-link
-              >
 
-              <!-- v-if="userStore.isAdmin(currentRole)" -->
+          <div class="selectcheck-all">
+            <h5><span>Veuillez sélectionner</span></h5>
+            <div class="selectcheckintype-btns">
+              <!-- Navigation avec domaine -->
+              <router-link :to="{ name: 'CreateVisitor', params: { domain: domain } }">Meetings</router-link>
+              <router-link :to="{ name: 'ListQrcode', params: { domain: domain } }">Demandes</router-link>
+              <router-link :to="{ name: 'ManalCheck', params: { domain: domain } }">Manual Code</router-link>
+
               <router-link
-                to="/create-company"
+                v-if="userStore.isAdmin(currentRole) || userStore.isSupervisor(currentRole)"
+                :to="{ name: 'CreateEvent', params: { domain: domain } }"
                 class="mt-2"
-                v-if="
-                  userStore.isAdmin(currentRole) ||
-                  userStore.isSupervisor(currentRole)
-                "
               >
-                + Entreprise</router-link
+                Créer Event
+              </router-link>
+
+              <router-link
+                v-if="userStore.isAdmin(currentRole) || userStore.isSupervisor(currentRole)"
+                :to="{ name: 'EventList', params: { domain: domain } }"
+                class="mt-2"
               >
+                Liste Event
+              </router-link>
+
+              <router-link
+                v-if="userStore.isAdmin(currentRole)"
+                :to="{ name: 'ListUser', params: { domain: domain } }"
+                class="mt-2"
+              >
+                Utilisateurs
+              </router-link>
+
+              <router-link
+                v-if="userStore.isAdmin(currentRole)"
+                :to="{ name: 'CreateUser', params: { domain: domain } }"
+                class="mt-2"
+              >
+                + Utilisateurs
+              </router-link>
+
+              <router-link
+                v-if="userStore.isAdmin(currentRole) || userStore.isSupervisor(currentRole)"
+                :to="{ name: 'CreateCompany', params: { domain: domain } }"
+                class="mt-2"
+              >
+                + Entreprise
+              </router-link>
             </div>
           </div>
         </div>

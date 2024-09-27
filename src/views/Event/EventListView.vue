@@ -1,15 +1,13 @@
 <script setup>
 import { useDate } from "@/composables/useDate";
 import { useEventList } from "@/services/useEventList";
-import {
-  ref,
-  // watch
-} from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 
+// Importation des données depuis les services et composables
 const { events, loading, error } = useEventList();
-const { formatDate, /*formatDateHour*/ formatTime } = useDate();
+const { formatDate, formatTime } = useDate();
 
 // Définitions des colonnes pour le tableau
 const thead = ref([
@@ -39,39 +37,29 @@ const tbody = ref([
   { slot: "participants" },
 ]);
 
-// Gestion de la pagination
-// const page = ref(1);
-// const total = ref(0);
-
-// const onPage = (newPage) => {
-// page.value = newPage;
-// Appeler une méthode pour charger les données de la page spécifique
-// };
-
-// watch(page, (newPage) => {
-// Logique pour charger les données basées sur la page
-// console.log("Page actuelle : ", newPage);
-// });
-
-open.value = ref(true);
+// const open = ref(true);
 const visitorsList = ref([]);
 const showUserEvent = ref(false);
 
-const showVisitors = (slug) => {
-  router.push("list-qrcode-events/" + slug);
-  // console.log(visitors);
-  // showUserEvent.value = true;
-  // visitorsList.value = visitors;
-
-  // console.log({ visitorsList });
-};
-
 const router = useRouter();
-const retour = () => {
-  showUserEvent.value = false;
-  router.push("/list-events");
+const route = useRoute();
+const domain = ref(route.params.domain || "scb");
+
+// Fonction pour afficher la liste des visiteurs
+const showVisitors = (slug) => {
+  router.push({
+    name: "ListQrcodeEvents",
+    params: { domain: domain.value, slug },
+  });
 };
 
+// Fonction pour gérer le retour à la liste des événements
+// const retour = () => {
+//   showUserEvent.value = false;
+//   router.push({ name: "ListEvents", params: { domain: domain.value } });
+// };
+
+// Fonction pour copier le lien dans le presse-papiers
 const copyContent = (dataLink) => {
   const copied = ref(false);
   let host = process.env.FRONT_URL ?? window.location.host;
@@ -92,19 +80,38 @@ const copyContent = (dataLink) => {
       console.error("Échec de la copie : ", err);
     });
 };
+
+const goToMenu = () => {
+  router.push({
+    name: "Menu",
+    params: {
+      domain: domain.value,
+    },
+  });
+};
+
+onMounted(() => {
+  if (domain.value) {
+    router.push({
+      name: "EventList",
+      params: {
+        domain: domain.value,
+      },
+    });
+  }
+});
 </script>
 
 <template>
   <div class="container">
     <div class="d-flex justify-content-center align-items-center">
       <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
-        <button class="back" @click="router.push('/menu')">Retour</button>
+        <button class="back" @click="goToMenu()">Retour</button>
         <h3 class="text-center">Liste des Evenements</h3>
       </div>
     </div>
 
     <div v-if="showUserEvent">
-      <!-- <div class="text-center"></div> -->
       <div class="d-flex justify-content-center">
         <ui-list>
           <ui-item v-for="i in visitorsList" :key="i">
@@ -120,7 +127,6 @@ const copyContent = (dataLink) => {
 
     <div class="d-flex justify-content-center py-3" v-if="!showUserEvent">
       <ui-table :data="events" :thead="thead" :tbody="tbody">
-        <!-- Utilisation d'un slot personnalisé pour formater la date -->
         <template #departement="{ data }">
           {{ data.departement.name }}
         </template>
@@ -142,11 +148,15 @@ const copyContent = (dataLink) => {
         </template>
 
         <template #link="{ data }">
-          <ui-icon role="button" @click="copyContent(data)"> content_copy </ui-icon>
+          <ui-icon role="button" @click="copyContent(data)">
+            content_copy
+          </ui-icon>
         </template>
 
         <template #participants="{ data }">
-          <ui-icon role="button" @click="showVisitors(data.slug)"> groups </ui-icon>
+          <ui-icon role="button" @click="showVisitors(data.slug)">
+            groups
+          </ui-icon>
         </template>
       </ui-table>
     </div>
@@ -158,20 +168,11 @@ const copyContent = (dataLink) => {
     <div v-if="error" class="d-flex justify-content-center">
       {{ error }}
     </div>
-
-    <!-- Pagination ajoutée ici -->
-    <!-- <ui-pagination
-      v-model="page"
-      :total="total"
-      show-total
-      @update:model-value="onPage"
-    ></ui-pagination> -->
   </div>
 </template>
 
 <style scoped>
 a {
-  /*background: #b92b00;*/
   color: #000;
   border-radius: 10px;
   padding: 20px 100px;

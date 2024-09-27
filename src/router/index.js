@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Login from "@/views/LoginView.vue";
-// import Meeting from "@/views/MeetingView.vue";
-// import RequestMeeting from "@/views/RequestMeetingView.vue";
 import CreateUserView from "@/views/User/CreateUserView.vue";
 import CreateVisitorView from "@/views/CreateVisitorView.vue";
 import MenuView from "@/views/MenuView.vue";
@@ -12,7 +10,6 @@ import ManalCheckView from "@/views/QRcode/ManalCheckView.vue";
 import ListUserView from "@/views/User/ListUserView.vue";
 import EventView from "@/views/Event/EventView.vue";
 import EventListView from "@/views/Event/EventListView.vue";
-// import TestView from "@/views/TestView.vue";
 import SuccessCheckoutView from "@/views/SuccessCheckoutView.vue";
 import SuccessCheckinView from "@/views/SuccessCheckinView.vue";
 import CreateCompanyView from "@/views/CreateCompanyView.vue";
@@ -24,53 +21,56 @@ const routes = [
     component: Login,
   },
   {
-    path: "/meeting",
+    path: "/:domain/meeting",
     name: "CreateVisitor",
     component: CreateVisitorView,
   },
   {
-    path: "/create-user",
+    path: "/:domain/create-user",
     name: "CreateUser",
     component: CreateUserView,
   },
   {
-    path: "/list-users",
-    name: "listUser",
+    path: "/:domain/list-users",
+    name: "ListUser",
     component: ListUserView,
   },
   {
-    path: "/request-meeting",
+    path: "/:domain/request-meeting",
     name: "RequestMeeting",
     component: RequestMeetingView,
-    alias: "/",
+    alias:[
+      "/",
+      "/:domain"
+    ],
   },
   {
-    path: "/waiting-validation/:id",
-    name: "waitingValidationView",
+    path: "/:domain/waiting-validation/:id",
+    name: "WaitingValidation",
     component: WaitingValidationView,
   },
   {
-    path: "/list-qrcode",
-    name: "listQrcode",
+    path: "/:domain/list-qrcode",
+    name: "ListQrcode",
     component: ListQrCodeView,
   },
   {
-    path: "/list-qrcode-events/:slug",
-    name: "listQrcodeEvent",
+    path: "/:domain/list-qrcode-events/:slug",
+    name: "ListQrcodeEvents",
     component: ListQrCodeView,
   },
   {
-    path: "/list-manuel",
+    path: "/:domain/list-manual",
     name: "ManalCheck",
     component: ManalCheckView,
   },
   {
-    path: "/menu",
-    name: "menu",
+    path: "/:domain/menu",
+    name: "Menu",
     component: MenuView,
   },
   {
-    path: "/create-event",
+    path: "/:domain/create-event",
     name: "CreateEvent",
     component: EventView,
   },
@@ -80,35 +80,30 @@ const routes = [
     component: CreateVisitorView,
   },
   {
-    path: "/list-events",
+    path: "/:domain/list-events",
     name: "EventList",
     component: EventListView,
   },
   {
-    path: "/success-checkout/:uidn",
-    name: "successCheckout",
+    path: "/:domain/success-checkout/:uidn",
+    name: "SuccessCheckout",
     component: SuccessCheckoutView,
   },
   {
-    path: "/success-checkin/:uidn",
-    name: "successCheckin",
+    path: "/:domain/success-checkin/:uidn",
+    name: "SuccessCheckin",
     component: SuccessCheckinView,
   },
   {
-    path: "/create-company",
-    name: "createCompany",
-    component: CreateCompanyView
+    path: "/:domain/create-company",
+    name: "CreateCompany",
+    component: CreateCompanyView,
   },
-  // {
-  //   path: "/test",
-  //   name: "Test",
-  //   component: TestView,
-  // },
 ];
 
 const router = createRouter({
-  history: createWebHistory(), // Utilise l'historique du navigateur
-  routes, // Déclare les routes
+  history: createWebHistory(),
+  routes,
 });
 
 export default router;

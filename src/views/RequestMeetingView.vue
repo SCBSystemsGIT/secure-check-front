@@ -1,14 +1,31 @@
 <script setup>
+// import { useGlobalStore } from "@/stores/globalStore";
 import { useUserStore } from "@/stores/useUserStore";
-import { onMounted, ref } from "vue";
+import { onBeforeMount, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-const roles = ref();
-roles.value = JSON.parse(localStorage.getItem("userInfo"));
-
+const roles = ref(JSON.parse(localStorage.getItem("userInfo")) || {});
 const userStore = useUserStore();
-const currentRole = ref();
-currentRole.value = roles?.value?.roles ? roles?.value?.roles[0] : "";
-onMounted(() => {
+const currentRole = ref(roles?.value?.roles ? roles.value.roles[0] : "");
+
+const route = useRoute();
+const router = useRouter();
+
+const domain = ref();
+onBeforeMount(() => {
+  domain.value = route.params.domain || "scb";
+  localStorage.setItem("currentCompany", domain.value);
+
+  if (domain.value) {
+    router.push({
+      name: "RequestMeeting",
+      params: {
+        domain: domain.value,
+      },
+    });
+  }
+
+  // Stocker les rôles dans le localStorage pour une utilisation ultérieure
   localStorage.setItem(
     "roles_list",
     JSON.stringify([
@@ -21,6 +38,7 @@ onMounted(() => {
   );
 });
 </script>
+
 <template>
   <section class="background-gradi request-meeting">
     <div class="container">
@@ -34,17 +52,22 @@ onMounted(() => {
             /></router-link>
           </div>
           <div class="request-btn">
-            <router-link to="/meeting">Request-meeting</router-link>
+            <router-link
+              :to="{ name: 'CreateVisitor', params: { domain: domain } }"
+              >Request-meeting</router-link
+            >
           </div>
 
           <div
             class="request-btn"
             v-if="
-              userStore.isAdmin(currentRole) ||
-              userStore.isEmployee(currentRole)
+              userStore.isAdmin(currentRole.value) ||
+              userStore.isEmployee(currentRole.value)
             "
           >
-            <router-link to="/menu">Menu</router-link>
+            <router-link :to="{ name: 'Menu', params: { domain: domain } }"
+              >Menu</router-link
+            >
           </div>
         </div>
       </div>

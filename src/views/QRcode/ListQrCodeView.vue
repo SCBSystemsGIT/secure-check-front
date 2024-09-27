@@ -16,13 +16,30 @@ const formatDate = (dateString) => {
   });
 };
 
+const goToMenu = () => {
+  router.push({
+    name: "Menu",
+    params: {
+      domain: domain.value,
+    },
+  });
+};
+
 const router = useRouter();
 const route = useRoute();
 // Pagination variables
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 const show = (id) => {
-  router.push(`/waiting-validation/${id}`);
+  // router.push(`/waiting-validation/${id}`);
+
+  router.push({
+    name: "WaitingValidation",
+    params: {
+      domain: domain,
+      id: id,
+    },
+  });
 };
 
 // Computed property for paginated data
@@ -58,6 +75,7 @@ onBeforeMount(async () => {
   requests.value = filteredRequests.value;
 });
 
+const domain = ref(route.params.domain || "scb");
 onMounted(async () => {
   console.log({ req: typeof requests.value });
 
@@ -77,15 +95,10 @@ onMounted(async () => {
     </div> -->
     <div class="d-flex justify-content-center align-items-center">
       <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
-        <button class="back" @click="router.push('/menu')">Retour</button>
-        <h3 class="mt-3" v-if="route?.params?.slug">
-          Liste Participants
-        </h3>
+        <button class="back" @click="goToMenu()">Retour</button>
+        <h3 class="mt-3" v-if="route?.params?.slug">Liste Participants</h3>
 
-        <h3 class="mt-3" v-else>
-          Liste des demandes
-        </h3>
-        
+        <h3 class="mt-3" v-else>Liste des demandes</h3>
       </div>
     </div>
 
@@ -131,7 +144,7 @@ onMounted(async () => {
 
         <ui-pagination
           v-if="!route?.params?.slug"
-          v-model="currentPage" 
+          v-model="currentPage"
           :total="requests.length"
           show-total
           @update:model-value="onPage"
