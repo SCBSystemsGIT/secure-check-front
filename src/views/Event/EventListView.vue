@@ -1,6 +1,7 @@
 <script setup>
 import { useDate } from "@/composables/useDate";
 import { useEventList } from "@/services/useEventList";
+import { useGlobalStore } from "@/stores/globalStore";
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
@@ -8,6 +9,7 @@ import { toast } from "vue3-toastify";
 // Importation des données depuis les services et composables
 const { events, loading, error } = useEventList();
 const { formatDate, formatTime } = useDate();
+const { publicDir } = useGlobalStore();
 
 // Définitions des colonnes pour le tableau
 const thead = ref([
@@ -21,6 +23,7 @@ const thead = ref([
   "Date de Création",
   "Lien",
   "Participants",
+  "QRCode",
 ]);
 
 // Correspondance des propriétés de l'utilisateur
@@ -35,6 +38,7 @@ const tbody = ref([
   { slot: "created_at" },
   { slot: "link" },
   { slot: "participants" },
+  { slot: "QRCode" },
 ]);
 
 // const open = ref(true);
@@ -50,6 +54,21 @@ const showVisitors = (slug) => {
   router.push({
     name: "ListQrcodeEvents",
     params: { domain: domain.value, slug },
+  });
+};
+
+const showEventQR = (slug) => {
+  console.log({
+    domain: domain.value,
+    slug: slug,
+  });
+
+  router.push({
+    name: "ShowEventQRcode",
+    params: {
+      domain: domain.value,
+      slug: slug,
+    },
   });
 };
 
@@ -148,15 +167,34 @@ onMounted(() => {
         </template>
 
         <template #link="{ data }">
-          <ui-icon role="button" @click="copyContent(data)">
-            content_copy
-          </ui-icon>
+          <ui-icon role="button" @click="copyContent(data)"> content_copy </ui-icon>
         </template>
 
         <template #participants="{ data }">
-          <ui-icon role="button" @click="showVisitors(data.slug)">
-            groups
-          </ui-icon>
+          <ui-icon role="button" @click="showVisitors(data.slug)"> groups </ui-icon>
+        </template>
+
+        <template #QRCode="{ data }">
+          <!-- <ui-icon role="button"> -->
+          <!-- {{ `${publicDir}/qrcode-link/qrcode-${data.slug}.png` }}   -->
+          <!-- :to="`/${domain}/show-event-qrcode/${data?.slug}`" -->
+
+          <!-- <router-link v-if="data?.slug != ''"> -->
+          <img
+            v-if="data?.slug"
+            role="button"
+            @click="showEventQR(data?.slug)"
+            :src="`${publicDir}/qrcode-link/qrcode-${data?.slug}.png`"
+            class=""
+            height="50"
+            width="50"
+            style="margin-top: 20px; margin-bottom: 20px"
+            :alt="data.slug"
+          />
+          <!-- </router-link> -->
+
+          <p v-else>Pas de QRcode</p>
+          <!-- </ui-icon> -->
         </template>
       </ui-table>
     </div>

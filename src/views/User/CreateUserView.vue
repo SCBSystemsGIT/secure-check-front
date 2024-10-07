@@ -2,6 +2,7 @@
 import { useCreateUser } from "@/services/createUser";
 import { useCompanies } from "@/services/useCompanies";
 import { useDepartement } from "@/services/useDepartement";
+import { useUserStore } from "@/stores/useUserStore";
 import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
@@ -15,6 +16,13 @@ const submitForm = () => {
   createUser();
 };
 
+const userStore = useUserStore();
+const currentRole = ref();
+
+const roles = ref();
+roles.value = JSON.parse(localStorage.getItem("userInfo"));
+currentRole.value = roles.value?.roles[0];
+
 onMounted(async () => {
   await fetchDepartements();
   await fetchCompanies();
@@ -25,13 +33,19 @@ watch(statusCode, (newStatus) => {
     case 200:
       toast.success("OK - Utilisateur créé avec succès.");
       toast.info(successMessage);
-      router.push("/menu");
+
+      router.push(localStorage.getItem("currentCompany") ?? "/scb" + "/menu");
       break;
     case 201:
       toast.success("Created - L'utilisateur a été créé avec succès.");
 
       setTimeout(() => {
-        router.push("/menu");
+        router.push({
+          name: "Menu",
+          params: {
+            domain: domain.value ?? localStorage.getItem("currentCompany"),
+          },
+        });
       }, 1400);
 
       break;
@@ -61,7 +75,7 @@ const goToMenu = () => {
   router.push({
     name: "Menu",
     params: {
-      domain: domain.value
+      domain: domain.value,
     },
   });
 };
@@ -77,9 +91,7 @@ const goToMenu = () => {
               <div
                 class="d-flex justify-content-start mb-4 gap-3 align-items-center"
               >
-                <button class="back" @click="goToMenu">
-                  Retour
-                </button>
+                <button class="back" @click="goToMenu">Retour</button>
                 <h3>Création Utilisateur</h3>
               </div>
             </div>
@@ -131,11 +143,51 @@ const goToMenu = () => {
                   name="country"
                   class="form-control"
                 >
-                  <option value="ROLE_USER">Utilisateur</option>
-                  <option value="ROLE_EMPLOYEE">Employé</option>
-                  <option value="ROLE_SUPERVISOR">Superviseur</option>
-                  <!-- <option value="ROLE_VISITOR">Visiteur</option> -->
-                  <option value="ROLE_ADMIN">Admin</option>
+                  <option
+                    value="ROLE_USER"
+                    v-if="
+                      userStore.isAdmin(currentRole) ||
+                      userStore.isSupervisor(currentRole) ||
+                      userStore.isManager(currentRole)
+                    "
+                  >
+                    Utilisateur
+                  </option>
+
+                  <option
+                    value="ROLE_EMPLOYEE"
+                    v-if="
+                      userStore.isAdmin(currentRole) ||
+                      userStore.isSupervisor(currentRole) ||
+                      userStore.isManager(currentRole)
+                    "
+                  >
+                    Employé
+                  </option>
+
+                  <option
+                    value="ROLE_SUPERVISOR"
+                    v-if="
+                      userStore.isAdmin(currentRole) ||
+                      userStore.isManager(currentRole)
+                    "
+                  >
+                    Superviseur
+                  </option>
+
+                  <option
+                    value="ROLE_MANAGER"
+                    v-if="userStore.isAdmin(currentRole)"
+                  >
+                    Manager
+                  </option>
+
+                  <option
+                    value="ROLE_ADMIN"
+                    v-if="userStore.isAdmin(currentRole)"
+                  >
+                    Admin
+                  </option>
                   <option value="ROLE_SUPER_ADMIN">Super Admin</option></select
                 ><br />
               </div>
@@ -161,6 +213,7 @@ const goToMenu = () => {
               <div>
                 <label for="company">Entreprise</label><br />
                 <select
+                  v-if="company?.slug == 'scb'"
                   v-model="user.company_id"
                   id="company"
                   name="company"
@@ -172,8 +225,15 @@ const goToMenu = () => {
                     :value="company.id"
                   >
                     {{ company.name }}
-                  </option></select
-                ><br />
+                  </option>
+                </select>
+                <input
+                  v-else
+                  type="checkbox"
+                  id="name"
+                  v-model="company.name"
+                />
+                <br />
               </div>
 
               <div v-show="false">

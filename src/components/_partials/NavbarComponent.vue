@@ -2,6 +2,9 @@
 import { useCompanies } from "@/services/useCompanies";
 import { useGlobalStore } from "@/stores/globalStore";
 import { useUserStore } from "@/stores/useUserStore";
+import { EventBus } from "@/utils/eventBus";
+import { watch } from "vue";
+// import { ref } from "vue";
 import { onBeforeMount /*ref*/ } from "vue";
 import { useRoute } from "vue-router";
 const userStore = useUserStore();
@@ -17,9 +20,28 @@ const { publicDir } = useGlobalStore();
 const { showCompany, company } = useCompanies();
 
 onBeforeMount(async () => {
-  let company_slug = localStorage.getItem("currentCompany");
-  await showCompany(company_slug);
+  // Extraire l'hôte (domaine + port)
+  console.log("Host:", window.location.host);
+  // Extraire le chemin (path)
+  console.log("Path:", window.location.pathname);
+
+  if (window.location.pathname != "/sign-in") {
+    let company_slug = localStorage.getItem("currentCompany");
+    if (company_slug) {
+      await showCompany(company_slug);
+    } else {
+      company_slug = "";
+    }
+  }
 });
+
+// const distantData = ref();
+watch(
+  () => EventBus["company_slug"],
+  async (newValue) => {
+    await showCompany(localStorage.getItem("currentCompany") ?? newValue);
+  }
+);
 </script>
 
 <template>
@@ -35,21 +57,23 @@ onBeforeMount(async () => {
                 alt="secure-check-logo"
             /></router-link>
 
-            <!-- src="@/assets/secure-check-logo.png" -->
-            <router-link to="/" v-if="company"
-              ><img
+            <router-link to="/" v-else>
+              <img
                 :src="`${publicDir}/logo/${company?.logo}`"
-                alt="secure-check-logo"
+                :alt="company?.logo"
             /></router-link>
           </div>
         </div>
         <div class="col col-6 col-md-6 top-bar-right">
           <div class="account-login-button">
             <p v-show="false">
-              {{ `${publicDir}/logo/${company?.logo}` }}
               {{ `${roles}` }}
+              {{ `${publicDir}/logo/${company?.logo}` }}
             </p>
 
+            <!-- <h1>
+              {{ distantData }}
+            </h1> -->
             <a
               @click="logout"
               class="login-button"
@@ -59,6 +83,8 @@ onBeforeMount(async () => {
               Se Déconnecter
             </a>
 
+            <!-- to="/sign-in" -->
+            <!-- :to="`/${company_slug ?? 'scb'}/sign-in`" -->
             <router-link
               v-else-if="route.name != 'Login'"
               to="/sign-in"
@@ -67,7 +93,12 @@ onBeforeMount(async () => {
               Se Connecter
             </router-link>
 
-            <router-link v-else to="/request-meeting" class="login-button">
+            <!-- :to="`/${company_slug ?? 'scb'}/request-meeting`" -->
+            <router-link
+              v-else
+              :to="`/${company_slug ?? 'scb'}/request-meeting`"
+              class="login-button"
+            >
               Visite
             </router-link>
           </div>

@@ -32,11 +32,13 @@ const currentPage = ref(1);
 const itemsPerPage = ref(10);
 const show = (id) => {
   // router.push(`/waiting-validation/${id}`);
+  // alert(id);
+  // alert(domain.value);
 
   router.push({
     name: "WaitingValidation",
     params: {
-      domain: domain,
+      domain: domain.value,
       id: id,
     },
   });
@@ -139,7 +141,8 @@ onMounted(async () => {
         </template>
 
         <template #actions="{ data }">
-          <ui-icon @click="show(data.id)" role="button"> edit </ui-icon>
+          <!-- <ui-icon @click="show(data.id)" v-if="data.u" role="button"> edit </ui-icon> -->
+          <ui-icon role="button" @click="show(data.id)"> edit </ui-icon>
         </template>
 
         <ui-pagination

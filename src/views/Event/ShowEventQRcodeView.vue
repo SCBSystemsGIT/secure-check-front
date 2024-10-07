@@ -1,26 +1,18 @@
 <script setup>
-// import { useNavigation } from "@/composables/useNavigation";
-import { useUpdateRequest } from "@/services/useUpdateRequest";
 import { useUserStore } from "@/stores/useUserStore";
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { toast } from "vue3-toastify";
 import { useGlobalStore } from "@/stores/globalStore";
+import { useEvent } from "@/services/useEvent";
+import { useDate } from "@/composables/useDate";
 
 const userStore = useUserStore();
 const route = useRoute();
-const isSuccess = ref(false);
-const request = ref({
-  status: "",
-  confirmed: "",
-});
+const { showEvent, event } = useEvent();
 
 const { publicDir } = useGlobalStore();
-const { isLoading, error, uidn, updateRequest } = useUpdateRequest();
-
 const router = useRouter();
 const goToMenu = () => {
-
   router.push({
     name: "Menu",
     params: {
@@ -28,31 +20,22 @@ const goToMenu = () => {
       id: route.params.id,
     },
   });
-
 };
 
+const { formatDate, formatTime } = useDate();
 const isAuthenticated = userStore.isAuthenticated();
-const submitForm = async (state) => {
-  request.value.status = state;
-  request.value.confirmed = state;
-
-  try {
-    await updateRequest(route.params.id, request.value); // Remplacez 1 par l'ID réel de la demande
-    toast.success("Mise à jour éffectué");
-    isSuccess.value = true;
-  } catch (err) {
-    console.log(error);
-    console.error("Failed to update request:", err);
-  }
-};
-
 const domain = ref(route.params.domain || "scb");
 onMounted(() => {
+  // alert(route.params.slug)
+
+  showEvent(route.params.slug);
+
   if (domain.value) {
     router.push({
-      name: "WaitingValidation",
+      name: "ShowEventQRcode",
       params: {
         domain: domain.value,
+        slug: route.params.slug,
       },
     });
   }
@@ -64,27 +47,29 @@ onMounted(() => {
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
-          <div class="popup-logo" v-if="!isSuccess">
-            <router-link to="/">
-              <img
-                src="@/assets/secure-check-logo.png"
-                class=""
-                alt="secure-check-logo"
-            /></router-link>
-          </div>
+          <div class="popup-logo">
 
-          <div class="popup-logo" v-if="isSuccess">
+          <h2>
+            INFORMATION SUR L'ÉVÈNEMENT 
+          </h2>
+
             <router-link to="/">
               <img
-                :src="`${publicDir}/qrcode/qrcode-${uidn}.png`"
-                class=""
-                alt="secure-check-logo"
+                :src="`${publicDir}/qrcode-link/qrcode-${route.params.slug}.png`"
+                :class="route.params.slug"
+                :alt="route.params.slug"
               />
             </router-link>
 
             <div class="text-center py-2">
-              <h3>{{ uidn }}</h3>
-              <!-- <h3>QRCode Généré</h3> -->
+              <h3>Entreprise : {{ domain }}</h3>
+            </div>
+
+            <div class="text-center py-2">
+              <h3>Nom : {{ event?.name }}</h3>
+              <h3>Lieu : {{ event?.location }}</h3>
+              <h3>Date : {{ formatDate(event?.date_event) }}</h3>
+              <h3>Heure : {{ formatTime(event?.time_event) }}</h3>
             </div>
 
             <div
@@ -98,28 +83,6 @@ onMounted(() => {
 
             <div v-else>
               <h3>Votre QRCode a été envoyé par e-mail, Merci</h3>
-            </div>
-          </div>
-
-          <div v-if="!isSuccess">
-            <h3 class="text-center py-3">
-              En attente de la confirmation de l'hôte ...
-            </h3>
-
-            <div
-              class="request-btn"
-              @click.prevent="submitForm(1)"
-              v-if="!isLoading"
-            >
-              <a>Valider </a>
-            </div>
-
-            <div class="text-center" v-else>
-              <h3>Chargement .....</h3>
-            </div>
-
-            <div class="request-btn-cannel" @click.prevent="submitForm(0)">
-              <a>Annuler </a>
             </div>
           </div>
         </div>

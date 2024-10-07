@@ -63,7 +63,7 @@ onMounted(() => {
               </router-link>
 
               <router-link
-                v-if="userStore.isAdmin(currentRole)"
+                v-if="userStore.isAdmin(currentRole) || userStore.isManager(currentRole)"
                 :to="{ name: 'CreateUser', params: { domain: domain } }"
                 class="mt-2"
               >

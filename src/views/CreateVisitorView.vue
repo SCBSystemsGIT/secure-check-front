@@ -7,6 +7,7 @@ import { toast } from "vue3-toastify";
 import { useRoute, useRouter } from "vue-router";
 import { useVisitRequest } from "@/services/useVisitRequest";
 import { useEvent } from "@/services/useEvent";
+import { useCompanies } from "@/services/useCompanies";
 // import { useCompanies } from "@/services/useCompanies";
 
 const currentRole = ref();
@@ -17,10 +18,9 @@ currentRole.value = roles.value?.roles[0];
 const { userInfo, fetchUserInfo } = useUserInfo();
 const { createVisitor, statusCode, visitorId } = useCreateVisitor();
 const { createVisitRequest, requestId, statusCodeReq } = useVisitRequest();
-// const { showCompany, company } = useCompanies();
+const { showCompany, company } = useCompanies();
 
 const { showEvent, event } = useEvent();
-
 const userStore = useUserStore();
 const isAuthenticated = userStore.isAuthenticated();
 
@@ -30,6 +30,7 @@ const route = useRoute();
 const visitor = ref({
   user_id: userInfo?.value?.id,
   evenements_id: event?.value?.id ?? null,
+  company_id: company?.value?.id ?? null,
   firstname: "",
   lastname: "",
   email: "",
@@ -54,9 +55,11 @@ const submitForm = async () => {
 
   try {
     visitor.value.evenements_id = event?.value?.id;
+    visitor.value.company_id = company?.value?.id;
     await createVisitor(visitor.value);
 
     visitRequest.value.visitor_id = visitorId.value;
+    visitRequest.value.user_id = userInfo?.value?.id;
     visitRequest.value.user_id = userInfo?.value?.id;
 
     await createVisitRequest(visitRequest.value);
@@ -69,6 +72,7 @@ const submitForm = async () => {
 
 const domain = ref(route.params.domain || "scb");
 const title = ref("");
+
 onBeforeMount(async () => {
   if (route.params.slug) {
     await showEvent(route.params.slug);
@@ -76,6 +80,8 @@ onBeforeMount(async () => {
   }
 
   if (domain.value) {
+    await showCompany(domain.value);
+
     router.push({
       name: "CreateVisitor",
       params: {
@@ -95,9 +101,9 @@ watch(statusCode, (newStatus) => {
         toast.success("Visiteur créé avec succès.");
 
         if (userStore.isEmployee(currentRole.value)) {
-          setTimeout(() => {
-            router.push("/menu");
-          }, 1500);
+          // setTimeout(() => {
+          //   router.push("/menu");
+          // }, 1500);
         } else {
           // if (requestId?.value) {
           //   setTimeout((requestId) => {
@@ -109,24 +115,26 @@ watch(statusCode, (newStatus) => {
         }
       } else {
         toast.success("Demande créé avec succès.");
+        // alert(201)
 
         setTimeout(() => {
-          router.push("/");
-        }, 1500);
+          router.push({
+            name: "RequestMeeting",
+            params: {
+              domain: domain.value,
+              id: requestId.value,
+            },
+          });
+        }, 2000);
       }
 
       break;
     case 200:
       if (isAuthenticated) {
         toast.success("Visiteur créé avec succès.");
-
+        // Si connecter en temps que isEmployee
         if (userStore.isEmployee(currentRole.value)) {
-          console.log("employee");
-          router.push("/menu");
-        } else {
           setTimeout(() => {
-            // router.push("/waiting-validation/" + requestId.value);
-
             router.push({
               name: "WaitingValidation",
               params: {
@@ -135,15 +143,25 @@ watch(statusCode, (newStatus) => {
               },
             });
           }, 1500);
+        } else {
+          toast.success("Visiteur créé avec succès.");
+
+          router.push({
+            name: "Menu",
+            params: {
+              domain: domain,
+            },
+          });
         }
       } else {
         toast.success("Demande créé avec succès.");
+        alert(200);
 
         setTimeout(() => {
           router.push({
             name: "RequestMeeting",
             params: {
-              domain: domain,
+              domain: domain.value,
               id: requestId.value,
             },
           });
@@ -211,10 +229,19 @@ watch(statusCodeReq, (newStatusReq) => {
       <section class="request-meeting meeting-form">
         <div class="row align-items-center">
           <div class="col col-12 col-md-12 col-sm-12">
-            <div class="d-flex justify-content-start mb-4">
-              <button class="back" @click="router.push(`/${domain}/request-meeting`)">
+            <div
+              class="d-flex justify-content-start align-items-center gap-5 mb-3"
+            >
+              <button
+                class="back"
+                @click="router.push(`/${domain}/request-meeting`)"
+              >
                 Retour
               </button>
+
+              <h3 class="text-center" v-if="company">
+                {{ company.name }}
+              </h3>
             </div>
 
             <h3 class="text-center pb-3" v-if="title">
@@ -231,7 +258,9 @@ watch(statusCodeReq, (newStatusReq) => {
                   v-model="visitor.visitor_type"
                 >
                   <option value="2">Temporaire</option>
-                  <option value="1" v-if="userStore.isAuthenticated()">Permanent</option>
+                  <option value="1" v-if="userStore.isAuthenticated()">
+                    Permanent
+                  </option>
                 </select>
               </div>
 
@@ -257,7 +286,12 @@ watch(statusCodeReq, (newStatusReq) => {
 
               <div>
                 <label for="email">Email</label><br />
-                <input type="email" id="email" v-model="visitor.email" required /><br />
+                <input
+                  type="email"
+                  id="email"
+                  v-model="visitor.email"
+                  required
+                /><br />
               </div>
 
               <div>

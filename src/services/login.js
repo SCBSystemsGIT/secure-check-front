@@ -9,6 +9,8 @@ export function useLogin() {
   const errorMessage = ref(null);
   const statusCode = ref(null);
   const userStore = useUserStore();
+  const company_name = ref(null);
+  const userInfo = ref(null);
 
   const login = async () => {
     loading.value = true;
@@ -25,10 +27,11 @@ export function useLogin() {
 
       localStorage.setItem("token", response.data.token);
       userStore.setToken(response.data.token);
-      let fetchResult = userStore.fetchUserInfo();
 
+      let fetchResult = fetchUserInfo();
       console.log({ fetchResult: fetchResult });
 
+      company_name.value = fetchResult;
       // localStorage.setItem(
       //   "roles",
       //   JSON.stringify([
@@ -51,12 +54,24 @@ export function useLogin() {
     }
   };
 
+  const fetchUserInfo = async () => {
+    try {
+      const response = await apiClient.get("/user/info");
+      userInfo.value = response.data;
+      localStorage.setItem("userInfo", JSON.stringify(userInfo.value));
+    } catch (error) {
+      console.error("Failed to fetch user info:", error);
+    }
+  };
+
   return {
     username,
     password,
     loading,
     errorMessage,
     statusCode,
+    company_name,
+    userInfo,
     login,
   };
 }
