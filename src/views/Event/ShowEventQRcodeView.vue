@@ -5,10 +5,12 @@ import { useRoute, useRouter } from "vue-router";
 import { useGlobalStore } from "@/stores/globalStore";
 import { useEvent } from "@/services/useEvent";
 import { useDate } from "@/composables/useDate";
+import { useCompanies } from "@/services/useCompanies";
 
 const userStore = useUserStore();
 const route = useRoute();
 const { showEvent, event } = useEvent();
+const { company, showCompany } = useCompanies();
 
 const { publicDir } = useGlobalStore();
 const router = useRouter();
@@ -29,6 +31,7 @@ onMounted(() => {
   // alert(route.params.slug)
 
   showEvent(route.params.slug);
+  showCompany(domain.value);
 
   if (domain.value) {
     router.push({
@@ -46,30 +49,43 @@ onMounted(() => {
   <section class="background-gradi request-meeting">
     <div class="container">
       <div class="row align-items-center">
-        <div class="col col-12 col-md-12 col-sm-12">
+        <div class="col col-12 col-md-12 col-sm-12 event-details">
           <div class="popup-logo">
+            <div>
+              <router-link to="/" v-if="company && domain != 'scb'"
+                ><img
+                class="logo_qr"
+                  :src="`${publicDir}/logo/${company?.logo}`"
+                  :alt="`${publicDir}/logo/${company?.logo}`"
+              /></router-link>
+            </div>
 
-          <h2>
-            INFORMATION SUR L'ÉVÈNEMENT 
-          </h2>
-
-            <router-link to="/">
-              <img
-                :src="`${publicDir}/qrcode-link/qrcode-${route.params.slug}.png`"
-                :class="route.params.slug"
-                :alt="route.params.slug"
-              />
-            </router-link>
-
-            <div class="text-center py-2">
-              <h3>Entreprise : {{ domain }}</h3>
+            <div>
+              <router-link :to="`/${route.params.slug}`">
+                <img
+                  :src="`${publicDir}/qrcode-link/qrcode-${route.params.slug}.png`"
+                  :class="route.params.slug"
+                  :alt="route.params.slug"
+                />
+              </router-link>
             </div>
 
             <div class="text-center py-2">
+              <h3>Entreprise : {{ company?.name }}</h3>
+            </div>
+
+            <!-- <div class="text-center py-2">
               <h3>Nom : {{ event?.name }}</h3>
               <h3>Lieu : {{ event?.location }}</h3>
               <h3>Date : {{ formatDate(event?.date_event) }}</h3>
               <h3>Heure : {{ formatTime(event?.time_event) }}</h3>
+            </div> -->
+
+            <div class="event-details">
+              <h3 class="event-title">Nom : {{ event?.name }}</h3>
+              <h3 class="event-title">Lieu : {{ event?.location }}</h3>
+              <h3 class="event-title">Date : {{ formatDate(event?.date_event) }}</h3>
+              <h3 class="event-title">Heure : {{ formatTime(event?.time_event) }}</h3>
             </div>
 
             <div
@@ -128,4 +144,55 @@ onMounted(() => {
   background: #000000;
   color: #ffffff;
 }
+
+.event-details {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  /*background-color: #f9f9f9;*/
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.event-title {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 10px 0;
+}
+
+.event-title:nth-child(even) {
+  color: #007BFF; /* Accent color for alternating text */
+}
+
+.event-details h3 {
+  font-weight: normal;
+}
+
+.event-details h3:not(:last-child) {
+  /*border-bottom: 1px solid #ddd;*/
+  padding-bottom: 10px;
+}
+
+.event-details {
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logo_qr{
+  height: 7rem !important;
+  width: 8rem !important;
+  margin-bottom: 22px;
+}
+
 </style>

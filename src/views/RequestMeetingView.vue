@@ -67,30 +67,28 @@ onBeforeMount(async () => {
         <div class="col col-12 col-md-12 col-sm-12">
           <div class="popup-logo">
             <router-link to="/" v-if="!company_slug && !company"
-              ><img
-                src="@/assets/secure-check-logo.png"
-                alt="secure-check-logo"
+              ><img src="@/assets/secure-check-logo.png" alt="secure-check-logo"
             /></router-link>
 
             <!-- v-else-if="company_slug" -->
             <router-link to="/" v-if="domain && company"
-              ><img
-                :src="`${publicDir}/logo/${company?.logo}`"
-                :alt="company.slug"
+              ><img :src="`${publicDir}/logo/${company?.logo}`" :alt="company.slug"
             /></router-link>
           </div>
 
           <div class="request-btn">
-            <router-link
-              :to="{ name: 'CreateVisitor', params: { domain: domain } }"
-            >
+            <router-link :to="{ name: 'CreateVisitor', params: { domain: domain } }">
               Request-meeting
             </router-link>
           </div>
 
           <div
             class="request-btn"
-            v-if="userStore.isEmployee(currentRole) || userStore.isAdmin(currentRole) || userStore.isManager(currentRole)"
+            v-if="
+              userStore.isEmployee(currentRole) ||
+              userStore.isAdmin(currentRole) ||
+              userStore.isManager(currentRole)
+            "
           >
             <router-link :to="{ name: 'Menu', params: { domain: domain } }"
               >Menu</router-link

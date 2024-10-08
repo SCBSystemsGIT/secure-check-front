@@ -63,8 +63,8 @@ a {text-decoration:none !important;}
 }
 
 .request-meeting {
-    background: rgb(0,212,255);
-    background: linear-gradient(90deg, rgba(0,212,255,1) 2%, rgba(86,121,9,1) 100%);
+    /* background: rgb(0,212,255); */
+    /* background: linear-gradient(90deg, rgba(0,212,255,1) 2%, rgba(86,121,9,1) 100%); */
 	    height: 100vh;
 		    position: relative;
 }
@@ -76,8 +76,8 @@ a {text-decoration:none !important;}
 }
 section.background-gradi.request-meeting.meeting-form {height: 100%;}
 .login-meeting {
-    background: rgb(0,212,255);
-    background: linear-gradient(90deg, rgba(0,212,255,1) 2%, rgba(86,121,9,1) 100%);
+    /* background: rgb(0,212,255); */
+    /* background: linear-gradient(90deg, rgba(0,212,255,1) 2%, rgba(86,121,9,1) 100%); */
 	    height: 100vh;
 		    position: relative;
 }

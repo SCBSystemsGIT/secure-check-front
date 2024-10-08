@@ -1,7 +1,7 @@
 <script setup>
 import { useLogin } from "@/services/login";
-import { useCompanies } from "@/services/useCompanies";
-import { useGlobalStore } from "@/stores/globalStore";
+// import { useCompanies } from "@/services/useCompanies";
+// import { useGlobalStore } from "@/stores/globalStore";
 import { EventBus } from "@/utils/eventBus";
 import { onMounted } from "vue";
 import { watch } from "vue";
@@ -53,8 +53,8 @@ watch(statusCode, (newStatus) => {
   }
 });
 
-const { publicDir } = useGlobalStore();
-const { showCompany, company } = useCompanies();
+// const { publicDir } = useGlobalStore();
+// const { showCompany, company } = useCompanies();
 let company_slug = localStorage.getItem("currentCompany");
 
 const sendData = (params, valueAdded) => {
@@ -70,7 +70,7 @@ onMounted(async () => {
   if (window.location.pathname == "/sign-in") {
     if (company_slug) {
       sendData("company_slug", company_slug);
-      await showCompany(company_slug);
+      // await showCompany(company_slug);
     } else {
       company_slug = "";
     }
@@ -84,13 +84,14 @@ onMounted(async () => {
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
           <div class="popup-logo">
-            <router-link to="/" v-if="company && domain != 'scb'"
+            <!-- <router-link to="/" v-if="company && domain != 'scb'"
               ><img
+                class="logo"
                 :src="`${publicDir}/logo/${company?.logo}`"
                 :alt="`${publicDir}/logo/${company?.logo}`"
-            /></router-link>
-
-            <a href="#" v-else
+            /></router-link> -->
+            <!-- v-else -->
+            <a href="#" 
               ><img
                 src="@/assets/secure-check-logo.png"
                 class=""

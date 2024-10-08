@@ -59,6 +59,7 @@ watch(
 
             <router-link to="/" v-else>
               <img
+                class="logo"
                 :src="`${publicDir}/logo/${company?.logo}`"
                 :alt="company?.logo"
             /></router-link>
@@ -107,3 +108,11 @@ watch(
     </div>
   </section>
 </template>
+
+<style>
+.logo {
+  width: 100%;
+  max-width: 210px;
+  max-height: 180px;
+}
+</style>

@@ -25,8 +25,14 @@ onMounted(() => {
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
           <div class="popup-logo">
-            <router-link :to="{ name: 'RequestMeeting', params: { domain: domain } }">
-              <img src="@/assets/secure-check-logo.png" class="" alt="secure-check-logo" />
+            <router-link
+              :to="{ name: 'RequestMeeting', params: { domain: domain } }"
+            >
+              <img
+                src="@/assets/secure-check-logo.png"
+                class=""
+                alt="secure-check-logo"
+              />
             </router-link>
           </div>
 
@@ -34,12 +40,31 @@ onMounted(() => {
             <h5><span>Veuillez sélectionner</span></h5>
             <div class="selectcheckintype-btns">
               <!-- Navigation avec domaine -->
-              <router-link :to="{ name: 'CreateVisitor', params: { domain: domain } }">Meetings</router-link>
-              <router-link :to="{ name: 'ListQrcode', params: { domain: domain } }">Demandes</router-link>
-              <router-link :to="{ name: 'ManalCheck', params: { domain: domain } }">Manual Code</router-link>
+              <router-link
+                :to="{ name: 'CreateVisitor', params: { domain: domain } }"
+                class="mt-2"
+                >Meetings</router-link
+              >
+              <router-link
+                :to="{ name: 'ListQrcode', params: { domain: domain } }"
+                class="mt-2"
+                >Demandes</router-link
+              >
+              <router-link
+                :to="{ name: 'ManalCheck', params: { domain: domain } }"
+                class="mt-2"
+                v-if="
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isEmployee(currentRole)
+                "
+                >Manual Code</router-link
+              >
 
               <router-link
-                v-if="userStore.isAdmin(currentRole) || userStore.isSupervisor(currentRole)"
+                v-if="
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isSupervisor(currentRole)
+                "
                 :to="{ name: 'CreateEvent', params: { domain: domain } }"
                 class="mt-2"
               >
@@ -47,7 +72,11 @@ onMounted(() => {
               </router-link>
 
               <router-link
-                v-if="userStore.isAdmin(currentRole) || userStore.isSupervisor(currentRole)"
+                v-if="
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isSupervisor(currentRole) ||
+                  userStore.isManager(currentRole)
+                "
                 :to="{ name: 'EventList', params: { domain: domain } }"
                 class="mt-2"
               >
@@ -63,7 +92,10 @@ onMounted(() => {
               </router-link>
 
               <router-link
-                v-if="userStore.isAdmin(currentRole) || userStore.isManager(currentRole)"
+                v-if="
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isManager(currentRole)
+                "
                 :to="{ name: 'CreateUser', params: { domain: domain } }"
                 class="mt-2"
               >
@@ -71,7 +103,10 @@ onMounted(() => {
               </router-link>
 
               <router-link
-                v-if="userStore.isAdmin(currentRole) || userStore.isSupervisor(currentRole)"
+                v-if="
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isSupervisor(currentRole)
+                "
                 :to="{ name: 'CreateCompany', params: { domain: domain } }"
                 class="mt-2"
               >
