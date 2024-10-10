@@ -128,7 +128,6 @@ onMounted(() => {
 
             <img v-if="image" :src="image" alt="Captured Image" v-show="false" />
 
-
             <div class="request-btn" @click="captureDiv" role="button">
               <a>Capture </a>
             </div>
