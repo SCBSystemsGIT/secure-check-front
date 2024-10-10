@@ -2,15 +2,12 @@
 import { onMounted, ref } from "vue";
 import { useUserList } from "@/services/useUserList";
 import { useRoute, useRouter } from "vue-router";
+import { useUserStore } from "@/stores/useUserStore";
 // import { useUserStore } from "@/stores/useUserStore";
 
-const { fetchUsers, users, loading, error } = useUserList();
+const { fetchUsers, fetchUsersComp, users, loading, error } = useUserList();
 // const userStore = useUserStore();
 const router = useRouter();
-
-onMounted(() => {
-  fetchUsers();
-});
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -22,22 +19,10 @@ const formatDate = (dateString) => {
 };
 
 // Définitions des colonnes pour le tableau
-const thead = ref([
-  "ID",
-  "Nom",
-  "Email",
-  "Role",
-  // "Date de Création"
-]);
+const thead = ref(["ID", "Nom", "Email" /*, "Role"*/]);
 
 // Correspondance des propriétés de l'utilisateur
-const tbody = ref([
-  "id",
-  "name",
-  "email",
-  "role",
-  //  { slot: "create_at" }
-]);
+const tbody = ref(["id", "name", "email" /*, "role"*/]);
 
 const route = useRoute();
 const domain = ref(route.params.domain || "scb");
@@ -45,15 +30,26 @@ const goToMenu = () => {
   router.push({
     name: "Menu",
     params: {
-      domain: domain.value
+      domain: domain.value,
     },
   });
 };
+
+const roles = ref(JSON.parse(localStorage.getItem("userInfo")) || {});
+const userStore = useUserStore();
+const currentRole = ref(roles?.value?.roles ? roles.value.roles[0] : "");
+
+onMounted(async () => {
+  if (!userStore.isAdmin(currentRole.value)) {
+    await fetchUsersComp(domain.value);
+  } else {
+    await fetchUsers();
+  }
+});
 </script>
 
 <template>
   <div class="container">
-    
     <div class="d-flex justify-content-center align-items-center">
       <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
         <button class="back" @click="goToMenu">Retour</button>

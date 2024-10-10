@@ -4,6 +4,9 @@ import { useGlobalStore } from "@/stores/globalStore";
 import { useUserStore } from "@/stores/useUserStore";
 import { EventBus } from "@/utils/eventBus";
 import { watch } from "vue";
+import { onMounted } from "vue";
+// import { onMounted } from "vue";
+import { ref } from "vue";
 // import { ref } from "vue";
 import { onBeforeMount /*ref*/ } from "vue";
 import { useRoute } from "vue-router";
@@ -15,9 +18,9 @@ const logout = () => {
 };
 
 const isAuthenticated = userStore.isAuthenticated();
-const roles = userStore.roles;
 const { publicDir } = useGlobalStore();
 const { showCompany, company } = useCompanies();
+const company_slug = ref(localStorage.getItem("currentCompany"));
 
 onBeforeMount(async () => {
   // Extraire l'hôte (domaine + port)
@@ -26,14 +29,15 @@ onBeforeMount(async () => {
   console.log("Path:", window.location.pathname);
 
   if (window.location.pathname != "/sign-in") {
-    let company_slug = localStorage.getItem("currentCompany");
-    if (company_slug) {
-      await showCompany(company_slug);
+    if (company_slug.value) {
+      await showCompany(company_slug.value);
     } else {
-      company_slug = "";
+      company_slug.value = "";
     }
   }
 });
+
+
 
 // const distantData = ref();
 watch(
@@ -42,6 +46,13 @@ watch(
     await showCompany(localStorage.getItem("currentCompany") ?? newValue);
   }
 );
+
+const roles = ref(JSON.parse(localStorage.getItem("userInfo")) || {});
+const currentRole = ref(roles?.value?.roles ? roles.value.roles[0] : "");
+
+onMounted(() => {
+  // alert(currentRole.value);
+});
 </script>
 
 <template>
@@ -57,11 +68,18 @@ watch(
                 alt="secure-check-logo"
             /></router-link>
 
-            <router-link to="/" v-else>
+            <router-link to="/" v-else-if="company">
               <img
                 class="logo"
                 :src="`${publicDir}/logo/${company?.logo}`"
                 :alt="company?.logo"
+            /></router-link>
+
+            <router-link to="/" v-else
+              ><img
+                src="@/assets/secure-check-logo.png"
+                class=""
+                alt="secure-check-logo"
             /></router-link>
           </div>
         </div>
@@ -102,6 +120,14 @@ watch(
             >
               Visite
             </router-link>
+
+            <router-link
+              :to="`/${company_slug ?? 'scb'}/edit-company/${company_slug}`"
+              class="login-button"
+              v-if="userStore.isManager(currentRole)"
+            >
+              Modifier Entreprise
+            </router-link>
           </div>
         </div>
       </div>
@@ -114,5 +140,14 @@ watch(
   width: 100%;
   max-width: 210px;
   max-height: 180px;
+}
+
+.top-bar-right a.login-button {
+  background: #0097b9;
+  color: #ffffff;
+  border-radius: 99px;
+  padding: 12px 25px;
+  font-weight: 600;
+  margin-left: 20px;
 }
 </style>

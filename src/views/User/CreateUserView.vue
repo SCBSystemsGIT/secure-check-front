@@ -3,6 +3,7 @@ import { useCreateUser } from "@/services/createUser";
 import { useCompanies } from "@/services/useCompanies";
 import { useDepartement } from "@/services/useDepartement";
 import { useUserStore } from "@/stores/useUserStore";
+import { onBeforeMount } from "vue";
 import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
@@ -79,6 +80,24 @@ const goToMenu = () => {
     },
   });
 };
+
+const { showCompany, company } = useCompanies();
+
+onBeforeMount(async () => {
+  // Extraire l'hôte (domaine + port)
+  console.log("Host:", window.location.host);
+  // Extraire le chemin (path)
+  console.log("Path:", window.location.pathname);
+
+  if (window.location.pathname != "/sign-in") {
+    let company_slug = localStorage.getItem("currentCompany");
+    if (company_slug) {
+      await showCompany(company_slug);
+    } else {
+      company_slug = "";
+    }
+  }
+});
 </script>
 
 <template>
@@ -221,19 +240,20 @@ const goToMenu = () => {
                 >
                   <option
                     v-for="company in companies"
-                    :key="company.id"
-                    :value="company.id"
+                    :key="company?.id"
+                    :value="company?.id"
                   >
-                    {{ company.name }}
+                    {{ company?.name }}
                   </option>
                 </select>
+
                 <input
-                  v-else
-                  type="checkbox"
+                  v-else-if="!(company?.name)"
+                  type="text"
                   id="name"
-                  v-model="company.name"
+                  :value="company?.name"
                 />
-                <br />
+                <!-- <br v-if="company" /> -->
               </div>
 
               <div v-show="false">

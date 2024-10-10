@@ -2,12 +2,14 @@
 import { useDate } from "@/composables/useDate";
 import { useEventList } from "@/services/useEventList";
 import { useGlobalStore } from "@/stores/globalStore";
+import { useUserStore } from "@/stores/useUserStore";
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 
 // Importation des données depuis les services et composables
-const { events, loading, error } = useEventList();
+const { events, loading, error, fetchEventsByComp, fetchEvents } =
+  useEventList();
 const { formatDate, formatTime } = useDate();
 const { publicDir } = useGlobalStore();
 
@@ -49,7 +51,6 @@ const router = useRouter();
 const route = useRoute();
 const domain = ref(route.params.domain || "scb");
 
-// Fonction pour afficher la liste des visiteurs
 const showVisitors = (slug) => {
   router.push({
     name: "ListQrcodeEvents",
@@ -109,7 +110,21 @@ const goToMenu = () => {
   });
 };
 
+const roles = ref(JSON.parse(localStorage.getItem("userInfo")) || {});
+const userStore = useUserStore();
+const currentRole = ref(roles?.value?.roles ? roles.value.roles[0] : "");
+
 onMounted(() => {
+  
+  if (!userStore.isAdmin(currentRole.value)) {
+    fetchEventsByComp(domain.value);
+  } else {
+    fetchEvents();
+  }
+  // if (!userStore.isAdmin(currentRole.value)) {
+  // alert("no");
+  // }
+
   if (domain.value) {
     router.push({
       name: "EventList",
@@ -167,11 +182,15 @@ onMounted(() => {
         </template>
 
         <template #link="{ data }">
-          <ui-icon role="button" @click="copyContent(data)"> content_copy </ui-icon>
+          <ui-icon role="button" @click="copyContent(data)">
+            content_copy
+          </ui-icon>
         </template>
 
         <template #participants="{ data }">
-          <ui-icon role="button" @click="showVisitors(data.slug)"> groups </ui-icon>
+          <ui-icon role="button" @click="showVisitors(data.slug)">
+            groups
+          </ui-icon>
         </template>
 
         <template #QRCode="{ data }">

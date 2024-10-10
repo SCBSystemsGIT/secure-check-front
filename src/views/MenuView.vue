@@ -2,12 +2,15 @@
 import { useUserStore } from "@/stores/useUserStore";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 
 // Utilisation du routeur pour récupérer le domaine courant
 const route = useRoute();
 const domain = ref(route.params.domain || "scb");
 
 const userStore = useUserStore();
+const isAuthenticated = userStore.isAuthenticated();
+const router = useRouter();
 const currentRole = ref();
 
 const roles = ref();
@@ -16,6 +19,16 @@ currentRole.value = roles.value?.roles[0];
 
 onMounted(() => {
   console.log("Rôle actuel :", currentRole.value);
+  console.log("isAuthenticated :", isAuthenticated);
+  if (!isAuthenticated) {
+    console.log("RequestMeeting");
+    router.push({
+      name: "RequestMeeting",
+      params: {
+        domain: domain.value,
+      },
+    });
+  }
 });
 </script>
 
@@ -36,7 +49,7 @@ onMounted(() => {
             </router-link>
           </div>
 
-          <div class="selectcheck-all">
+          <div class="selectcheck-all" v-if="isAuthenticated">
             <h5><span>Veuillez sélectionner</span></h5>
             <div class="selectcheckintype-btns">
               <!-- Navigation avec domaine -->
@@ -45,9 +58,15 @@ onMounted(() => {
                 class="mt-2"
                 >Meetings</router-link
               >
+              <!-- userStore.isAdmin(currentRole) ||s -->
               <router-link
                 :to="{ name: 'ListQrcode', params: { domain: domain } }"
                 class="mt-2"
+                v-if="
+                  userStore.isEmployee(currentRole) ||
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isSupervisor(currentRole)
+                "
                 >Demandes</router-link
               >
               <router-link
@@ -55,7 +74,8 @@ onMounted(() => {
                 class="mt-2"
                 v-if="
                   userStore.isAdmin(currentRole) ||
-                  userStore.isEmployee(currentRole)
+                  userStore.isEmployee(currentRole) ||
+                  userStore.isSupervisor(currentRole)
                 "
                 >Manual Code</router-link
               >
@@ -84,7 +104,10 @@ onMounted(() => {
               </router-link>
 
               <router-link
-                v-if="userStore.isAdmin(currentRole)"
+                v-if="
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isSupervisor(currentRole)
+                "
                 :to="{ name: 'ListUser', params: { domain: domain } }"
                 class="mt-2"
               >
@@ -105,12 +128,25 @@ onMounted(() => {
               <router-link
                 v-if="
                   userStore.isAdmin(currentRole) ||
-                  userStore.isSupervisor(currentRole)
+                  userStore.isSupervisor(currentRole) ||
+                  userStore.isManager(currentRole)
                 "
                 :to="{ name: 'CreateCompany', params: { domain: domain } }"
                 class="mt-2"
               >
                 + Entreprise
+              </router-link>
+
+              <router-link
+                v-if="
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isSupervisor(currentRole) ||
+                  userStore.isManager(currentRole)
+                "
+                :to="{ name: 'CreateQRCode', params: { domain: domain } }"
+                class="mt-2"
+              >
+                + Création QRCode 
               </router-link>
             </div>
           </div>
@@ -123,5 +159,18 @@ onMounted(() => {
 <style scoped>
 .menu-item {
   width: 20%;
+}
+
+.selectcheckintype .col.col-12.col-md-12.col-sm-12 {
+  text-align: center;
+  margin: 0px auto 0px auto !important;
+  max-width: 900px;
+  background: #ffffff;
+  padding: 80px 40px;
+  border-radius: 15px;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  position: absolute;
+  left: 50%;
 }
 </style>

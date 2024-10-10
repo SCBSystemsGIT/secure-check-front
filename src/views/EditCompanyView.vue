@@ -12,7 +12,7 @@ roles.value = JSON.parse(localStorage.getItem("userInfo"));
 currentRole.value = roles.value?.roles[0];
 
 const { userInfo, fetchUserInfo } = useUserInfo();
-const { postCompany, showCompany, company, statusCode } = useCompanies();
+const { showCompany, updateCompany, company, statusCode } = useCompanies();
 
 const userStore = useUserStore();
 const isAuthenticated = userStore.isAuthenticated();
@@ -23,6 +23,7 @@ const fileName = ref();
 const errorMessage = ref("");
 
 const companyReq = ref({
+  id: "",
   name: "",
   description: "",
 });
@@ -45,8 +46,8 @@ const onFileChange = (event) => {
 const loading = ref(false);
 const submitForm = async () => {
   try {
-    await postCompany(companyReq.value);
-    console.log(company);
+    await updateCompany(companyReq.value, companyReq.value.id);
+    // console.log(company);
   } catch (error) {
     errorMessage.value = `Erreur: ${error.message}`;
   } finally {
@@ -58,14 +59,14 @@ const submitForm = async () => {
 watch(statusCode, (newStatus) => {
   switch (newStatus) {
     case 201:
-      toast.success("Entreprise créé avec succès.");
+      toast.success("Mise à jour éffectué.");
       setTimeout(() => {
         router.push("/menu");
       }, 1500);
 
       break;
     case 200:
-      toast.success("Entreprise créé avec succès.");
+      toast.success("Mise à jour éffectué.");
       setTimeout(() => {
         router.push("/menu");
       }, 1500);
@@ -108,9 +109,12 @@ const goToMenu = () => {
 };
 
 onBeforeMount(async () => {
-    if (route?.params?.company_edit) {
-    showCompany(route.params.slug);
-    // companyReq.value = company.value;
+  if (route?.params?.company_edit) {
+    await showCompany(domain.value);
+    // console.log({
+    //   _____company_____: company.value,
+    // });
+    companyReq.value = company.value;
   }
 
   await fetchUserInfo();
@@ -128,7 +132,7 @@ onBeforeMount(async () => {
               class="d-flex justify-content-start mb-4 gap-3 align-items-center"
             >
               <button class="back" @click="goToMenu">Retour</button>
-              <h3>Création Entreprise</h3>
+              <h3>Editer Entreprise</h3>
             </div>
 
             <form @submit.prevent="submitForm" enctype="multipart/form-data">
@@ -138,7 +142,6 @@ onBeforeMount(async () => {
                   type="file"
                   id="logo"
                   @change="onFileChange"
-                  required
                   :class="{ error: errorMessage }"
                 /><br />
               </div>

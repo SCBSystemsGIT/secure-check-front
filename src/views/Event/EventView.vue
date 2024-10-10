@@ -5,13 +5,13 @@ import { toast } from "vue3-toastify";
 import { useRoute, useRouter } from "vue-router";
 import { useCompanies } from "@/services/useCompanies";
 import { useEvent } from "@/services/useEvent";
-import { useDepartement } from "@/services/useDepartement";
+// import { useDepartement } from "@/services/useDepartement";
 import { useGlobalStore } from "@/stores/globalStore";
 
-const { fetchCompanies, showCompany, errorMessage, /*companies */company } =
+const { fetchCompanies, showCompany, errorMessage, /*companies */ company } =
   useCompanies();
 const { createEvent, statusCode } = useEvent();
-const { departements, fetchDepartements } = useDepartement();
+// const { departements, fetchDepartements } = useDepartement();
 const { publicDir } = useGlobalStore();
 
 const userStore = useUserStore();
@@ -33,11 +33,11 @@ const goToMenu = () => {
 
 const event = ref({
   company_id: "",
-  name: "Diner Gala SIKIHHK", // Valeur par défaut
-  location: "Palace hotel", // Valeur par défaut
-  date_event: "2024-10-08", // Valeur par défaut
+  name: "", // Valeur par défaut
+  location: "", // Valeur par défaut
+  date_event: "", // Valeur par défaut
   time_event: "14:30", // Valeur par défaut
-  departement_id: "",
+  departement_id: 1,
 });
 
 // Changement de compagnie
@@ -53,7 +53,7 @@ const submitForm = async () => {
   try {
     event.value.company_id = company.value.id;
 
-    alert(company.value.id)
+    // alert(company.value.id);
     await createEvent(event.value);
   } catch (error) {
     errorMessage.value = `Erreur: ${error.message}`;
@@ -65,9 +65,14 @@ const submitForm = async () => {
 // Appel initial des données
 onBeforeMount(async () => {
   try {
-    await Promise.all([fetchCompanies(), fetchDepartements()]);
+    await Promise.all([
+      fetchCompanies(),
+      // , fetchDepartements()
+    ]);
 
     let company_slug = localStorage.getItem("currentCompany") ?? domain;
+
+    // alert(company_slug); 
     if (company_slug) {
       await showCompany(company_slug ?? domain.value);
     } else {
@@ -76,7 +81,16 @@ onBeforeMount(async () => {
 
     if (!isAuthenticated) {
       toast.info("L'utilisateur doit être connecté");
-      setTimeout(() => router.push("/"), 1500);
+      setTimeout(
+        () =>
+          router.push({
+            name: "RequestMeeting",
+            params: {
+              domain: domain.value,
+            },
+          }),
+        1500
+      );
     }
   } catch (error) {
     toast.error("Erreur lors du chargement des données.");
@@ -87,9 +101,19 @@ onBeforeMount(async () => {
 watch(statusCode, (newStatus) => {
   switch (newStatus) {
     case 201:
-    case 200:
+    case 200:   
       toast.success("Evénements ajouté");
-      setTimeout(() => router.push("/menu"), 1500);
+      setTimeout(
+        () =>
+          router.push({
+            name: "Menu",
+            params: {
+              domain: domain.value,
+            },
+          }),
+        1500
+      );
+
       break;
     case 400:
       toast.info("La requête est mal formée.");
@@ -153,8 +177,8 @@ watch(statusCode, (newStatus) => {
                   >
                     {{ company.name }}
                   </option>
-                </select> 
-                -->
+                </select> -->
+
                 <input
                   disabled
                   v-if="company?.name"
@@ -172,6 +196,7 @@ watch(statusCode, (newStatus) => {
                   type="text"
                   id="name"
                   v-model="event.name"
+                  placeholder="Diner Gala SIKIHHK"
                   required
                 /><br />
               </div>
@@ -183,6 +208,19 @@ watch(statusCode, (newStatus) => {
                   type="text"
                   id="location"
                   v-model="event.location"
+                  placeholder="SOCOCE"
+                  required
+                /><br />
+              </div>
+
+              <!-- Lieu de l'événement -->
+              <div>
+                <label for="address_name">Adresse</label><br />
+                <input
+                  type="text"
+                  id="address_name"
+                  v-model="event.address_name"
+                  placeholder="Marcory"
                   required
                 /><br />
               </div>
@@ -194,6 +232,7 @@ watch(statusCode, (newStatus) => {
                   type="date"
                   id="date_event"
                   v-model="event.date_event"
+                  placeholder="2024-10-08"
                   required
                 /><br />
               </div>
@@ -210,7 +249,7 @@ watch(statusCode, (newStatus) => {
               </div>
 
               <!-- Sélection du département -->
-              <div>
+              <!-- <div>
                 <label for="departement_id">Département</label><br />
                 <select
                   class="form-control"
@@ -225,7 +264,7 @@ watch(statusCode, (newStatus) => {
                     {{ departement.name }}
                   </option>
                 </select>
-              </div>
+              </div> -->
 
               <!-- Bouton de soumission -->
               <div class="submit-button">

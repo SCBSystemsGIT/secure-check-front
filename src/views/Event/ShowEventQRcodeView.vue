@@ -6,6 +6,7 @@ import { useGlobalStore } from "@/stores/globalStore";
 import { useEvent } from "@/services/useEvent";
 import { useDate } from "@/composables/useDate";
 import { useCompanies } from "@/services/useCompanies";
+import html2canvas from "html2canvas";
 
 const userStore = useUserStore();
 const route = useRoute();
@@ -23,6 +24,42 @@ const goToMenu = () => {
     },
   });
 };
+
+const capture = ref(null);
+const image = ref(null);
+
+const captureDiv = () => {
+  if (capture.value) {
+    const images = capture.value.querySelectorAll('img');
+    const promises = Array.from(images).map((img) => {
+      return new Promise((resolve) => {
+        if (img.complete) {
+          resolve();
+        } else {
+          img.onload = resolve;
+          img.onerror = resolve;
+        }
+      });
+    });
+
+    // Capture après le chargement des images
+    Promise.all(promises).then(() => {
+      html2canvas(capture.value, { useCORS: true }).then((canvas) => {
+        const imageData = canvas.toDataURL("image/png");
+        image.value = imageData;
+
+        const link = document.createElement("a");
+        link.href = imageData;
+        link.download = `event-${domain.value}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+    });
+  }
+};
+
+
 
 const { formatDate, formatTime } = useDate();
 const isAuthenticated = userStore.isAuthenticated();
@@ -49,12 +86,12 @@ onMounted(() => {
   <section class="background-gradi request-meeting">
     <div class="container">
       <div class="row align-items-center">
-        <div class="col col-12 col-md-12 col-sm-12 event-details">
+        <div class="col col-12 col-md-12 col-sm-12 event-details" ref="capture">
           <div class="popup-logo">
             <div>
               <router-link to="/" v-if="company && domain != 'scb'"
                 ><img
-                class="logo_qr"
+                  class="logo_qr"
                   :src="`${publicDir}/logo/${company?.logo}`"
                   :alt="`${publicDir}/logo/${company?.logo}`"
               /></router-link>
@@ -88,6 +125,14 @@ onMounted(() => {
               <h3 class="event-title">Heure : {{ formatTime(event?.time_event) }}</h3>
             </div>
 
+
+            <img v-if="image" :src="image" alt="Captured Image" v-show="false" />
+
+
+            <div class="request-btn" @click="captureDiv" role="button">
+              <a>Capture </a>
+            </div>
+
             <div
               class="request-btn"
               @click="goToMenu()"
@@ -97,9 +142,6 @@ onMounted(() => {
               <a>Menu </a>
             </div>
 
-            <div v-else>
-              <h3>Votre QRCode a été envoyé par e-mail, Merci</h3>
-            </div>
           </div>
         </div>
       </div>
@@ -162,7 +204,7 @@ onMounted(() => {
 }
 
 .event-title:nth-child(even) {
-  color: #007BFF; /* Accent color for alternating text */
+  color: #007bff; /* Accent color for alternating text */
 }
 
 .event-details h3 {
@@ -189,10 +231,9 @@ onMounted(() => {
   }
 }
 
-.logo_qr{
+.logo_qr {
   height: 7rem !important;
   width: 8rem !important;
   margin-bottom: 22px;
 }
-
 </style>

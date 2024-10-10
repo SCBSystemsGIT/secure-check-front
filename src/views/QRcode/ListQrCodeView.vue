@@ -1,10 +1,11 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeMount } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRequestsList } from "@/services/useRequestsList";
 import { useRoute, useRouter } from "vue-router";
 import { useEvent } from "@/services/useEvent";
+import { useUserStore } from "@/stores/useUserStore";
 
-const { requests, error } = useRequestsList();
+const { requests, error, fetchRequestsByComp, fetchRequests } = useRequestsList();
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleDateString("fr-FR", {
@@ -66,26 +67,35 @@ const paginatedRequests = computed(() => {
 // };
 
 const { showEvent, event } = useEvent();
-
 const filteredRequests = computed(() => {
   return requests.value.filter(
-    (request) => request.visitor.evenements?.id === event.value.id
+    (request) => request.visitor.evenements?.id === event?.value?.id
   );
 });
 
-onBeforeMount(async () => {
-  requests.value = filteredRequests.value;
-});
+const roles = ref(JSON.parse(localStorage.getItem("userInfo")) || {});
+const userStore = useUserStore();
+const currentRole = ref(roles?.value?.roles ? roles.value.roles[0] : "");
 
 const domain = ref(route.params.domain || "scb");
 onMounted(async () => {
-  console.log({ req: typeof requests.value });
+  // console.log({ req: typeof requests.value });
 
   if (route?.params?.slug) {
     await showEvent(route?.params?.slug);
     console.log({ requests: requests });
     console.log({ event: event.value });
   }
+
+  if (!userStore.isAdmin(currentRole.value)) {
+    // fetchEventsByComp(domsain.value);
+    await fetchRequestsByComp(domain.value);
+  } else {
+    // fetchEvents();
+    await fetchRequests();
+  }
+
+  requests.value = filteredRequests.value;
 });
 </script>
 

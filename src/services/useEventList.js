@@ -1,4 +1,4 @@
-import { ref, onMounted } from "vue";
+import { ref} from "vue";
 import apiClient from "@/plugins/axios";
 
 export function useEventList() {
@@ -14,20 +14,35 @@ export function useEventList() {
       events.value = response.data;
       console.log();
     } catch (err) {
+      error.value = "Erreur lors de la récupération des events.";
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const fetchEventsByComp = async (id) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const response = await apiClient.get("/evenement/list/" + id);
+      events.value = response.data;
+      console.log();
+    } catch (err) {
       error.value = "Erreur lors de la récupération des utilisateurs.";
     } finally {
       loading.value = false;
     }
   };
 
-  onMounted(() => {
-    fetchEvents();
-  });
+  // onMounted(() => {
+  //   fetchEvents();
+  // });
 
   return {
     events,
     loading,
     error,
     fetchEvents,
+    fetchEventsByComp,
   };
 }
