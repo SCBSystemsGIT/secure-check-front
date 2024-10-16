@@ -159,7 +159,7 @@ onMounted(() => {
                 :to="{ name: 'Camera', params: { domain: domain } }"
                 class="mt-2"
               >
-                Camera
+                QR Code
               </router-link>
             </div>
           </div>
