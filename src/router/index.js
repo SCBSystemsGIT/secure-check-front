@@ -17,6 +17,7 @@ import SuccessCheckinView from "@/views/SuccessCheckinView.vue";
 import CreateCompanyView from "@/views/CreateCompanyView.vue";
 import EditCompanyView from "@/views/EditCompanyView.vue";
 import ShowEventQRcodeView from "@/views/Event/ShowEventQRcodeView.vue";
+import CameraView from "@/views/CameraView.vue";
 
 const routes = [
   {
@@ -120,6 +121,11 @@ const routes = [
     path: "/:domain/create-qr",
     name: "CreateQRCode",
     component: CreateQRCodeView,
+  },
+  {
+    path: "/:domain/camera",
+    name: "Camera",
+    component: CameraView,
   },
 ];
 

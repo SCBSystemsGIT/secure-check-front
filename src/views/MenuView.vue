@@ -148,6 +148,19 @@ onMounted(() => {
               >
                 + Création QRCode 
               </router-link>
+              <!-- Add the Camera Button -->
+              <router-link
+                v-if="
+                  userStore.isAdmin(currentRole) || 
+                  userStore.isSupervisor(currentRole) || 
+                  userStore.isManager(currentRole) || 
+                  userStore.isEmployee(currentRole)  
+                "
+                :to="{ name: 'Camera', params: { domain: domain } }"
+                class="mt-2"
+              >
+                Camera
+              </router-link>
             </div>
           </div>
         </div>
