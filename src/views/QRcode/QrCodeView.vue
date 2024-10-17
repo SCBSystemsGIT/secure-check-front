@@ -1,56 +1,31 @@
 <script setup>
-// import { useNavigation } from "@/composables/useNavigation";
-import { useUpdateRequest } from "@/services/useUpdateRequest";
-import { useUserStore } from "@/stores/useUserStore";
-import { onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { toast } from "vue3-toastify";
-import { useGlobalStore } from "@/stores/globalStore";
+// import { useQrCode } from "@/services/useManualCheck";
+import { /*defineProps,*/ onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 
-const userStore = useUserStore();
 const route = useRoute();
-const isSuccess = ref(false);
-const request = ref({
-  status: "",
-  confirmed: "",
-});
-
-const { publicDir } = useGlobalStore();
-const { isLoading, error, uidn, updateRequest } = useUpdateRequest();
-
 const router = useRouter();
-const goToMenu = () => {
+const isSuccess = ref(false);
+// const { getQrData, status } = useQrCode();
+// const props = defineProps({
+//   uidn: String,
+// });
 
+const domain = ref(route.params.domain || "scb");
+const goToMenu = () => {
   router.push({
     name: "Menu",
     params: {
       domain: domain.value,
-      id: route.params.id,
     },
   });
-
 };
 
-const isAuthenticated = userStore.isAuthenticated();
-const submitForm = async (state) => {
-  request.value.status = state;
-  request.value.confirmed = state;
-
-  try {
-    await updateRequest(route.params.id, request.value); // Remplacez 1 par l'ID réel de la demande
-    toast.success("Mise à jour éffectué");
-    isSuccess.value = true;
-  } catch (err) {
-    console.log(error);
-    console.error("Failed to update request:", err);
-  }
-};
-
-const domain = ref(route.params.domain || "scb");
 onMounted(() => {
   if (domain.value) {
     router.push({
-      name: "WaitingValidation",
+      name: "ManalCheck",
       params: {
         domain: domain.value,
       },
@@ -74,6 +49,7 @@ onMounted(() => {
           </div>
 
           <div class="popup-logo" v-if="isSuccess">
+
             <router-link to="/">
               <img
                 :src="`${publicDir}/qrcode/qrcode-${uidn}.png`"
@@ -84,7 +60,6 @@ onMounted(() => {
 
             <div class="text-center py-2">
               <h3>{{ uidn }}</h3>
-              <!-- <h3>QRCode Généré</h3> -->
             </div>
 
             <div
@@ -101,27 +76,6 @@ onMounted(() => {
             </div>
           </div>
 
-          <div v-if="!isSuccess">
-            <h3 class="text-center py-3">
-              En attente de la confirmation de l'hôte ...
-            </h3>
-
-            <div
-              class="request-btn"
-              @click.prevent="submitForm(1)"
-              v-if="!isLoading"
-            >
-              <a>Valider </a>
-            </div>
-
-            <div class="text-center" v-else>
-              <h3>Chargement .....</h3>
-            </div>
-
-            <div class="request-btn-cannel" @click.prevent="submitForm(0)">
-              <a>Annuler </a>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -164,5 +118,11 @@ onMounted(() => {
 .request-btn-cannel a:hover {
   background: #000000;
   color: #ffffff;
+}
+
+.uidn {
+  border-radius: 10px;
+  padding: 20px 100px;
+  text-transform: uppercase;
 }
 </style>

@@ -21,6 +21,7 @@ export const useUserStore = defineStore(
         "ROLE_SUPERVISOR",
         "ROLE_ADMIN",
         "ROLE_SUPER_ADMIN",
+        "ROLE_MANAGER",
       ])
     );
 
@@ -85,6 +86,7 @@ export const useUserStore = defineStore(
     const isSupervisor = (role) => role == "ROLE_SUPERVISOR";
     const isEmployee = (role) => role == "ROLE_EMPLOYEE";
     const isUser = (role) => role == "ROLE_USER";
+    const isManager = (role) => role == "ROLE_MANAGER";
 
     const router = useRouter();
     const logout = () => {
@@ -116,6 +118,7 @@ export const useUserStore = defineStore(
       isSupervisor,
       isEmployee,
       isUser,
+      isManager,
     };
   },
   {

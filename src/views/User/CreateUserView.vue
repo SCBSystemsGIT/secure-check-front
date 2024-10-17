@@ -1,21 +1,32 @@
 <script setup>
 import { useCreateUser } from "@/services/createUser";
+import { useCompanies } from "@/services/useCompanies";
 import { useDepartement } from "@/services/useDepartement";
-import { onMounted, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/useUserStore";
+import { onBeforeMount } from "vue";
+import { onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 
 const { user, loading, errorMessage, successMessage, createUser, statusCode } =
   useCreateUser();
 const { departements, fetchDepartements } = useDepartement();
 const router = useRouter();
-
+const { companies, fetchCompanies } = useCompanies();
 const submitForm = () => {
   createUser();
 };
 
+const userStore = useUserStore();
+const currentRole = ref();
+
+const roles = ref();
+roles.value = JSON.parse(localStorage.getItem("userInfo"));
+currentRole.value = roles.value?.roles[0];
+
 onMounted(async () => {
   await fetchDepartements();
+  await fetchCompanies();
 });
 // Watcher pour réagir aux changements du statusCode
 watch(statusCode, (newStatus) => {
@@ -23,13 +34,19 @@ watch(statusCode, (newStatus) => {
     case 200:
       toast.success("OK - Utilisateur créé avec succès.");
       toast.info(successMessage);
-      router.push("/menu");
+
+      router.push(localStorage.getItem("currentCompany") ?? "/scb" + "/menu");
       break;
     case 201:
       toast.success("Created - L'utilisateur a été créé avec succès.");
 
-      setTimeout(()=>{
-        router.push("/menu");
+      setTimeout(() => {
+        router.push({
+          name: "Menu",
+          params: {
+            domain: domain.value ?? localStorage.getItem("currentCompany"),
+          },
+        });
       }, 1400);
 
       break;
@@ -52,6 +69,35 @@ watch(statusCode, (newStatus) => {
       toast.info(`Erreur inconnue - Code : ${newStatus}`);
   }
 });
+
+const route = useRoute();
+const domain = ref(route.params.domain || "scb");
+const goToMenu = () => {
+  router.push({
+    name: "Menu",
+    params: {
+      domain: domain.value,
+    },
+  });
+};
+
+const { showCompany, company } = useCompanies();
+
+onBeforeMount(async () => {
+  // Extraire l'hôte (domaine + port)
+  console.log("Host:", window.location.host);
+  // Extraire le chemin (path)
+  console.log("Path:", window.location.pathname);
+
+  if (window.location.pathname != "/sign-in") {
+    let company_slug = localStorage.getItem("currentCompany");
+    if (company_slug) {
+      await showCompany(company_slug);
+    } else {
+      company_slug = "";
+    }
+  }
+});
 </script>
 
 <template>
@@ -60,6 +106,15 @@ watch(statusCode, (newStatus) => {
       <div class="container">
         <div class="row align-items-center">
           <div class="col col-12 col-md-12 col-sm-12">
+            <div class="d-flex justify-content-center align-items-center">
+              <div
+                class="d-flex justify-content-start mb-4 gap-3 align-items-center"
+              >
+                <button class="back" @click="goToMenu">Retour</button>
+                <h3>Création Utilisateur</h3>
+              </div>
+            </div>
+
             <form @submit.prevent="submitForm">
               <div>
                 <label for="name">Nom</label><br />
@@ -107,11 +162,51 @@ watch(statusCode, (newStatus) => {
                   name="country"
                   class="form-control"
                 >
-                  <option value="ROLE_USER">Utilisateur</option>
-                  <option value="ROLE_EMPLOYEE">Employé</option>
-                  <option value="ROLE_SUPERVISOR">Superviseur</option>
-                  <!-- <option value="ROLE_VISITOR">Visiteur</option> -->
-                  <option value="ROLE_ADMIN">Admin</option>
+                  <option
+                    value="ROLE_USER"
+                    v-if="
+                      userStore.isAdmin(currentRole) ||
+                      userStore.isSupervisor(currentRole) ||
+                      userStore.isManager(currentRole)
+                    "
+                  >
+                    Utilisateur
+                  </option>
+
+                  <option
+                    value="ROLE_EMPLOYEE"
+                    v-if="
+                      userStore.isAdmin(currentRole) ||
+                      userStore.isSupervisor(currentRole) ||
+                      userStore.isManager(currentRole)
+                    "
+                  >
+                    Employé
+                  </option>
+
+                  <option
+                    value="ROLE_SUPERVISOR"
+                    v-if="
+                      userStore.isAdmin(currentRole) ||
+                      userStore.isManager(currentRole)
+                    "
+                  >
+                    Superviseur
+                  </option>
+
+                  <option
+                    value="ROLE_MANAGER"
+                    v-if="userStore.isAdmin(currentRole)"
+                  >
+                    Manager
+                  </option>
+
+                  <option
+                    value="ROLE_ADMIN"
+                    v-if="userStore.isAdmin(currentRole)"
+                  >
+                    Admin
+                  </option>
                   <option value="ROLE_SUPER_ADMIN">Super Admin</option></select
                 ><br />
               </div>
@@ -132,6 +227,33 @@ watch(statusCode, (newStatus) => {
                     {{ departement.name }}
                   </option></select
                 ><br />
+              </div>
+
+              <div>
+                <label for="company">Entreprise</label><br />
+                <select
+                  v-if="company?.slug == 'scb'"
+                  v-model="user.company_id"
+                  id="company"
+                  name="company"
+                  class="form-control"
+                >
+                  <option
+                    v-for="company in companies"
+                    :key="company?.id"
+                    :value="company?.id"
+                  >
+                    {{ company?.name }}
+                  </option>
+                </select>
+
+                <input
+                  v-else-if="!(company?.name)"
+                  type="text"
+                  id="name"
+                  :value="company?.name"
+                />
+                <!-- <br v-if="company" /> -->
               </div>
 
               <div v-show="false">

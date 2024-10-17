@@ -1,31 +1,31 @@
-import { ref } from "vue";
+import { ref} from "vue";
 import apiClient from "@/plugins/axios";
 
-export function useUserList() {
-  const users = ref([]);
+export function useEventList() {
+  const events = ref([]);
   const loading = ref(false);
   const error = ref(null);
 
-  const fetchUsers = async () => {
+  const fetchEvents = async () => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await apiClient.get("/user/list");
-      users.value = response.data;
+      const response = await apiClient.get("/evenement/list");
+      events.value = response.data;
       console.log();
     } catch (err) {
-      error.value = "Erreur lors de la récupération des utilisateurs.";
+      error.value = "Erreur lors de la récupération des events.";
     } finally {
       loading.value = false;
     }
   };
 
-  const fetchUsersComp = async (slug) => {
+  const fetchEventsByComp = async (id) => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await apiClient.get("/user/list/" + slug);
-      users.value = response.data;
+      const response = await apiClient.get("/evenement/list/" + id);
+      events.value = response.data;
       console.log();
     } catch (err) {
       error.value = "Erreur lors de la récupération des utilisateurs.";
@@ -35,14 +35,14 @@ export function useUserList() {
   };
 
   // onMounted(() => {
-  //   fetchUsers();
+  //   fetchEvents();
   // });
 
   return {
-    users,
+    events,
     loading,
     error,
-    fetchUsers,
-    fetchUsersComp,
+    fetchEvents,
+    fetchEventsByComp,
   };
 }
