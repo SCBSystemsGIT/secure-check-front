@@ -13,10 +13,11 @@ export function useUpdateRequest() {
 
     try {
       const response = await apiClient.put(
-      const response = await apiClient.post(
+      //const response = await apiClient.post(
         `/requests/update/${id}`,
         requestData
       );
+      
       isLoading.value = false;
       uidn.value = response.data.data.uidn;
 
