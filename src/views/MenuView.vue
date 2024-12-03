@@ -56,6 +56,14 @@ onMounted(() => {
               <router-link
                 :to="{ name: 'CreateVisitor', params: { domain: domain } }"
                 class="mt-2"
+                v-if="
+                  userStore.isEmployee(currentRole) ||
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isSuperAdmin(currentRole) ||
+                  userStore.isSupervisor(currentRole) ||
+                  userStore.isUser(currentRole) ||
+                  userStore.isManager(currentRole)
+                "
                 >Meetings</router-link
               >
               <!-- userStore.isAdmin(currentRole) ||s -->
@@ -65,7 +73,8 @@ onMounted(() => {
                 v-if="
                   userStore.isEmployee(currentRole) ||
                   userStore.isAdmin(currentRole) ||
-                  userStore.isSupervisor(currentRole)
+                  userStore.isSupervisor(currentRole)||
+                  userStore.isSecureCheck(currentRole)
                 "
                 >Demandes</router-link
               >
@@ -75,7 +84,8 @@ onMounted(() => {
                 v-if="
                   userStore.isAdmin(currentRole) ||
                   userStore.isEmployee(currentRole) ||
-                  userStore.isSupervisor(currentRole)
+                  userStore.isSupervisor(currentRole)||
+                  userStore.isSecureCheck(currentRole)
                 "
                 >Manual Code</router-link
               >
@@ -83,7 +93,8 @@ onMounted(() => {
               <router-link
                 v-if="
                   userStore.isAdmin(currentRole) ||
-                  userStore.isSupervisor(currentRole)
+                  userStore.isSupervisor(currentRole)||
+                  userStore.isSecureCheck(currentRole)
                 "
                 :to="{ name: 'CreateEvent', params: { domain: domain } }"
                 class="mt-2"
@@ -95,7 +106,8 @@ onMounted(() => {
                 v-if="
                   userStore.isAdmin(currentRole) ||
                   userStore.isSupervisor(currentRole) ||
-                  userStore.isManager(currentRole)
+                  userStore.isManager(currentRole)||
+                  userStore.isSecureCheck(currentRole)
                 "
                 :to="{ name: 'EventList', params: { domain: domain } }"
                 class="mt-2"
@@ -106,7 +118,8 @@ onMounted(() => {
               <router-link
                 v-if="
                   userStore.isAdmin(currentRole) ||
-                  userStore.isSupervisor(currentRole)
+                  userStore.isSupervisor(currentRole)||
+                  userStore.isSecureCheck(currentRole)
                 "
                 :to="{ name: 'ListUser', params: { domain: domain } }"
                 class="mt-2"
@@ -117,7 +130,8 @@ onMounted(() => {
               <router-link
                 v-if="
                   userStore.isAdmin(currentRole) ||
-                  userStore.isManager(currentRole)
+                  userStore.isManager(currentRole)||
+                  userStore.isSecureCheck(currentRole)
                 "
                 :to="{ name: 'CreateUser', params: { domain: domain } }"
                 class="mt-2"
@@ -129,7 +143,8 @@ onMounted(() => {
                 v-if="
                   userStore.isAdmin(currentRole) ||
                   userStore.isSupervisor(currentRole) ||
-                  userStore.isManager(currentRole)
+                  userStore.isManager(currentRole)||
+                  userStore.isSecureCheck(currentRole)
                 "
                 :to="{ name: 'CreateCompany', params: { domain: domain } }"
                 class="mt-2"
@@ -141,7 +156,8 @@ onMounted(() => {
                 v-if="
                   userStore.isAdmin(currentRole) ||
                   userStore.isSupervisor(currentRole) ||
-                  userStore.isManager(currentRole)
+                  userStore.isManager(currentRole)||
+                  userStore.isSecureCheck(currentRole)
                 "
                 :to="{ name: 'CreateQRCode', params: { domain: domain } }"
                 class="mt-2"
@@ -154,7 +170,8 @@ onMounted(() => {
                   userStore.isAdmin(currentRole) || 
                   userStore.isSupervisor(currentRole) || 
                   userStore.isManager(currentRole) || 
-                  userStore.isEmployee(currentRole)  
+                  userStore.isEmployee(currentRole)  ||
+                  userStore.isSecureCheck(currentRole)
                 "
                 :to="{ name: 'Camera', params: { domain: domain } }"
                 class="mt-2"

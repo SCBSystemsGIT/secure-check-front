@@ -13,7 +13,10 @@ export function useUpdateRequest() {
 
     try {
       const response = await apiClient.put(
+<<<<<<< HEAD
       const response = await apiClient.post(
+=======
+>>>>>>> user-create-issue
         `/requests/update/${id}`,
         requestData
       );

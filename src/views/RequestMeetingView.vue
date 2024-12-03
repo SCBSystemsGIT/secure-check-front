@@ -55,6 +55,7 @@ onBeforeMount(async () => {
       "ROLE_SUPERVISOR",
       "ROLE_ADMIN",
       "ROLE_SUPER_ADMIN",
+      "ROLE_SecureCheck" 
     ])
   );
 });
@@ -94,7 +95,8 @@ onBeforeMount(async () => {
               userStore.isEmployee(currentRole) ||
               userStore.isAdmin(currentRole) ||
               userStore.isManager(currentRole)||
-              userStore.isSupervisor(currentRole)
+              userStore.isSupervisor(currentRole)||
+              userStore.isSecureCheck(currentRole)
             "
           >
             <router-link :to="{ name: 'Menu', params: { domain: domain } }"
