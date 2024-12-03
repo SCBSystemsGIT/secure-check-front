@@ -56,6 +56,17 @@ onMounted(() => {
               <router-link
                 :to="{ name: 'CreateVisitor', params: { domain: domain } }"
                 class="mt-2"
+<<<<<<< HEAD
+=======
+                v-if="
+                  userStore.isEmployee(currentRole) ||
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isSuperAdmin(currentRole) ||
+                  userStore.isSupervisor(currentRole) ||
+                  userStore.isUser(currentRole) ||
+                  userStore.isManager(currentRole)
+                "
+>>>>>>> user-create-issue
                 >Meetings</router-link
               >
               <!-- userStore.isAdmin(currentRole) ||s -->
@@ -65,7 +76,12 @@ onMounted(() => {
                 v-if="
                   userStore.isEmployee(currentRole) ||
                   userStore.isAdmin(currentRole) ||
+<<<<<<< HEAD
                   userStore.isSupervisor(currentRole)
+=======
+                  userStore.isSupervisor(currentRole)||
+                  userStore.isSecureCheck(currentRole)
+>>>>>>> user-create-issue
                 "
                 >Demandes</router-link
               >
@@ -75,7 +91,12 @@ onMounted(() => {
                 v-if="
                   userStore.isAdmin(currentRole) ||
                   userStore.isEmployee(currentRole) ||
+<<<<<<< HEAD
                   userStore.isSupervisor(currentRole)
+=======
+                  userStore.isSupervisor(currentRole)||
+                  userStore.isSecureCheck(currentRole)
+>>>>>>> user-create-issue
                 "
                 >Manual Code</router-link
               >
@@ -83,7 +104,12 @@ onMounted(() => {
               <router-link
                 v-if="
                   userStore.isAdmin(currentRole) ||
+<<<<<<< HEAD
                   userStore.isSupervisor(currentRole)
+=======
+                  userStore.isSupervisor(currentRole)||
+                  userStore.isSecureCheck(currentRole)
+>>>>>>> user-create-issue
                 "
                 :to="{ name: 'CreateEvent', params: { domain: domain } }"
                 class="mt-2"
@@ -95,7 +121,12 @@ onMounted(() => {
                 v-if="
                   userStore.isAdmin(currentRole) ||
                   userStore.isSupervisor(currentRole) ||
+<<<<<<< HEAD
                   userStore.isManager(currentRole)
+=======
+                  userStore.isManager(currentRole)||
+                  userStore.isSecureCheck(currentRole)
+>>>>>>> user-create-issue
                 "
                 :to="{ name: 'EventList', params: { domain: domain } }"
                 class="mt-2"
@@ -106,7 +137,12 @@ onMounted(() => {
               <router-link
                 v-if="
                   userStore.isAdmin(currentRole) ||
+<<<<<<< HEAD
                   userStore.isSupervisor(currentRole)
+=======
+                  userStore.isSupervisor(currentRole)||
+                  userStore.isSecureCheck(currentRole)
+>>>>>>> user-create-issue
                 "
                 :to="{ name: 'ListUser', params: { domain: domain } }"
                 class="mt-2"
@@ -117,7 +153,12 @@ onMounted(() => {
               <router-link
                 v-if="
                   userStore.isAdmin(currentRole) ||
+<<<<<<< HEAD
                   userStore.isManager(currentRole)
+=======
+                  userStore.isManager(currentRole)||
+                  userStore.isSecureCheck(currentRole)
+>>>>>>> user-create-issue
                 "
                 :to="{ name: 'CreateUser', params: { domain: domain } }"
                 class="mt-2"
@@ -129,7 +170,12 @@ onMounted(() => {
                 v-if="
                   userStore.isAdmin(currentRole) ||
                   userStore.isSupervisor(currentRole) ||
+<<<<<<< HEAD
                   userStore.isManager(currentRole)
+=======
+                  userStore.isManager(currentRole)||
+                  userStore.isSecureCheck(currentRole)
+>>>>>>> user-create-issue
                 "
                 :to="{ name: 'CreateCompany', params: { domain: domain } }"
                 class="mt-2"
@@ -141,7 +187,12 @@ onMounted(() => {
                 v-if="
                   userStore.isAdmin(currentRole) ||
                   userStore.isSupervisor(currentRole) ||
+<<<<<<< HEAD
                   userStore.isManager(currentRole)
+=======
+                  userStore.isManager(currentRole)||
+                  userStore.isSecureCheck(currentRole)
+>>>>>>> user-create-issue
                 "
                 :to="{ name: 'CreateQRCode', params: { domain: domain } }"
                 class="mt-2"
@@ -154,7 +205,12 @@ onMounted(() => {
                   userStore.isAdmin(currentRole) || 
                   userStore.isSupervisor(currentRole) || 
                   userStore.isManager(currentRole) || 
+<<<<<<< HEAD
                   userStore.isEmployee(currentRole)  
+=======
+                  userStore.isEmployee(currentRole)  ||
+                  userStore.isSecureCheck(currentRole)
+>>>>>>> user-create-issue
                 "
                 :to="{ name: 'Camera', params: { domain: domain } }"
                 class="mt-2"
