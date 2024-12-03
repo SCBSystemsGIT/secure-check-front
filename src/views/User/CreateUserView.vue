@@ -167,13 +167,9 @@ onBeforeMount(async () => {
                     v-if="
                       userStore.isAdmin(currentRole) ||
                       userStore.isSupervisor(currentRole) ||
-<<<<<<< HEAD
-                      userStore.isManager(currentRole)
-=======
                       userStore.isManager(currentRole)||
                        userStore.isManager(currentRole)||
                       userStore.isSecureCheck(currentRole)
->>>>>>> user-create-issue
                     "
                   >
                     Utilisateur
@@ -184,12 +180,8 @@ onBeforeMount(async () => {
                     v-if="
                       userStore.isAdmin(currentRole) ||
                       userStore.isSupervisor(currentRole) ||
-<<<<<<< HEAD
-                      userStore.isManager(currentRole)
-=======
                       userStore.isManager(currentRole)||
                       userStore.isSecureCheck(currentRole)
->>>>>>> user-create-issue
                     "
                   >
                     Employé
@@ -199,18 +191,12 @@ onBeforeMount(async () => {
                     value="ROLE_SUPERVISOR"
                     v-if="
                       userStore.isAdmin(currentRole) ||
-<<<<<<< HEAD
-                      userStore.isManager(currentRole)
-=======
                       userStore.isManager(currentRole)||
                       userStore.isSecureCheck(currentRole)
->>>>>>> user-create-issue
                     "
                   >
                     Superviseur
                   </option>
-<<<<<<< HEAD
-=======
                   <option
                     value="ROLE_SecureCheck"
                     v-if="
@@ -220,8 +206,6 @@ onBeforeMount(async () => {
                   >
                     Secure Check
                   </option>
->>>>>>> user-create-issue
-
                   <option
                     value="ROLE_MANAGER"
                     v-if="userStore.isAdmin(currentRole)"
@@ -235,9 +219,6 @@ onBeforeMount(async () => {
                   >
                     Admin
                   </option>
-<<<<<<< HEAD
-                  <option value="ROLE_SUPER_ADMIN">Super Admin</option></select
-=======
                   <option 
                    value="ROLE_SUPER_ADMIN"
                    v-if="
@@ -247,7 +228,6 @@ onBeforeMount(async () => {
                     "
                   
                   >Super Admin</option></select
->>>>>>> user-create-issue
                 ><br />
               </div>
 

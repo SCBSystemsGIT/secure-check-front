@@ -40,10 +40,7 @@ export function useLogin() {
       //     "ROLE_SUPERVISOR",
       //     "ROLE_ADMIN",
       //     "ROLE_SUPER_ADMIN",
-<<<<<<< HEAD
-=======
       //     "ROLE_SecureCheck",
->>>>>>> user-create-issue
       //   ])
       // );
 

@@ -2,7 +2,6 @@ const { defineConfig } = require('@vue/cli-service');
 
 module.exports = defineConfig({
   transpileDependencies: true,
-
   runtimeCompiler: true,
 
   configureWebpack: {
@@ -12,7 +11,7 @@ module.exports = defineConfig({
         'balm-ui-css': 'balm-ui/dist/balm-ui.css'
       }
     }
-  }
+  },
 
   // Si tu préfères utiliser chainWebpack :
   // chainWebpack: (config) => {
