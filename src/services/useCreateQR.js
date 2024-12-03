@@ -9,7 +9,7 @@ export function useCreateQR() {
 
   const createQR = async (email, type) => {
     try {
-      const response = await axios.post('http://localhost:9999/api/create-qr', {
+      const response = await axios.post('http://127.0.0.1:8000/api/create-qr', {
         email: email,
         type: type
       }, {
