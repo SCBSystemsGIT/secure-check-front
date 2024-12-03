@@ -22,10 +22,7 @@ export const useUserStore = defineStore(
         "ROLE_ADMIN",
         "ROLE_SUPER_ADMIN",
         "ROLE_MANAGER",
-<<<<<<< HEAD
-=======
         "ROLE_SecureCheck"
->>>>>>> user-create-issue
       ])
     );
 
@@ -53,10 +50,7 @@ export const useUserStore = defineStore(
       //     "ROLE_SUPERVISOR",
       //     "ROLE_ADMIN",
       //     "ROLE_SUPER_ADMIN",
-<<<<<<< HEAD
-=======
       //     "ROLE_SecureCheck",
->>>>>>> user-create-issue
       //   ])
       // );
       // try {
@@ -95,10 +89,7 @@ export const useUserStore = defineStore(
     const isEmployee = (role) => role == "ROLE_EMPLOYEE";
     const isUser = (role) => role == "ROLE_USER";
     const isManager = (role) => role == "ROLE_MANAGER";
-<<<<<<< HEAD
-=======
     const isSecureCheck = (role) => role == "ROLE_SecureCheck";
->>>>>>> user-create-issue
 
     const router = useRouter();
     const logout = () => {
@@ -131,10 +122,7 @@ export const useUserStore = defineStore(
       isEmployee,
       isUser,
       isManager,
-<<<<<<< HEAD
-=======
       isSecureCheck
->>>>>>> user-create-issue
     };
   },
   {
