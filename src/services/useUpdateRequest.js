@@ -17,12 +17,6 @@ export function useUpdateRequest() {
         `/requests/update/${id}`,
         requestData
       );
-      
-=======
-        `/requests/update/${id}`,
-        requestData
-      );
->>>>>>> user-create-issue
       isLoading.value = false;
       uidn.value = response.data.data.uidn;
 
