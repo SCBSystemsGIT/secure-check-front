@@ -73,7 +73,6 @@ onMounted(() => {
                 v-if="
                   userStore.isEmployee(currentRole) ||
                   userStore.isAdmin(currentRole) ||
-
                   userStore.isSupervisor(currentRole)||
                   userStore.isSecureCheck(currentRole)
                 "
@@ -85,8 +84,7 @@ onMounted(() => {
                 v-if="
                   userStore.isAdmin(currentRole) ||
                   userStore.isEmployee(currentRole) ||
-
-                  userStore.isSupervisor(currentRole)
+                  userStore.isSupervisor(currentRole)||
                   userStore.isSecureCheck(currentRole)
                 "
                 >Manual Code</router-link
@@ -95,7 +93,6 @@ onMounted(() => {
               <router-link
                 v-if="
                   userStore.isAdmin(currentRole) ||
-
                   userStore.isSupervisor(currentRole)||
                   userStore.isSecureCheck(currentRole)
                 "
@@ -135,8 +132,6 @@ onMounted(() => {
                   userStore.isAdmin(currentRole) ||
                   userStore.isManager(currentRole)||
                   userStore.isSecureCheck(currentRole)
-                  userStore.isManager(currentRole)||
-                  userStore.isSecureCheck(currentRole)
                 "
                 :to="{ name: 'CreateUser', params: { domain: domain } }"
                 class="mt-2"
@@ -148,7 +143,6 @@ onMounted(() => {
                 v-if="
                   userStore.isAdmin(currentRole) ||
                   userStore.isSupervisor(currentRole) ||
-
                   userStore.isManager(currentRole)||
                   userStore.isSecureCheck(currentRole)
                 "
