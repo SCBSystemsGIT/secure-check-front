@@ -115,11 +115,7 @@ onMounted(() => {
             <!-- :to="`/${company_slug ?? 'scb'}/request-meeting`" -->
             <router-link
               v-else
-<<<<<<< HEAD
-              :to="`/${company_slug ?? 'scb'}/request-meeting`"
-=======
               :to="`/request-meeting`"
->>>>>>> user-create-issue
               class="login-button"
             >
               Visite
