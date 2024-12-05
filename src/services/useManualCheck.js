@@ -10,7 +10,7 @@ export function useQrCode() {
   const message = ref("");
   const loading = ref(false);
   const error = ref(null);
-  const { baseUrl_ } = useGlobalStore();
+  const { baseUrl } = useGlobalStore();
 
   const router = useRouter();
 
@@ -24,7 +24,7 @@ export function useQrCode() {
     //type 1 manual
     loading.value = true;
     try {
-      let host = baseUrl_;
+      let host = baseUrl;
       const response = await axios.get(`${host}/get-qr-data/${uidn}`, {
         params: {
           type: type,
