@@ -56,9 +56,10 @@ export default {
           context.drawImage(video, 0, 0, canvas.width, canvas.height);
           const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
           const code = jsQR(imageData.data, canvas.width, canvas.height);
-
+console.log(code);
           if (code) {
             const qrData = code.data;
+            console.log(qrData);
 
             // Check if the QR data is an email and toggle login/logout
             if (this.isValidEmail(qrData)) {

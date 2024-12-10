@@ -18,6 +18,7 @@ import CreateCompanyView from "@/views/CreateCompanyView.vue";
 import EditCompanyView from "@/views/EditCompanyView.vue";
 import ShowEventQRcodeView from "@/views/Event/ShowEventQRcodeView.vue";
 import CameraView from "@/views/CameraView.vue";
+import DisplayVisitorCodeView from "@/views/DisplayVisitorCodeView.vue";
 
 const routes = [
   {
@@ -126,6 +127,11 @@ const routes = [
     path: "/:domain/camera",
     name: "Camera",
     component: CameraView,
+  },
+  {
+    path: "/:domain/display-logs",
+    name: "DisplayVisitorCode",
+    component: DisplayVisitorCodeView,
   },
 ];
 

@@ -1,5 +1,6 @@
 <script setup>
-import { onBeforeMount, ref, watch } from "vue";
+import { onMounted, onBeforeMount, ref, watch } from "vue";
+
 import { useUserStore } from "@/stores/useUserStore";
 import { toast } from "vue3-toastify";
 import { useRoute, useRouter } from "vue-router";
@@ -8,8 +9,15 @@ import { useEvent } from "@/services/useEvent";
 // import { useDepartement } from "@/services/useDepartement";
 import { useGlobalStore } from "@/stores/globalStore";
 
-const { fetchCompanies, showCompany, errorMessage, /*companies */ company } =
-  useCompanies();
+const { company } = useGlobalStore();
+const { showCompany , companies, fetchCompanies } = useCompanies();
+const errorMessage = ref("");
+const currentRole = ref();
+const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+const roles = ref();
+roles.value = userInfo
+currentRole.value = roles.value?.roles[0];
+const userCompanyName = userInfo.company ?? '';
 const { createEvent, statusCode } = useEvent();
 // const { departements, fetchDepartements } = useDepartement();
 const { publicDir } = useGlobalStore();
@@ -31,6 +39,9 @@ const goToMenu = () => {
   });
 };
 
+onMounted(async () => {
+  await fetchCompanies();
+});
 const event = ref({
   company_id: "",
   name: "", // Valeur par défaut
@@ -50,10 +61,12 @@ const event = ref({
 
 const submitForm = async () => {
   loading.value = true;
-  try {
-    event.value.company_id = company.value.id;
 
-    // alert(company.value.id);
+  try {
+    
+    // event.value.company_id = company.value.id;
+
+  
     await createEvent(event.value);
   } catch (error) {
     errorMessage.value = `Erreur: ${error.message}`;
@@ -65,37 +78,43 @@ const submitForm = async () => {
 // Appel initial des données
 onBeforeMount(async () => {
   try {
-    await Promise.all([
-      fetchCompanies(),
-      // , fetchDepartements()
-    ]);
+    // Retrieve company slug from localStorage or fallback to domain.value
+    let company_slug = localStorage.getItem("currentCompany") ?? domain?.value;
 
-    let company_slug = localStorage.getItem("currentCompany") ?? domain;
+    console.log("Retrieved company_slug:", company_slug); // Debugging line
 
-    // alert(company_slug); 
+    // Check if company_slug is valid and proceed with showing the company
     if (company_slug) {
-      await showCompany(company_slug ?? domain.value);
+      console.log("Calling showCompany with:", company_slug);
+      await showCompany(company_slug); // Assuming showCompany is an async function
     } else {
-      company_slug = "";
+      console.log("No company_slug found, setting company_slug to empty string.");
+      company_slug = ""; // Set to empty string if not found
     }
 
+    // Authentication check
     if (!isAuthenticated) {
       toast.info("L'utilisateur doit être connecté");
-      setTimeout(
-        () =>
-          router.push({
-            name: "RequestMeeting",
-            params: {
-              domain: domain.value,
-            },
-          }),
-        1500
-      );
+
+      // Redirect the user to the RequestMeeting page after a delay
+      setTimeout(() => {
+        router.push({
+          name: "RequestMeeting",
+          params: {
+            domain: domain?.value, // Ensure domain.value is defined
+          },
+        });
+      }, 1500);
     }
+
   } catch (error) {
+    // Log the error to help debug
+    console.error("Error occurred during onBeforeMount:", error); // Debugging line
     toast.error("Erreur lors du chargement des données.");
   }
 });
+
+
 
 // Gestion des retours de l'API
 watch(statusCode, (newStatus) => {
@@ -163,31 +182,31 @@ watch(statusCode, (newStatus) => {
             <form @submit.prevent="submitForm">
               <!-- Sélection de l'entreprise -->
               <div>
-                <label for="company_id">Entreprise</label><br />
-                <!-- <select
-                  class="form-control"
-                  id="company_id"
-                  v-model="event.company_id"
-                  @change="onChangeCompany(event.company_id)"
-                >
-                  <option
-                    v-for="(company, index) in companies"
-                    :key="index"
-                    :value="company.id"
-                  >
-                    {{ company.name }}
-                  </option>
-                </select> -->
+    <label for="company_id">Entreprise</label><br />
 
-                <input
-                  disabled
-                  v-if="company?.name"
-                  type="text"
-                  id="name"
-                  v-model="company.name"
-                  required
-                /><br />
-              </div>
+    <!-- Show input field if currentRole is 'ROLE_SUPERVISOR' -->
+    <input
+      v-if="currentRole === 'ROLE_SUPERVISOR'"
+      disabled
+      type="text"
+      id="name"
+      v-model="userCompanyName"
+      required
+    /><br />
+
+    <!-- Show select dropdown if currentRole is NOT 'ROLE_SUPERVISOR' -->
+    <select
+      v-if="currentRole !== 'ROLE_SUPERVISOR'"
+      id="company_id"
+      v-model="event.company_id"
+      class="form-control"
+    >
+      <option v-for="company in companies" :key="company.id" :value="company.id">
+        {{ company.name }}
+      </option>
+    </select>
+  </div>
+
 
               <!-- Nom de l'événement -->
               <div>

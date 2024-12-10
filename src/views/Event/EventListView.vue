@@ -116,10 +116,10 @@ const currentRole = ref(roles?.value?.roles ? roles.value.roles[0] : "");
 
 onMounted(() => {
   
-  if (!userStore.isAdmin(currentRole.value)) {
-    fetchEventsByComp(domain.value);
-  } else {
+  if (userStore.isAdmin(currentRole.value) || userStore.isSecureCheck(currentRole.value)) {
     fetchEvents();
+  } else {
+    fetchEventsByComp(domain.value);
   }
   // if (!userStore.isAdmin(currentRole.value)) {
   // alert("no");
