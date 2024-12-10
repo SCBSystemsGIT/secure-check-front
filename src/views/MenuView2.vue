@@ -178,19 +178,6 @@ onMounted(() => {
               >
                 QR Code
               </router-link>
-
-              <router-link
-                v-if="
-                  userStore.isAdmin(currentRole) || 
-                  userStore.isSupervisor(currentRole) || 
-                  userStore.isManager(currentRole) || 
-                  userStore.isEmployee(currentRole)  
-                "
-                :to="{ name: 'DisplayVisitorCode', params: { domain: domain } }"
-                class="mt-2"
-              >
-                Check Visitors logs
-              </router-link>
             </div>
           </div>
         </div>
