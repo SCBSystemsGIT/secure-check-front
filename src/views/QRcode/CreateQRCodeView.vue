@@ -1,12 +1,17 @@
 <script setup>
 import { useCreateQR } from "@/services/useCreateQR";
 import { useGlobalStore } from "@/stores/globalStore";
+import { useCompanies } from "@/services/useCompanies";
 import { watch } from "vue";
+import { onBeforeMount /*ref*/ } from "vue";
+import { EventBus } from "@/utils/eventBus";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 import { toast } from "vue3-toastify";
 
+const { showCompany, company } = useCompanies();
+const company_slug = ref(localStorage.getItem("currentCompany"));
 const route = useRoute();
 const router = useRouter();
 const isSuccess = ref(false);
@@ -87,6 +92,31 @@ watch(statusCode, (newStatus) => {
     // toast.info(`Erreur inconnue - Code : ${newStatus}`);
   }
 });
+
+onBeforeMount(async () => {
+  // Extraire l'hôte (domaine + port)
+  console.log("Host:", window.location.host);
+  // Extraire le chemin (path)
+  console.log("Path:", window.location.pathname);
+
+  if (window.location.pathname != "/sign-in") {
+    if (company_slug.value) {
+      await showCompany(company_slug.value);
+    } else {
+      company_slug.value = "";
+    }
+  }
+});
+
+
+
+// const distantData = ref();
+watch(
+  () => EventBus["company_slug"],
+  async (newValue) => {
+    await showCompany(localStorage.getItem("currentCompany") ?? newValue);
+  }
+);
 </script>
 
 <template>
@@ -97,10 +127,16 @@ watch(statusCode, (newStatus) => {
           <div class="popup-logo" v-if="!isSuccess">
             <router-link to="/">
               <img
-                src="@/assets/secure-check-logo.png"
-                class=""
-                alt="secure-check-logo"
+                class="logo logo123"
+                :src="`${publicDir}/logo/${company?.logo}`"
+                :alt="company?.logo"
             /></router-link>
+          </div>
+          <div data-v-74f17804="" style="margin-top: 30px;" class="d-flex justify-content-center align-items-center">
+            <div data-v-74f17804="" class="d-flex justify-content-start mb-4 gap-3 align-items-center">
+              <button class="back" @click="goToMenu"> Retour </button>
+              <h3 data-v-74f17804="" class="text-center"> Création QRCode </h3>
+            </div>
           </div>
 
           <div class="popup-logo">

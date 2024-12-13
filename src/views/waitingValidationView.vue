@@ -1,8 +1,12 @@
 <script setup>
 // import { useNavigation } from "@/composables/useNavigation";
 import { useUpdateRequest } from "@/services/useUpdateRequest";
+import { useCompanies } from "@/services/useCompanies";
 import { useUserStore } from "@/stores/useUserStore";
 import { onMounted, ref } from "vue";
+import { EventBus } from "@/utils/eventBus";
+import { watch } from "vue";
+import { onBeforeMount /*ref*/ } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 import { useGlobalStore } from "@/stores/globalStore";
@@ -16,6 +20,8 @@ const request = ref({
 });
 
 const { publicDir } = useGlobalStore();
+const { showCompany, company } = useCompanies();
+const company_slug = ref(localStorage.getItem("currentCompany"));
 const { isLoading, error, uidn, updateRequest } = useUpdateRequest();
 
 const router = useRouter();
@@ -57,6 +63,31 @@ onMounted(() => {
     });
   }
 });
+
+onBeforeMount(async () => {
+  // Extraire l'hôte (domaine + port)
+  console.log("Host:", window.location.host);
+  // Extraire le chemin (path)
+  console.log("Path:", window.location.pathname);
+
+  if (window.location.pathname != "/sign-in") {
+    if (company_slug.value) {
+      await showCompany(company_slug.value);
+    } else {
+      company_slug.value = "";
+    }
+  }
+});
+
+
+
+// const distantData = ref();
+watch(
+  () => EventBus["company_slug"],
+  async (newValue) => {
+    await showCompany(localStorage.getItem("currentCompany") ?? newValue);
+  }
+);
 </script>
 
 <template>
@@ -65,12 +96,15 @@ onMounted(() => {
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
           <div class="popup-logo" v-if="!isSuccess">
-            <router-link to="/">
-              <img
-                src="@/assets/secure-check-logo.png"
-                class=""
-                alt="secure-check-logo"
-            /></router-link>
+            <router-link 
+              :to="{ name: 'RequestMeeting', params: { domain: domain } }"
+            >
+            <img
+                class="logo logo12333"
+                :src="`${publicDir}/logo/${company?.logo}`"
+                :alt="company?.logo"
+            />
+            </router-link>
           </div>
 
           <div class="popup-logo" v-if="isSuccess">
@@ -102,10 +136,12 @@ onMounted(() => {
           </div>
 
           <div v-if="!isSuccess">
-            <h3 class="text-center py-3">
-              En attente de la confirmation de l'hôte ...
-            </h3>
-
+            <div class="d-flex justify-content-center align-items-center">
+              <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
+                  <button class="back" @click="goToMenu"> Retour </button>
+                  <h3 style="display:block ruby" class="text-center py-3">  En attente de la confirmation de l'hôte ... </h3>
+              </div>
+            </div>
             <div
               class="request-btn"
               @click.prevent="submitForm(1)"

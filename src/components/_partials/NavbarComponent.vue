@@ -63,23 +63,17 @@ onMounted(() => {
           <div>
             <router-link to="/" v-if="route.params.domain == 'scb'"
               ><img
-                src="@/assets/secure-check-logo.png"
+                id="logoif" src="@/assets/secure-check-logo.png"
                 class=""
                 alt="secure-check-logo"
             /></router-link>
 
-            <router-link to="/" v-else-if="company">
-              <img
-                class="logo"
-                :src="`${publicDir}/logo/${company?.logo}`"
-                :alt="company?.logo"
-            /></router-link>
-
-            <router-link to="/" v-else
+            <router-link
+              :to="`/${company_slug ?? ''}`" v-else
               ><img
                 src="@/assets/secure-check-logo.png"
-                class=""
-                alt="secure-check-logo"
+                class="logo12333"
+                id ="testelse" alt="secure-check-logo"
             /></router-link>
           </div>
         </div>

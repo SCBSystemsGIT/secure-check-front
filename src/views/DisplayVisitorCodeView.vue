@@ -79,8 +79,8 @@ export default {
       <table v-if="visitorLogs.length" class="table table-striped">
         <thead>
           <tr>
-            <th>ID</th>
             <th>Visitor Id</th>
+            <th>Visitor Email</th>
             <th>Created At</th>
             <th>Check In</th>
             <th>Check Out</th>
@@ -88,8 +88,8 @@ export default {
         </thead>
         <tbody>
           <tr v-for="log in visitorLogs" :key="log.id">
-            <td>{{ log.id }}</td>
             <td>{{ log.visitor_id }}</td>
+            <td>{{ log.visitor_email }}</td>
             <td>{{ log.created_at }}</td>
             <td>{{ log.check_in_time }}</td>
             <td>{{ log.check_out_time }}</td>

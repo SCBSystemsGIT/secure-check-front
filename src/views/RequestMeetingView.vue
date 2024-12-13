@@ -81,7 +81,13 @@ onBeforeMount(async () => {
             /></router-link>
           </div>
 
-          <div class="request-btn">
+          <div class="request-btn"
+          v-if="
+              userStore.isEmployee(currentRole) ||
+              userStore.isAdmin(currentRole) ||
+              userStore.isManager(currentRole)
+            "
+          >
             <router-link
               :to="{ name: 'CreateVisitor', params: { domain: domain } }"
             >
