@@ -19,9 +19,6 @@ import EditCompanyView from "@/views/EditCompanyView.vue";
 import ShowEventQRcodeView from "@/views/Event/ShowEventQRcodeView.vue";
 import CameraView from "@/views/CameraView.vue";
 import DisplayVisitorCodeView from "@/views/DisplayVisitorCodeView.vue";
-import CompanyListView from "@/views/CompanyListView.vue";
-import DisplayEventAttendenceView from "@/views/DisplayEventAttendenceView.vue";
-import ShowCompanyQRcodeView from "@/views/ShowCompanyQRcodeView.vue";
 
 const routes = [
   {
@@ -122,16 +119,6 @@ const routes = [
     component: EditCompanyView,
   },
   {
-    path: "/:domain/company-list",
-    name: "CompanyList",
-    component: CompanyListView,
-  },
-  {
-    path: "/:domain/show-company-qrcode/:slug",
-    name: "ShowCompanyQRcode",
-    component: ShowCompanyQRcodeView,
-  },
-  {
     path: "/:domain/create-qr",
     name: "CreateQRCode",
     component: CreateQRCodeView,
@@ -145,11 +132,6 @@ const routes = [
     path: "/:domain/display-logs",
     name: "DisplayVisitorCode",
     component: DisplayVisitorCodeView,
-  },
-  {
-    path: "/:domain/event-attendences",
-    name: "DisplayEventAttendence",
-    component: DisplayEventAttendenceView,
   },
 ];
 

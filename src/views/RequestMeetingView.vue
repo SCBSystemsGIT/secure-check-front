@@ -32,6 +32,8 @@ onBeforeMount(async () => {
   // alert(userStore.isSupervisor(currentRole.value))
   localStorage.setItem("currentCompany", domain.value);
   let company_slug = localStorage.getItem("currentCompany");
+  let token = localStorage.getItem("token");
+  console.log(token);
   if (company_slug) {
     await showCompany(company_slug ?? domain.value);
   } else {
@@ -80,15 +82,20 @@ onBeforeMount(async () => {
                 :alt="company.slug"
             /></router-link>
           </div>
-
-          <div class="request-btn">
-            <router-link
-              :to="{ name: 'CreateVisitor', params: { domain: domain } }"
-            >
-              Request-meeting
-            </router-link>
+          <div>
+            <div class="request-btn" v-if="userStore.isEmployee(currentRole)||userStore.isAdmin(currentRole)||userStore.isManager(currentRole)">
+                <router-link :to="{ name: 'CreateVisitor', params: { domain: domain } }">
+                  Request-meeting
+                </router-link>
+            </div>
+            <div class="request-btn" v-else-if="userStore.isSupervisor(currentRole)"></div>
+            <div class="request-btn" v-else-if="userStore.isSecureCheck(currentRole)"></div>
+            <div class="request-btn" v-else>
+              <router-link :to="{ name: 'CreateVisitor', params: { domain: domain } }">
+                  Request-meeting
+              </router-link>
+            </div>
           </div>
-
           <div
             class="request-btn"
             v-if="

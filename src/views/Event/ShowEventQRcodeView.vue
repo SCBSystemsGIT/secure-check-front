@@ -86,17 +86,33 @@ onMounted(() => {
   <section class="background-gradi request-meeting">
     <div class="container">
       <div class="row align-items-center">
-        <div class="col col-12 col-md-12 col-sm-12 event-details" ref="capture">
+        <div class="col col-12 col-md-12 col-sm-12 event-details event_details_main" ref="capture">
           <div class="popup-logo">
             <div>
-              <router-link to="/" v-if="company && domain != 'scb'"
-                ><img
-                  class="logo_qr"
-                  :src="`${publicDir}/logo/${company?.logo}`"
-                  :alt="`${publicDir}/logo/${company?.logo}`"
-              /></router-link>
+              
             </div>
+            
+          
 
+            <!-- <div class="text-center py-2">
+              <h3>Nom : {{ event?.name }}</h3>
+              <h3>Lieu : {{ event?.location }}</h3>
+              <h3>Date : {{ formatDate(event?.date_event) }}</h3>
+              <h3>Heure : {{ formatTime(event?.time_event) }}</h3>
+            </div> -->
+            <div class="event_datetime">
+              <h3 class="event-title">{{ formatTime(event?.time_event) }}</h3>
+              <h3 class="event-title">{{ formatDate(event?.date_event) }}</h3>
+              
+            </div>
+            <div class="event-details">
+              <div style="display:none;"> <b> Entreprise</b> <h3 class="event-title"> {{ company?.name }}</h3> </div>
+              <div> <b> Entreprise</b>  <h3 class="event-title">{{ event?.company?.name }}</h3> </div>
+              <div> <b> Event Name</b> <h3 class="event-title"> {{ event?.name }}</h3> </div>
+              <div> <b> Where </b> <h3 class="event-title"> {{ event?.location }}</h3> </div>
+              <div> <b> Ticket </b> <h3 class="event-title">Summit Registartion</h3> </div>
+            </div>
+            
             <div>
               <router-link :to="`/${route.params.slug}`">
                 <img
@@ -106,25 +122,6 @@ onMounted(() => {
                 />
               </router-link>
             </div>
-
-            <div class="text-center py-2">
-              <h3>Entreprise : {{ company?.name }}</h3>
-            </div>
-
-            <!-- <div class="text-center py-2">
-              <h3>Nom : {{ event?.name }}</h3>
-              <h3>Lieu : {{ event?.location }}</h3>
-              <h3>Date : {{ formatDate(event?.date_event) }}</h3>
-              <h3>Heure : {{ formatTime(event?.time_event) }}</h3>
-            </div> -->
-
-            <div class="event-details">
-              <h3 class="event-title">Nom : {{ event?.name }}</h3>
-              <h3 class="event-title">Lieu : {{ event?.location }}</h3>
-              <h3 class="event-title">Date : {{ formatDate(event?.date_event) }}</h3>
-              <h3 class="event-title">Heure : {{ formatTime(event?.time_event) }}</h3>
-            </div>
-
 
             <img v-if="image" :src="image" alt="Captured Image" v-show="false" />
 
@@ -219,6 +216,50 @@ onMounted(() => {
   animation: fadeIn 1s ease-in-out;
 }
 
+.event-details {
+    background: #37bbf0 !IMPORTANT;
+}
+.event-details .popup-logo .event-details {
+    padding: 0;
+    box-shadow: none;
+    max-width: 100% !IMPORTANT;
+}
+.event_details_main {
+    position: unset !IMPORTANT;
+    transform: unset !IMPORTANT;
+    padding: 20px !important;
+}
+.event_datetime {
+    text-align: right;
+}
+.event_datetime h3.event-title {
+    color: #fff !IMPORTANT;
+    font-size: 18px;
+    margin: 0;
+    padding-bottom: 5px !important;
+}
+.event_datetime h3.event-title:last-child {
+    font-size: 22px !important;
+    font-weight: 400;
+    text-transform: capitalize;
+}
+.event_details_main .popup-logo .event-details div {
+    text-align: left;
+    color: #ffff;
+    margin-bottom: 17px;
+}
+.event_details_main .popup-logo .event-details div b {
+    font-size: 18px;
+}
+.event_details_main .popup-logo .event-details div h3 {
+    color: #fff;
+    font-size: 16px;
+    margin: 0;
+}
+.event_details_main .popup-logo a img {
+    border-radius: 12px;
+    margin-top: 50px;
+}
 @keyframes fadeIn {
   from {
     opacity: 0;
