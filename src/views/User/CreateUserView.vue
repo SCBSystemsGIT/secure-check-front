@@ -1,7 +1,7 @@
 <script setup>
 import { useCreateUser } from "@/services/createUser";
 import { useCompanies } from "@/services/useCompanies";
-import { useDepartement } from "@/services/useDepartement";
+//import { useDepartement } from "@/services/useDepartement";
 import { useUserStore } from "@/stores/useUserStore";
 import { onBeforeMount } from "vue";
 import { onMounted, ref, watch } from "vue";
@@ -10,7 +10,7 @@ import { toast } from "vue3-toastify";
 
 const { user, loading, errorMessage, successMessage, createUser, statusCode } =
   useCreateUser();
-const { departements, fetchDepartements } = useDepartement();
+//const { departements, fetchDepartements } = useDepartement();
 const router = useRouter();
 const { companies, fetchCompanies } = useCompanies();
 const submitForm = () => {
@@ -25,7 +25,7 @@ roles.value = JSON.parse(localStorage.getItem("userInfo"));
 currentRole.value = roles.value?.roles[0];
 
 onMounted(async () => {
-  await fetchDepartements();
+  //await fetchDepartements();
   await fetchCompanies();
 });
 // Watcher pour réagir aux changements du statusCode
@@ -229,24 +229,6 @@ onBeforeMount(async () => {
                     "
                   
                   >Super Admin</option></select
-                ><br />
-              </div>
-
-              <div>
-                <label for="department">Department</label><br />
-                <select
-                  v-model="user.department_id"
-                  id="department"
-                  name="department"
-                  class="form-control"
-                >
-                  <option
-                    v-for="departement in departements"
-                    :key="departement.id"
-                    :value="departement.id"
-                  >
-                    {{ departement.name }}
-                  </option></select
                 ><br />
               </div>
 

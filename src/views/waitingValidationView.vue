@@ -91,11 +91,11 @@ watch(
 </script>
 
 <template>
-  <section class="background-gradi request-meeting">
+  <section class="background-gradi request-meeting test12333">
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
-          <div class="popup-logo" v-if="!isSuccess">
+          <div class="popup-logo without_scan_cls" v-if="!isSuccess">
             <router-link 
               :to="{ name: 'RequestMeeting', params: { domain: domain } }"
             >
@@ -107,7 +107,7 @@ watch(
             </router-link>
           </div>
 
-          <div class="popup-logo" v-if="isSuccess">
+          <div class="popup-logo with_scan_cls" v-if="isSuccess">
             <router-link to="/">
               <img
                 :src="`${publicDir}/qrcode/qrcode-${uidn}.png`"
@@ -200,5 +200,16 @@ watch(
 .request-btn-cannel a:hover {
   background: #000000;
   color: #ffffff;
+}
+.popup-logo.with_scan_cls {
+	background: #37bbf0 ! IMPORTANT;
+	position: unset ! IMPORTANT;
+	transform: unset ! IMPORTANT;
+	padding: 40px 20px !important;
+	border-radius: 15px;
+}
+.popup-logo.with_scan_cls img {
+	border-radius: 12px;
+	margin-top: 20px;
 }
 </style>

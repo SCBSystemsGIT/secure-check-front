@@ -8,6 +8,7 @@ import { useCompanies } from "@/services/useCompanies";
 
 const currentRole = ref();
 const roles = ref();
+
 roles.value = JSON.parse(localStorage.getItem("userInfo"));
 currentRole.value = roles.value?.roles[0];
 
@@ -24,7 +25,16 @@ const errorMessage = ref("");
 
 const companyReq = ref({
   name: "",
-  description: "",
+  number_of_employee: "",
+  email: "",
+  phone_number: "",
+  id_number: "",
+  point_contact: "",
+  company_field: "",
+  country: "",
+  city: "",
+  address: "",
+  zipcode: "",
 });
 
 const onFileChange = (event) => {
@@ -158,11 +168,111 @@ onBeforeMount(async () => {
               </div>
 
               <div>
-                <label for="description">Description </label><br />
+                <label for="address">Address</label><br />
                 <input
-                  type="description"
-                  id="description"
-                  v-model="companyReq.description"
+                  type="text"
+                  id="address"
+                  v-model="companyReq.address"
+                  required
+                /><br />
+              </div>
+              
+              <div>
+                <label for="id_number">ID Number</label><br />
+                <input
+                  type="text"
+                  id="id_number"
+                  v-model="companyReq.id_number"
+                  required
+                /><br />
+              </div>
+
+              <div>
+                <label for="point_contact">Point of Contact</label><br />
+                <input
+                  type="text"
+                  id="point_contact"
+                  v-model="companyReq.point_contact"
+                  required
+                /><br />
+              </div>
+
+              <div>
+                <label for="email">Email</label><br />
+                <input
+                  type="email"
+                  id="email"
+                  v-model="companyReq.email"
+                  required
+                /><br />
+              </div>
+
+              <div>
+                <label for="phone_number">Phone number</label><br />
+                <input
+                  type="text"
+                  id="phone_number"
+                  v-model="companyReq.phone_number"
+                  required
+                /><br />
+              </div>
+
+              <div>
+                <label for="company_field">Company Field or Industry</label><br />
+                <input
+                  type="text"
+                  id="company_field"
+                  v-model="companyReq.company_field"
+                  required
+                /><br />
+              </div>
+            
+              <div>
+                <label for="country">Country</label><br />
+                <input
+                  type="text"
+                  id="country"
+                  v-model="companyReq.country"
+                  required
+                /><br />
+              </div>
+
+              <div>
+                <label for="city">City</label><br />
+                <input
+                  type="text"
+                  id="city"
+                  v-model="companyReq.city"
+                  required
+                /><br />
+              </div>
+
+              <div>
+                <label for="number_of_employee">Number of employee</label><br />
+                <select
+                  v-model="companyReq.number_of_employee"
+                  id="number_of_employee"
+                  name="number_of_employee"
+                  class="input_style"
+                >
+                  <option value="0-5">0-5</option>
+                  <option value="6-10">6-10</option>
+                  <option value="11-50">11-50</option>
+                  <option value="51-100">51-100</option>
+                  <option value="101-1000">101-1000</option>
+                  <option value="+1000">+1000</option>
+
+                  </select
+                ><br />
+              </div>
+
+
+              <div>
+                <label for="zipcode">Zip Code </label><br />
+                <input
+                  type="zipcode"
+                  id="zipcode"
+                  v-model="companyReq.zipcode"
                   required
                 /><br />
               </div>
@@ -183,5 +293,18 @@ onBeforeMount(async () => {
 <style scoped>
 .error {
   border-color: red;
+}
+.input_style {
+  float: left;
+  width: 100%;
+  font-size: 16px;
+  color: #000000;
+  font-weight: 500;
+  font-family: "Futura Std";
+  height: 40px;
+  border-radius: 5px;
+  border: 1px solid #000000 !important;
+  outline: none;
+  padding: 4px 10px;
 }
 </style>
