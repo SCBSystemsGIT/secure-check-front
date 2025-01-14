@@ -95,7 +95,9 @@ watch(
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
-          <div class="popup-logo without_scan_cls" v-if="!isSuccess">
+
+
+          <div class="popup-logo with_scan_cls" v-if="isSuccess">
             <router-link 
               :to="{ name: 'RequestMeeting', params: { domain: domain } }"
             >
@@ -105,9 +107,6 @@ watch(
                 :alt="company?.logo"
             />
             </router-link>
-          </div>
-
-          <div class="popup-logo with_scan_cls" v-if="isSuccess">
             <router-link to="/">
               <img
                 :src="`${publicDir}/qrcode/qrcode-${uidn}.png`"
