@@ -236,6 +236,7 @@ onBeforeMount(async () => {
                   required
                 >
                   <option value="" disabled>Select a country</option>
+                  <option value="Côte d’ivoire">Côte d’ivoire</option>
                   <option value="Afghanistan">Afghanistan</option>
                   <option value="Albania">Albania</option>
                   <option value="Algeria">Algeria</option>

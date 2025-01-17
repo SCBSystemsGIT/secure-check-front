@@ -131,7 +131,7 @@ watch(
                 :to="{ name: 'CreateEvent', params: { domain: domain } }"
                 class="mt-2"
               >
-                Créer Event
+              Create Event
               </router-link>
 
               <router-link
@@ -205,7 +205,7 @@ watch(
                 :to="{ name: 'CreateQRCode', params: { domain: domain } }"
                 class="mt-2"
               >
-                + Création QRCode 
+              + QRCode creation
               </router-link>
               <!-- Add the Camera Button -->
               <router-link
@@ -230,7 +230,8 @@ watch(
                 :to="{ name: 'DisplayVisitorCode', params: { domain: domain } }"
                 class="mt-2"
               >
-              Lista de visitantes
+              
+            Liste des visiteurs
               </router-link>
               <router-link
                 v-if="
@@ -242,7 +243,7 @@ watch(
                 :to="{ name: 'DisplayEventAttendence', params: { domain: domain } }"
                 class="mt-2"
               >
-                asistencia al evento de la empresa
+              Participation à un événement d'entreprise
               </router-link>
             </div>
           </div>

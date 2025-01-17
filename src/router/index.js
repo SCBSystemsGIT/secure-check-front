@@ -22,6 +22,8 @@ import DisplayVisitorCodeView from "@/views/DisplayVisitorCodeView.vue";
 import CompanyListView from "@/views/CompanyListView.vue";
 import DisplayEventAttendenceView from "@/views/DisplayEventAttendenceView.vue";
 import ShowCompanyQRcodeView from "@/views/ShowCompanyQRcodeView.vue";
+import EmployeeListView from '@/views/EmployeeListView.vue';
+
 
 const routes = [
   {
@@ -125,6 +127,11 @@ const routes = [
     path: "/:domain/company-list",
     name: "CompanyList",
     component: CompanyListView,
+  },
+  {
+    path: '/company/:slug/',
+    name: 'EmployeeListView',
+    component: EmployeeListView,
   },
   {
     path: "/:domain/show-company-qrcode/:slug",

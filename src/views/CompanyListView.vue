@@ -247,6 +247,7 @@ export default {
             <th class="mdc-data-table__header-cell">Lien</th>
             <th class="mdc-data-table__header-cell">QRCode</th>
             <th class="mdc-data-table__header-cell">Logo</th>
+            <th class="mdc-data-table__header-cell">Employees</th>
             <th class="mdc-data-table__header-cell">Edit</th>
           </tr>
         </thead>
@@ -282,6 +283,9 @@ export default {
                 style="margin-top: 20px; margin-bottom: 20px"
                 :alt="log.logo"
               />
+            </td>
+            <td>
+              <router-link :to="{ name: 'EmployeeListView', params: { slug: log.slug } }">View</router-link>
             </td>
             <td class="mdc-data-table__cell">
               <!-- Navigate to the edit page with the company ID as a parameter -->

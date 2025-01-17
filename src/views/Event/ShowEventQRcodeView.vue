@@ -11,7 +11,7 @@ import html2canvas from "html2canvas";
 const userStore = useUserStore();
 const route = useRoute();
 const { showEvent, event } = useEvent();
-const { company, showCompany } = useCompanies();
+const {  showCompany } = useCompanies();
 
 const { publicDir } = useGlobalStore();
 const router = useRouter();
@@ -42,9 +42,8 @@ const captureDiv = () => {
       });
     });
 
-    // Capture après le chargement des images
     Promise.all(promises).then(() => {
-      html2canvas(capture.value, { useCORS: true }).then((canvas) => {
+      html2canvas(capture.value, { useCORS: true ,allowTaint: true, }).then((canvas) => {
         const imageData = canvas.toDataURL("image/png");
         image.value = imageData;
 
@@ -59,14 +58,10 @@ const captureDiv = () => {
   }
 };
 
-
-
 const { formatDate, formatTime } = useDate();
 const isAuthenticated = userStore.isAuthenticated();
 const domain = ref(route.params.domain || "scb");
 onMounted(() => {
-  // alert(route.params.slug)
-
   showEvent(route.params.slug);
   showCompany(domain.value);
 
@@ -83,197 +78,60 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="background-gradi request-meeting">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col col-12 col-md-12 col-sm-12 event-details event_details_main" ref="capture">
-          <div class="popup-logo">
-            <div>
-              
+  <section style="">
+    <div style="max-width: 700px; margin: auto; padding: 20px;">
+      <div>
+        <div style=" background: #37bbf0; border-radius: 10px; padding: 20px;" ref="capture">
+          <div>
+            <div style="display: flex; justify-content: space-between; color: #fff;">
+              <h3 style="font-size: 18px; margin: 0;">{{ formatTime(event?.time_event) }}</h3>
+              <h3 style="font-size: 22px; font-weight: 400; margin: 0; text-transform: capitalize;">{{ formatDate(event?.date_event) }}</h3>
             </div>
-            
-          
-
-            <!-- <div class="text-center py-2">
-              <h3>Nom : {{ event?.name }}</h3>
-              <h3>Lieu : {{ event?.location }}</h3>
-              <h3>Date : {{ formatDate(event?.date_event) }}</h3>
-              <h3>Heure : {{ formatTime(event?.time_event) }}</h3>
-            </div> -->
-            <div class="event_datetime">
-              <h3 class="event-title">{{ formatTime(event?.time_event) }}</h3>
-              <h3 class="event-title">{{ formatDate(event?.date_event) }}</h3>
-              
+            <div style="margin: 20px 0;">
+              <div style="margin-bottom: 17px; color: #fff;">
+                <b style="font-size: 18px;">Entreprise</b>
+                <h3 style="font-size: 16px; margin: 0;">{{ event?.company?.name }}</h3>
+              </div>
+              <div style="margin-bottom: 17px; color: #fff;">
+                <b style="font-size: 18px;">Event Name</b>
+                <h3 style="font-size: 16px; margin: 0;">{{ event?.name }}</h3>
+              </div>
+              <div style="margin-bottom: 17px; color: #fff;">
+                <b style="font-size: 18px;">Where</b>
+                <h3 style="font-size: 16px; margin: 0;">{{ event?.location }}</h3>
+              </div>
+              <div style="margin-bottom: 17px; color: #fff;">
+                <b style="font-size: 18px;">Ticket</b>
+                <h3 style="font-size: 16px; margin: 0;">Summit Registration</h3>
+              </div>
             </div>
-            <div class="event-details">
-              <div style="display:none;"> <b> Entreprise</b> <h3 class="event-title"> {{ company?.name }}</h3> </div>
-              <div> <b> Entreprise</b>  <h3 class="event-title">{{ event?.company?.name }}</h3> </div>
-              <div> <b> Event Name</b> <h3 class="event-title"> {{ event?.name }}</h3> </div>
-              <div> <b> Where </b> <h3 class="event-title"> {{ event?.location }}</h3> </div>
-              <div> <b> Ticket </b> <h3 class="event-title">Summit Registartion</h3> </div>
-            </div>
-            
-            <div>
+            <div style="text-align: center;">
               <router-link :to="`/${route.params.slug}`">
                 <img
                   :src="`${publicDir}/qrcode-link/qrcode-${route.params.slug}.png`"
-                  :class="route.params.slug"
                   :alt="route.params.slug"
+                  style="border-radius: 12px; margin-top: 50px;"
                 />
               </router-link>
             </div>
-
-            <img v-if="image" :src="image" alt="Captured Image" v-show="false" />
-
-            <div class="request-btn" @click="captureDiv" role="button">
-              <a>Capture </a>
+            <div style="margin-top: 20px; text-align: center;">
+              <div
+                style="background: #b92b00; color: #fff; border-radius: 10px; padding: 20px 100px; font-weight: 600; font-size: 20px; display: inline-block; cursor: pointer; margin-right: 5px;"
+                @click="captureDiv"
+              >
+                Capture
+              </div>
+              <div
+                v-if="isAuthenticated"
+                style="background: #007bff; color: #fff; border-radius: 10px; padding: 20px 100px; font-weight: 600; font-size: 20px; display: inline-block; cursor: pointer; margin-top: 10px;"
+                @click="goToMenu()"
+              >
+                Menu
+              </div>
             </div>
-
-            <div
-              class="request-btn"
-              @click="goToMenu()"
-              v-if="isAuthenticated"
-              role="button"
-            >
-              <a>Menu </a>
-            </div>
-
           </div>
         </div>
       </div>
     </div>
   </section>
 </template>
-
-<style scoped>
-.request-btn-cannel {
-  margin: 10px auto 0px auto;
-  display: inline-block;
-  text-align: center;
-  width: 100%;
-}
-.request-btn-cannel a {
-  background: #b92b00;
-  color: #ffffff;
-  border-radius: 10px;
-  padding: 20px 100px;
-  font-weight: 600;
-  overflow: hidden;
-  margin: 0 auto;
-  float: left;
-  width: 100%;
-  font-size: 20px;
-}
-
-.request-btn a {
-  /*background: #b92b00;*/
-  color: #ffffff;
-  border-radius: 10px;
-  padding: 20px 100px;
-  font-weight: 600;
-  overflow: hidden;
-  margin: 0 auto;
-  float: left;
-  width: 100%;
-  font-size: 20px;
-}
-
-.request-btn-cannel a:hover {
-  background: #000000;
-  color: #ffffff;
-}
-
-.event-details {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  /*background-color: #f9f9f9;*/
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.event-title {
-  font-size: 1.5rem;
-  color: #333;
-  margin: 10px 0;
-}
-
-.event-title:nth-child(even) {
-  color: #007bff; /* Accent color for alternating text */
-}
-
-.event-details h3 {
-  font-weight: normal;
-}
-
-.event-details h3:not(:last-child) {
-  /*border-bottom: 1px solid #ddd;*/
-  padding-bottom: 10px;
-}
-
-.event-details {
-  animation: fadeIn 1s ease-in-out;
-}
-
-.event-details {
-    background: #37bbf0 !IMPORTANT;
-}
-.event-details .popup-logo .event-details {
-    padding: 0;
-    box-shadow: none;
-    max-width: 100% !IMPORTANT;
-}
-.event_details_main {
-    position: unset !IMPORTANT;
-    transform: unset !IMPORTANT;
-    padding: 20px !important;
-}
-.event_datetime {
-    text-align: right;
-}
-.event_datetime h3.event-title {
-    color: #fff !IMPORTANT;
-    font-size: 18px;
-    margin: 0;
-    padding-bottom: 5px !important;
-}
-.event_datetime h3.event-title:last-child {
-    font-size: 22px !important;
-    font-weight: 400;
-    text-transform: capitalize;
-}
-.event_details_main .popup-logo .event-details div {
-    text-align: left;
-    color: #ffff;
-    margin-bottom: 17px;
-}
-.event_details_main .popup-logo .event-details div b {
-    font-size: 18px;
-}
-.event_details_main .popup-logo .event-details div h3 {
-    color: #fff;
-    font-size: 16px;
-    margin: 0;
-}
-.event_details_main .popup-logo a img {
-    border-radius: 12px;
-    margin-top: 50px;
-}
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.logo_qr {
-  height: 7rem !important;
-  width: 8rem !important;
-  margin-bottom: 22px;
-}
-</style>
