@@ -33,6 +33,8 @@ const companyReq = ref({
   company_field: "",
   country: "",
   city: "",
+  state: "",
+  title: "",
   address: "",
   zipcode: "",
 });
@@ -70,14 +72,25 @@ watch(statusCode, (newStatus) => {
     case 201:
       toast.success("Entreprise créé avec succès.");
       setTimeout(() => {
-        router.push("/menu");
+        router.push({
+          name: "Menu",
+          params: {
+            domain: domain.value,
+          },
+        });
       }, 1500);
 
       break;
     case 200:
       toast.success("Entreprise créé avec succès.");
       setTimeout(() => {
-        router.push("/menu");
+        // router.push("/");
+        router.push({
+          name: "Menu",
+          params: {
+            domain: domain.value,
+          },
+        });
       }, 1500);
 
       break;
@@ -107,7 +120,7 @@ watch(statusCode, (newStatus) => {
 });
 
 const route = useRoute();
-const domain = ref(route.params.domain || "scb");
+const domain = ref(route.params.domain || "scb-systems-africa");
 const goToMenu = () => {
   router.push({
     name: "Menu",
@@ -168,17 +181,7 @@ onBeforeMount(async () => {
               </div>
 
               <div>
-                <label for="address">Address</label><br />
-                <input
-                  type="text"
-                  id="address"
-                  v-model="companyReq.address"
-                  required
-                /><br />
-              </div>
-              
-              <div>
-                <label for="id_number">ID Number</label><br />
+                <label for="id_number">Numéro d’identification</label><br />
                 <input
                   type="text"
                   id="id_number"
@@ -186,47 +189,54 @@ onBeforeMount(async () => {
                   required
                 /><br />
               </div>
+              <div>
+                <label for="number_of_employee">Nombre d’employés</label><br />
+                <select
+                  v-model="companyReq.number_of_employee"
+                  id="number_of_employee"
+                  name="number_of_employee"
+                  class="input_style"
+                >
+                  <option value="0-5">0-5</option>
+                  <option value="6-10">6-10</option>
+                  <option value="11-50">11-50</option>
+                  <option value="51-100">51-100</option>
+                  <option value="101-1000">101-1000</option>
+                  <option value="+1000">+1000</option>
+
+                  </select
+                ><br />
+              </div>
 
               <div>
-                <label for="point_contact">Point of Contact</label><br />
+                <label for="address">Adresse</label><br />
                 <input
                   type="text"
-                  id="point_contact"
-                  v-model="companyReq.point_contact"
+                  id="address"
+                  v-model="companyReq.address"
                   required
                 /><br />
               </div>
 
               <div>
-                <label for="email">Email</label><br />
-                <input
-                  type="email"
-                  id="email"
-                  v-model="companyReq.email"
-                  required
-                /><br />
-              </div>
-
-              <div>
-                <label for="phone_number">Phone number</label><br />
+                <label for="city">City</label><br />
                 <input
                   type="text"
-                  id="phone_number"
-                  v-model="companyReq.phone_number"
+                  id="city"
+                  v-model="companyReq.city"
+                  required
+                /><br />
+              </div>
+              <div>
+                <label for="state">Région/État</label><br />
+                <input
+                  type="text"
+                  id="state"
+                  v-model="companyReq.state"
                   required
                 /><br />
               </div>
 
-              <div>
-                <label for="company_field">Company Field or Industry</label><br />
-                <input
-                  type="text"
-                  id="company_field"
-                  v-model="companyReq.company_field"
-                  required
-                /><br />
-              </div>
-            
               <div>
                 <label for="country">Country</label><br />
                 <select
@@ -434,43 +444,61 @@ onBeforeMount(async () => {
                 </select><br />
               </div>
 
-
-              <div>
-                <label for="city">City</label><br />
-                <input
-                  type="text"
-                  id="city"
-                  v-model="companyReq.city"
-                  required
-                /><br />
-              </div>
-
-              <div>
-                <label for="number_of_employee">Number of employee</label><br />
-                <select
-                  v-model="companyReq.number_of_employee"
-                  id="number_of_employee"
-                  name="number_of_employee"
-                  class="input_style"
-                >
-                  <option value="0-5">0-5</option>
-                  <option value="6-10">6-10</option>
-                  <option value="11-50">11-50</option>
-                  <option value="51-100">51-100</option>
-                  <option value="101-1000">101-1000</option>
-                  <option value="+1000">+1000</option>
-
-                  </select
-                ><br />
-              </div>
-
-
               <div>
                 <label for="zipcode">Zip Code </label><br />
                 <input
                   type="zipcode"
                   id="zipcode"
                   v-model="companyReq.zipcode"
+                  required
+                /><br />
+              </div>
+
+              <div>
+                <label for="company_field">Company Field or Industry</label><br />
+                <input
+                  type="text"
+                  id="company_field"
+                  v-model="companyReq.company_field"
+                  required
+                /><br />
+              </div>
+              
+              <div>
+                <label for="point_contact">Point of Contact</label><br />
+                <input
+                  type="text"
+                  id="point_contact"
+                  v-model="companyReq.point_contact"
+                  required
+                /><br />
+              </div>
+
+              <div>
+                <label for="title">Titre</label><br />
+                <input
+                  type="text"
+                  id="title"
+                  v-model="companyReq.title"
+                  required
+                /><br />
+              </div>
+              <div>
+                <label for="email">Email</label><br />
+                <input
+                  type="email"
+                  id="email"
+                  v-model="companyReq.email"
+                  required
+                /><br />
+              </div>
+
+              <div>
+                <label for="phone_number">Phone number</label><br />
+                <input
+                  type="text"
+                  id="phone_number"
+                  v-model="companyReq.phone_number"
                   required
                 /><br />
               </div>

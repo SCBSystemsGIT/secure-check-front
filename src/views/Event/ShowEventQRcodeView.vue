@@ -11,7 +11,7 @@ import html2canvas from "html2canvas";
 const userStore = useUserStore();
 const route = useRoute();
 const { showEvent, event } = useEvent();
-const {  showCompany } = useCompanies();
+const { showCompany, company } = useCompanies();
 
 const { publicDir } = useGlobalStore();
 const router = useRouter();
@@ -43,7 +43,14 @@ const captureDiv = () => {
     });
 
     Promise.all(promises).then(() => {
-      html2canvas(capture.value, { useCORS: true ,allowTaint: true, }).then((canvas) => {
+      html2canvas(capture.value, {
+        useCORS: true,
+        allowTaint: true,
+        ignoreElements: (element) => {
+          // Ignore elements with the class 'capture-button' and 'menu-button'
+          return element.classList.contains("capture-button") || element.classList.contains("menu-button");
+        },
+      }).then((canvas) => {
         const imageData = canvas.toDataURL("image/png");
         image.value = imageData;
 
@@ -60,7 +67,7 @@ const captureDiv = () => {
 
 const { formatDate, formatTime } = useDate();
 const isAuthenticated = userStore.isAuthenticated();
-const domain = ref(route.params.domain || "scb");
+const domain = ref(route.params.domain || "scb-systems-africa");
 onMounted(() => {
   showEvent(route.params.slug);
   showCompany(domain.value);
@@ -83,15 +90,35 @@ onMounted(() => {
       <div>
         <div style=" background: #37bbf0; border-radius: 10px; padding: 20px;" ref="capture">
           <div>
-            <div style="display: flex; justify-content: space-between; color: #fff;">
-              <h3 style="font-size: 18px; margin: 0;">{{ formatTime(event?.time_event) }}</h3>
-              <h3 style="font-size: 22px; font-weight: 400; margin: 0; text-transform: capitalize;">{{ formatDate(event?.date_event) }}</h3>
+            <div>
+              <router-link 
+                :to="{ name: 'RequestMeeting', params: { domain: domain } }"
+              >
+                <img
+                    class="logo logo12333"
+                    :src="`${publicDir}/logo/${company?.logo}`"
+                    :alt="company?.logo"
+                />
+              </router-link>
+            </div>
+            <div style="
+              justify-content: flex-end; 
+              color: #fff;
+              padding: 10px;
+              gap: 10px;
+            ">
+              <h3 style="font-size: 18px; margin: 0; text-align: right;">
+                {{ formatTime(event?.time_event) }}
+              </h3>
+              <h3 style="font-size: 22px; font-weight: 400; margin: 0; text-transform: capitalize; text-align: right;">
+                {{ formatDate(event?.date_event) }}
+              </h3>
             </div>
             <div style="margin: 20px 0;">
-              <div style="margin-bottom: 17px; color: #fff;">
+              <!-- <div style="margin-bottom: 17px; color: #fff;">
                 <b style="font-size: 18px;">Entreprise</b>
                 <h3 style="font-size: 16px; margin: 0;">{{ event?.company?.name }}</h3>
-              </div>
+              </div> -->
               <div style="margin-bottom: 17px; color: #fff;">
                 <b style="font-size: 18px;">Event Name</b>
                 <h3 style="font-size: 16px; margin: 0;">{{ event?.name }}</h3>
@@ -115,7 +142,9 @@ onMounted(() => {
               </router-link>
             </div>
             <div style="margin-top: 20px; text-align: center;">
+              <!-- Add a class to the capture button to exclude it -->
               <div
+                class="capture-button"
                 style="background: #b92b00; color: #fff; border-radius: 10px; padding: 20px 100px; font-weight: 600; font-size: 20px; display: inline-block; cursor: pointer; margin-right: 5px;"
                 @click="captureDiv"
               >
@@ -123,6 +152,7 @@ onMounted(() => {
               </div>
               <div
                 v-if="isAuthenticated"
+                class="menu-button"
                 style="background: #007bff; color: #fff; border-radius: 10px; padding: 20px 100px; font-weight: 600; font-size: 20px; display: inline-block; cursor: pointer; margin-top: 10px;"
                 @click="goToMenu()"
               >

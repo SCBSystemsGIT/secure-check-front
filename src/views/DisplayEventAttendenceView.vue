@@ -8,7 +8,7 @@ export default {
   setup() {
     const router = useRouter();
     const route = useRoute();
-    const domain = ref(route?.params?.domain || "scb");
+    const domain = ref(route?.params?.domain || "scb-systems-africa");
     const eventAttendence = ref([]); // Flattened list of all visitors
     const message = ref("");
     const error = ref(null);

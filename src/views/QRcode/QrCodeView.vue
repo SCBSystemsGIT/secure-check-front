@@ -18,7 +18,7 @@ const isSuccess = ref(false);
 
 const { showCompany, company } = useCompanies();
 const company_slug = ref(localStorage.getItem("currentCompany"));
-const domain = ref(route.params.domain || "scb");
+const domain = ref(route.params.domain || "scb-systems-africa");
 const goToMenu = () => {
   router.push({
     name: "Menu",

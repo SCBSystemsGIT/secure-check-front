@@ -49,7 +49,7 @@ const showUserEvent = ref(false);
 
 const router = useRouter();
 const route = useRoute();
-const domain = ref(route.params.domain || "scb");
+const domain = ref(route.params.domain || "scb-systems-africa");
 
 const showVisitors = (slug) => {
   router.push({

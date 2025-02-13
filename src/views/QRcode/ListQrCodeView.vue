@@ -77,7 +77,7 @@ const roles = ref(JSON.parse(localStorage.getItem("userInfo")) || {});
 const userStore = useUserStore();
 const currentRole = ref(roles?.value?.roles ? roles.value.roles[0] : "");
 
-const domain = ref(route.params.domain || "scb");
+const domain = ref(route.params.domain || "scb-systems-africa");
 onMounted(async () => {
   // console.log({ req: typeof requests.value });
 
@@ -121,11 +121,14 @@ onMounted(async () => {
     <div class="d-flex justify-content-center py-3">
       <ui-table
         :data="paginatedRequests"
-        :thead="['Visiteur', 'Host', 'Statut', 'Date Création', 'Action']"
+        :thead="['Visiteur', 'Email', 'Contact', 'Host', 'Statut', 'Date Création', 'Action']"
         :tbody="[
           {
             slot: 'visitor',
           },
+          { slot: 'email' },
+
+          { slot: 'contact' },
           'host',
           { slot: 'confirmed' },
           {
@@ -140,6 +143,14 @@ onMounted(async () => {
         <template #visitor="{ data }">
           {{ data.visitor.firstname }}
           {{ data.visitor.lastname }}
+        </template>
+
+        <template #email="{ data }">
+          {{ data.visitor.email }}
+        </template>
+
+        <template #contact="{ data }">
+          {{ data.visitor.contact }}
         </template>
 
         <template #request_date="{ data }">

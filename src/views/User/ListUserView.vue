@@ -25,7 +25,7 @@ const thead = ref(["ID", "Nom", "Email" /*, "Role"*/]);
 const tbody = ref(["id", "name", "email" /*, "role"*/]);
 
 const route = useRoute();
-const domain = ref(route.params.domain || "scb");
+const domain = ref(route.params.domain || "scb-systems-africa");
 const goToMenu = () => {
   router.push({
     name: "Menu",

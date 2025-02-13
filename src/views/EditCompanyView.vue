@@ -5,6 +5,7 @@ import { useCompanies } from "@/services/useCompanies";
 import { toast } from "vue3-toastify";
 
 const companyReq = ref({
+  id: "",
   name: "",
   number_of_employee: "",
   email: "",
@@ -42,7 +43,7 @@ watch(statusCode, (newStatus) => {
     case 200:
       toast.success("Entreprise mise à jour avec succès.");
       setTimeout(() => {
-        router.push("/menu/company-list");
+        router.push("/");
       }, 1500);
       break;
     case 400:
@@ -79,7 +80,7 @@ onBeforeMount(async () => {
 const submitForm = async () => {
   try {
     if (route?.params?.company_edit) {
-    await updateCompany(companyReq.value,route.params.company_edit);
+    await updateCompany(companyReq.value,companyReq.value.id);
   }
   } catch (error) {
     errorMessage.value = `Erreur: ${error.message}`;
@@ -122,6 +123,8 @@ const goToMenu = () => {
                   id="name"
                   v-model="companyReq.name"
                   required
+                  readonly
+                  disabled
                 /><br />
               </div>
 

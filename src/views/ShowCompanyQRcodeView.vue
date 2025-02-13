@@ -11,7 +11,7 @@ export default {
   setup() {
     const router = useRouter();
     const route = useRoute();
-    const domain = ref(route?.params?.domain || "scb");
+    const domain = ref(route?.params?.domain || "scb-systems-africa");
     const companyList = ref([]);  // Initialize companyList as an empty array
     const message = ref("");
     const error = ref(null);
@@ -107,11 +107,10 @@ export default {
 <template>
   <div class="container">
     <div data-v-3f0f1f51="" class="row align-items-center">
-      <div data-v-3f0f1f51="" class="col col-12 col-md-12 col-sm-12 event-details event_details_main">
+      <div data-v-3f0f1f51="" class="col col-12 col-md-12 col-sm-12 event-details event_details_main event_popup">
         <div data-v-3f0f1f51="" class="popup-logo">
           <div data-v-3f0f1f51=""><!--v-if--></div>
           <div class="event-details" v-for="(company, index) in companyList" :key="index">
-            <div data-v-3f0f1f51=""><b data-v-3f0f1f51=""> Id</b> <h3 data-v-3f0f1f51="" class="event-title">{{ company.id }}</h3></div>
             <div data-v-3f0f1f51=""><b data-v-3f0f1f51=""> Nom de l'entreprise</b> <h3 data-v-3f0f1f51="" class="event-title">{{ company.name }}</h3></div>
             <div data-v-3f0f1f51=""><b data-v-3f0f1f51=""> Description</b> <h3 data-v-3f0f1f51="" class="event-title">{{ company.description }}</h3></div>
             <div data-v-3f0f1f51=""><b data-v-3f0f1f51=""> Limace </b> <h3 data-v-3f0f1f51="" class="event-title">{{ company.slug }}</h3></div>

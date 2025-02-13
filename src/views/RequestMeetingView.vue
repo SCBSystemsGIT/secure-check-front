@@ -1,7 +1,5 @@
 <script setup>
 import { useCompanies } from "@/services/useCompanies";
-// import { useUserInfo } from "@/services/useUserInfo";
-import { useGlobalStore } from "@/stores/globalStore";
 import { useUserStore } from "@/stores/useUserStore";
 import { EventBus } from "@/utils/eventBus";
 import { onBeforeMount, ref } from "vue";
@@ -14,39 +12,26 @@ const { showCompany, company } = useCompanies();
 
 const route = useRoute();
 const router = useRouter();
-const { publicDir } = useGlobalStore();
 
 const sendData = (params, valueAdded) => {
-  console.info({
-    params: params,
-    valueAdded: valueAdded,
-  });
+  console.info({ params, valueAdded });
   EventBus[params] = valueAdded;
 };
 
 const domain = ref();
 onBeforeMount(async () => {
-  domain.value = route.params.domain || "scb";
+  domain.value = route.params.domain || "scb-systems-africa";
   sendData("company_slug", domain.value);
 
-  // alert(userStore.isSupervisor(currentRole.value))
   localStorage.setItem("currentCompany", domain.value);
   let company_slug = localStorage.getItem("currentCompany");
-  let token = localStorage.getItem("token");
-  console.log(token);
+  
   if (company_slug) {
     await showCompany(company_slug ?? domain.value);
-  } else {
-    company_slug = "";
   }
 
   if (domain.value) {
-    router.push({
-      name: "RequestMeeting",
-      params: {
-        domain: domain.value,
-      },
-    });
+    router.push({ name: "RequestMeeting", params: { domain: domain.value } });
   }
 
   localStorage.setItem(
@@ -57,7 +42,7 @@ onBeforeMount(async () => {
       "ROLE_SUPERVISOR",
       "ROLE_ADMIN",
       "ROLE_SUPER_ADMIN",
-      "ROLE_SecureCheck" 
+      "ROLE_SecureCheck",
     ])
   );
 });
@@ -69,46 +54,28 @@ onBeforeMount(async () => {
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
           <div class="popup-logo">
-            <router-link to="/" v-if="!company_slug && !company"
-              ><img
-                src="@/assets/secure-check-logo.png"
-                alt="secure-check-logo"
-            /></router-link>
-
-            <!-- v-else-if="company_slug" -->
-            <router-link to="/" v-if="domain && company"
-              ><img
-                :src="`${publicDir}/logo/${company?.logo}`"
-                :alt="company.slug"
-            /></router-link>
+            <router-link to="/" v-if="!company_slug && !company">
+              <img src="@/assets/secure-check-logo.png" alt="secure-check-logo" />
+            </router-link>
           </div>
           <div>
-            <div class="request-btn" v-if="userStore.isEmployee(currentRole)||userStore.isAdmin(currentRole)||userStore.isManager(currentRole)">
-                <router-link :to="{ name: 'CreateVisitor', params: { domain: domain } }">
-                  Request-meeting
-                </router-link>
+            <div class="request-btn" v-if="userStore.isEmployee(currentRole) || userStore.isAdmin(currentRole) || userStore.isManager(currentRole)">
+              <router-link :to="{ name: 'CreateVisitor', params: { domain: domain } }">
+                Request-meeting
+              </router-link>
             </div>
             <div class="request-btn" v-else-if="userStore.isSupervisor(currentRole)"></div>
             <div class="request-btn" v-else-if="userStore.isSecureCheck(currentRole)"></div>
             <div class="request-btn" v-else>
               <router-link :to="{ name: 'CreateVisitor', params: { domain: domain } }">
-                  Request-meeting
+                Request-meeting
               </router-link>
             </div>
           </div>
-          <div
-            class="request-btn"
-            v-if="
-              userStore.isEmployee(currentRole) ||
-              userStore.isAdmin(currentRole) ||
-              userStore.isManager(currentRole)||
-              userStore.isSupervisor(currentRole)||
-              userStore.isSecureCheck(currentRole)
-            "
-          >
-            <router-link :to="{ name: 'Menu', params: { domain: domain } }"
-              >Menu</router-link
-            >
+          <div class="request-btn" v-if="userStore.isEmployee(currentRole) || userStore.isAdmin(currentRole) || userStore.isManager(currentRole) || userStore.isSupervisor(currentRole) || userStore.isSecureCheck(currentRole)">
+            <router-link :to="{ name: 'Menu', params: { domain: domain } }">
+              Menu
+            </router-link>
           </div>
         </div>
       </div>

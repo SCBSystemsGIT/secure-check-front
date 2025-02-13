@@ -71,7 +71,7 @@ watch(statusCode, (newStatus) => {
 });
 
 const route = useRoute();
-const domain = ref(route.params.domain || "scb");
+const domain = ref(route.params.domain || "scb-systems-africa");
 const goToMenu = () => {
   router.push({
     name: "Menu",
@@ -81,7 +81,8 @@ const goToMenu = () => {
   });
 };
 
-const { showCompany, company } = useCompanies();
+// const { showCompany, company } = useCompanies();
+const { showCompany } = useCompanies();
 
 onBeforeMount(async () => {
   // Extraire l'hôte (domaine + port)
@@ -172,7 +173,7 @@ onBeforeMount(async () => {
                       userStore.isSecureCheck(currentRole)
                     "
                   >
-                    Utilisateur
+                  Employee 
                   </option>
 
                   <option
@@ -184,7 +185,7 @@ onBeforeMount(async () => {
                       userStore.isSecureCheck(currentRole)
                     "
                   >
-                    Employé
+                    Employé (Front Desk)
                   </option>
 
                   <option
@@ -217,6 +218,7 @@ onBeforeMount(async () => {
                   <option
                     value="ROLE_ADMIN"
                     v-if="userStore.isAdmin(currentRole)"
+
                   >
                     Admin
                   </option>
@@ -224,7 +226,6 @@ onBeforeMount(async () => {
                    value="ROLE_SUPER_ADMIN"
                    v-if="
                       userStore.isAdmin(currentRole) ||
-                      userStore.isSupervisor(currentRole) ||
                       userStore.isManager(currentRole)
                     "
                   
@@ -235,7 +236,6 @@ onBeforeMount(async () => {
               <div>
                 <label for="company">Entreprise</label><br />
                 <select
-                  v-if="company?.slug == 'scb'"
                   v-model="user.company_id"
                   id="company"
                   name="company"
@@ -250,12 +250,12 @@ onBeforeMount(async () => {
                   </option>
                 </select>
 
-                <input
+                <!-- <input
                   v-else-if="!(company?.name)"
                   type="text"
                   id="name"
                   :value="company?.name"
-                />
+                /> -->
                 <!-- <br v-if="company" /> -->
               </div>
 

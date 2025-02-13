@@ -29,7 +29,7 @@ const router = useRouter();
 const route = useRoute();
 const loading = ref(false);
 
-const domain = ref(route.params.domain || "scb");
+const domain = ref(route.params.domain || "scb-systems-africa");
 const goToMenu = () => {
   router.push({
     name: "Menu",

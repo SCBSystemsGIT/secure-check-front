@@ -1,17 +1,20 @@
 // src/composables/useCreateQR.js
 import { ref } from 'vue';
-import axios from 'axios';
+import apiClient from "@/plugins/axios";
 
 export function useCreateQR() {
   const qrResponse = ref(null);
   const error = ref(null);
   const statusCode = ref(null);
 
-  const createQR = async (email, type) => {
+  const createQR = async (email, type, firstname , lastname ,contact) => {
     try {
-      const response = await axios.post('https://www.securecheck.info/api/create-qr', {
+      const response = await apiClient.post('/create-qr', {
         email: email,
-        type: type
+        type: type,
+        firstname: firstname,
+        lastname: lastname,
+        contact: contact
       }, {
         headers: {
           'Content-Type': 'application/json'

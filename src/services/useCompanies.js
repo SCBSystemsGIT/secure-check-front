@@ -69,7 +69,7 @@ export function useCompanies() {
       formData.append("city", data.city);
       formData.append("number_of_employee", data.number_of_employee);
       formData.append("zipcode", data.zipcode);
-      formData.append("logo", data.logo); // Assurez-vous que `data.logo` est un fichier (Blob)
+      formData.append("logo", data.logo);
 
       // Send the FormData object
       const response = await apiClient.post(`/company/${id}`, formData, {
@@ -104,6 +104,8 @@ export function useCompanies() {
       formData.append("company_field", data.company_field);
       formData.append("country", data.country);
       formData.append("city", data.city);
+      formData.append("state", data.state);
+      formData.append("title", data.title);
       formData.append("number_of_employee", data.number_of_employee);
       formData.append("zipcode", data.zipcode);
       formData.append("logo", data.logo); // Assurez-vous que `data.logo` est un fichier (Blob)

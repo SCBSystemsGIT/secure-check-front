@@ -1,7 +1,7 @@
 <script setup>
 import { useNavigation } from "@/composables/useNavigation";
 import { useCompanies } from "@/services/useCompanies";
-import { useGlobalStore } from "@/stores/globalStore";
+// import { useGlobalStore } from "@/stores/globalStore";
 import { EventBus } from "@/utils/eventBus";
 import { watch } from "vue";
 import { onBeforeMount /*ref*/ } from "vue";
@@ -11,8 +11,10 @@ import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 // import { toast } from "vue3-toastify";
 
-const { publicDir } = useGlobalStore();
-const { showCompany, company } = useCompanies();
+// const { publicDir } = useGlobalStore();
+// const { showCompany, company } = useCompanies();
+const { showCompany } = useCompanies();
+
 const company_slug = ref(localStorage.getItem("currentCompany"));
 const route = useRoute();
 const router = useRouter();
@@ -32,7 +34,7 @@ const submitForm = async () => {
   }
 };
 
-const domain = ref(route.params.domain || "scb");
+const domain = ref(route.params.domain || "scb-systems-africa");
 const goToMenu = () => {
   router.push({
     name: "Menu",
@@ -84,14 +86,14 @@ watch(
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
-          <div class="popup-logo" v-if="!isSuccess">
+          <!-- <div class="popup-logo" v-if="!isSuccess">
             <router-link to="/">
               <img
                 class="logo logo12333"
                 :src="`${publicDir}/logo/${company?.logo}`"
                 :alt="company?.logo"
             /></router-link>
-          </div>
+          </div> -->
 
           <div class="popup-logo" v-if="isSuccess">
             <div class="text-center py-2">

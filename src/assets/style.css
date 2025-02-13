@@ -321,6 +321,49 @@ section.background-gradi.request-meeting.meeting-form {height: 100%;}
     box-shadow: none;
 }
 
+.event_popup {
+    max-width: 700px;
+    margin: 30px auto;
+    background: rgb(55, 187, 240);
+    border-radius: 10px;
+    padding: 20px;
+}
+.event_popup .event-details > div:nth-child(1) {
+    display: flex;
+    gap: 11px;
+    align-items: center;
+}
+.event_popup .event-details div {
+    margin-bottom: 17px;
+    color: rgb(255, 255, 255);
+}
+.event_popup .event-details div b {
+    font-size: 20px;
+}
+.event_popup .event-details h3.event-title {
+    font-size: 18px;
+    font-weight: 500;
+}
+.event_popup .event-detailssss {
+    text-align: center;
+}
+.event_popup .event-detailssss img.logo_qr {
+    border-radius: 12px;
+    margin-top: 50px;
+    width: 46%;
+    height: 100%;
+}
+.selectcheck-all .mb-4.gap-3.align-items-center {
+    display: unset !IMPORTANT;
+}
+
+.selectcheck-all .mb-4.gap-3.align-items-center button.back {
+    float: left;
+}
+.selectcheck-all .mb-4.gap-3.align-items-center h5 {
+    margin-top: 10px;
+}
+
 @media (min-width: 0px) and (max-width: 567px) {
 .request-meeting .row.align-items-center  .col.col-12.col-md-12.col-sm-12 { max-width: 90% !important; }
 .request-btn a { padding: 20px; }

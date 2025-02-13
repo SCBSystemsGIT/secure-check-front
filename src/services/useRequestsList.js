@@ -23,7 +23,6 @@ export function useRequestsList() {
     loading.value = true;
     try {
       const response = await apiClient.get("/requests/list/" + slug);
-
       console.log({ response: response.data });
 
       requests.value = response.data;

@@ -61,20 +61,26 @@ onMounted(() => {
       <div class="row align-items-center">
         <div class="col col-6 col-md-6 top-bar-left">
           <div>
-            <router-link to="/" v-if="route.params.domain == 'scb'"
+            <router-link to="/" v-if="route.params.domain == 'scb-systems-africa'"
               ><img
                 id="logoif" src="@/assets/secure-check-logo.png"
                 class=""
                 alt="secure-check-logo"
             /></router-link>
 
-            <router-link
+            <router-link to="/" v-else 
+              ><img
+                :src="`${publicDir}/logo/${company?.logo}`"
+                :alt="company_slug"
+            /></router-link>
+
+            <!-- <router-link
               :to="`/${company_slug ?? ''}`" v-else
               ><img
                 src="@/assets/secure-check-logo.png"
                 class="logo12333"
                 id ="testelse" alt="secure-check-logo"
-            /></router-link>
+            /></router-link> -->
           </div>
         </div>
         <div class="col col-6 col-md-6 top-bar-right">
@@ -116,9 +122,10 @@ onMounted(() => {
             </router-link>
 
             <router-link
-              :to="`/${company_slug ?? 'scb'}/edit-company/${company_slug}`"
+              :to="`/${company_slug ?? 'scb-systems-africa'}/edit-company/${company_slug}`"
               class="login-button"
-              v-if="userStore.isManager(currentRole)"
+              v-if="userStore.isManager(currentRole) ||
+                    userStore.isSupervisor(currentRole)"
             >
               Modifier Entreprise
             </router-link>

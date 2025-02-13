@@ -10,6 +10,7 @@ import { onBeforeMount /*ref*/ } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 import { useGlobalStore } from "@/stores/globalStore";
+import html2canvas from "html2canvas";
 
 const userStore = useUserStore();
 const route = useRoute();
@@ -21,12 +22,12 @@ const request = ref({
 
 const { publicDir } = useGlobalStore();
 const { showCompany, company } = useCompanies();
+// const { showCompany } = useCompanies();
 const company_slug = ref(localStorage.getItem("currentCompany"));
 const { isLoading, error, uidn, updateRequest } = useUpdateRequest();
 
 const router = useRouter();
 const goToMenu = () => {
-
   router.push({
     name: "Menu",
     params: {
@@ -34,7 +35,6 @@ const goToMenu = () => {
       id: route.params.id,
     },
   });
-
 };
 
 const isAuthenticated = userStore.isAuthenticated();
@@ -43,7 +43,7 @@ const submitForm = async (state) => {
   request.value.confirmed = state;
 
   try {
-    await updateRequest(route.params.id, request.value); // Remplacez 1 par l'ID réel de la demande
+    await updateRequest(route.params.id, request.value); // Replace with the actual request ID
     toast.success("Mise à jour éffectué");
     isSuccess.value = true;
   } catch (err) {
@@ -52,7 +52,7 @@ const submitForm = async (state) => {
   }
 };
 
-const domain = ref(route.params.domain || "scb");
+const domain = ref(route.params.domain || "scb-systems-africa");
 onMounted(() => {
   if (domain.value) {
     router.push({
@@ -65,9 +65,9 @@ onMounted(() => {
 });
 
 onBeforeMount(async () => {
-  // Extraire l'hôte (domaine + port)
+  // Extract host (domain + port)
   console.log("Host:", window.location.host);
-  // Extraire le chemin (path)
+  // Extract path
   console.log("Path:", window.location.pathname);
 
   if (window.location.pathname != "/sign-in") {
@@ -79,9 +79,46 @@ onBeforeMount(async () => {
   }
 });
 
+const capture = ref(null);
+const image = ref(null);
 
+const captureDiv = () => {
+  if (capture.value) {
+    const images = capture.value.querySelectorAll('img');
+    const promises = Array.from(images).map((img) => {
+      return new Promise((resolve) => {
+        if (img.complete) {
+          resolve();
+        } else {
+          img.onload = resolve;
+          img.onerror = resolve;
+        }
+      });
+    });
 
-// const distantData = ref();
+    Promise.all(promises).then(() => {
+      html2canvas(capture.value, {
+        useCORS: true,
+        allowTaint: true,
+        ignoreElements: (element) => {
+          // Exclude "Capture" and "Menu" buttons
+          return element.classList.contains("capture-button") || element.classList.contains("menu-button");
+        },
+      }).then((canvas) => {
+        const imageData = canvas.toDataURL("image/png");
+        image.value = imageData;
+
+        const link = document.createElement("a");
+        link.href = imageData;
+        link.download = `meeting-${domain.value}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+    });
+  }
+};
+
 watch(
   () => EventBus["company_slug"],
   async (newValue) => {
@@ -95,17 +132,15 @@ watch(
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
-
-
-          <div class="popup-logo with_scan_cls" v-if="isSuccess">
+          <div class="popup-logo with_scan_cls" v-if="isSuccess" ref="capture">
             <router-link 
               :to="{ name: 'RequestMeeting', params: { domain: domain } }"
             >
-            <img
-                class="logo logo12333"
-                :src="`${publicDir}/logo/${company?.logo}`"
-                :alt="company?.logo"
-            />
+              <img
+                  class="logo logo12333"
+                  :src="`${publicDir}/logo/${company?.logo}`"
+                  :alt="company?.logo"
+              />
             </router-link>
             <router-link to="/">
               <img
@@ -117,16 +152,23 @@ watch(
 
             <div class="text-center py-2">
               <h3>{{ uidn }}</h3>
-              <!-- <h3>QRCode Généré</h3> -->
             </div>
 
             <div
-              class="request-btn"
+              class="request-btn menu-button"
               @click="goToMenu()"
               v-if="isAuthenticated"
               role="button"
             >
               <a>Menu </a>
+            </div>
+            <div
+              class="request-btn capture-button"
+              @click="captureDiv"
+              v-if="isAuthenticated"
+              role="button"
+            >
+              <a>Capture </a>
             </div>
 
             <div v-else>
@@ -137,7 +179,7 @@ watch(
           <div v-if="!isSuccess">
             <div class="d-flex justify-content-center align-items-center">
               <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
-                  <button class="back" @click="goToMenu"> Retour </button>
+                <a class="back" :href="`/${company_slug}/list-qrcode`">Retour</a>
                   <h3 style="display:block ruby" class="text-center py-3">  En attente de la confirmation de l'hôte ... </h3>
               </div>
             </div>
@@ -184,7 +226,6 @@ watch(
 }
 
 .request-btn a {
-  /*background: #b92b00;*/
   color: #ffffff;
   border-radius: 10px;
   padding: 20px 100px;
@@ -201,14 +242,14 @@ watch(
   color: #ffffff;
 }
 .popup-logo.with_scan_cls {
-	background: #37bbf0 ! IMPORTANT;
-	position: unset ! IMPORTANT;
-	transform: unset ! IMPORTANT;
-	padding: 40px 20px !important;
-	border-radius: 15px;
+  background: #37bbf0 !important;
+  position: unset !important;
+  transform: unset !important;
+  padding: 40px 20px !important;
+  border-radius: 15px;
 }
 .popup-logo.with_scan_cls img {
-	border-radius: 12px;
-	margin-top: 20px;
+  border-radius: 12px;
+  margin-top: 20px;
 }
 </style>

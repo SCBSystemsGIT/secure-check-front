@@ -8,7 +8,7 @@ export default {
   setup() {
     const router = useRouter();
     const route = useRoute();
-    const domain = ref(route?.params?.domain || "scb");
+    const domain = ref(route?.params?.domain || "scb-systems-africa");
     const visitorLogs = ref([]);
     const message = ref("");
     const error = ref(null);
@@ -80,6 +80,7 @@ export default {
         <thead>
           <tr>
             <th>Visitor Id</th>
+            <th>Visitor Name</th>
             <th>Visitor Email</th>
             <th>Created At</th>
             <th>Check In</th>
@@ -89,6 +90,7 @@ export default {
         <tbody>
           <tr v-for="log in visitorLogs" :key="log.id">
             <td>{{ log.visitor_id }}</td>
+            <td>{{ log.visitor_name }}</td>
             <td>{{ log.visitor_email }}</td>
             <td>{{ log.created_at }}</td>
             <td>{{ log.check_in_time }}</td>

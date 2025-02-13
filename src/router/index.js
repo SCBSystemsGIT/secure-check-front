@@ -54,6 +54,12 @@ const routes = [
     alias: ["/", "/:domain"],
   },
   {
+    path: "/:domain",
+    name: "homePage",
+    component: RequestMeetingView,
+    alias: ["/"],
+  },
+  {
     path: "/:domain/waiting-validation/:id",
     name: "WaitingValidation",
     component: WaitingValidationView,

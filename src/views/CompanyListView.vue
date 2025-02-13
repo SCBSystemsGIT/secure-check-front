@@ -1,22 +1,33 @@
 <script>
 import apiClient from "@/plugins/axios";
 import myService from "@/services/useCompanyList";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted ,onBeforeMount } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useGlobalStore } from "@/stores/globalStore";
 import { toast } from "vue3-toastify";
+import { useUserStore } from "@/stores/useUserStore";
+import { useCompanies } from "@/services/useCompanies";
+
 
 export default {
   name: "CompanyListView",
   setup() {
     const router = useRouter();
     const route = useRoute();
-    const domain = ref(route?.params?.domain || "scb");
+    const domain = ref(route?.params?.domain || "scb-systems-africa");
     const companyList = ref([]);
     const message = ref("");
     const urlParamsval = ref(""); // Store the URL parameter
     const error = ref(null);
     const { publicDir } = useGlobalStore();
+    const userStore = useUserStore();
+    const roles = ref(JSON.parse(localStorage.getItem("userInfo")) || {});
+    const currentRole = ref(roles?.value?.roles ? roles.value.roles[0] : "");
+    const { showCompany, company } = useCompanies();
+
+
+    console.log('roles',roles)
+    console.log('currentRole',currentRole)
 
     // Form-related states
     const formData = ref({
@@ -157,10 +168,15 @@ export default {
 
 
     // Fetch event data when the component is mounted
-    onMounted(() => {
+    onMounted(async() => {
+      
       fetchEventData();
     });
-
+    onBeforeMount(async () => {
+      if (userStore.isSupervisor(currentRole?.value)) {
+          await showCompany(roles?.value?.company);
+        } 
+      });
     return {
       domain,
       companyList,
@@ -178,6 +194,10 @@ export default {
       submitForm, // Submit the form
       syncedName, // Use this for v-model in template
       syncedDescription, // Use this for v-model in template
+      userStore,
+      currentRole,
+      showCompany,
+      company
     };
   },
 };
@@ -237,6 +257,74 @@ export default {
       </div>
     </div>
 
+    <div v-if="company">
+      <div class="company-details">
+        <table class="mdc-data-table__table">
+          <thead>
+            <tr class="mdc-data-table__header-row">
+              <th class="mdc-data-table__header-cell">ID</th>
+              <th class="mdc-data-table__header-cell">Nom de l'entreprise</th>
+              <th class="mdc-data-table__header-cell">Limace</th>
+              <th class="mdc-data-table__header-cell">Lien</th>
+              <th class="mdc-data-table__header-cell">QRCode</th>
+              <th class="mdc-data-table__header-cell">Logo</th>
+              <th class="mdc-data-table__header-cell">Employees</th>
+              <th class="mdc-data-table__header-cell" 
+                  v-if="userStore.isSuperAdmin(currentRole) ||
+                  userStore.isSecureCheck(currentRole)">
+                Edit
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :key="company.id" class="mdc-data-table__row">
+              <td class="mdc-data-table__cell">{{ company.id }}</td>
+            <td class="mdc-data-table__cell">{{ company.name }}</td>
+            <td class="mdc-data-table__cell">{{ company.slug }}</td>
+            <td class="mdc-data-table__cell">
+              <i
+                class="material-icons"
+                @click="copyContent(company.slug)"
+                role="button"
+              >
+                content_copy
+              </i>
+            </td>
+            <td class="mdc-data-table__cell">
+              <img
+                role="button"
+                @click="showCompanyQR(company?.slug)"
+                width="100px"
+                height="100px"
+                :src="`${publicDir}/qrcode-company/qrcode-${company?.slug}.png`"
+                alt="No img"
+              />
+            </td>
+            <td>
+              <img
+                :src="`${publicDir}/logo/${company?.logo}`"
+                height="75"
+                width="75"
+                style="margin-top: 20px; margin-bottom: 20px"
+                :alt="company.logo"
+              />
+            </td>
+            <td>
+              <router-link :to="{ name: 'EmployeeListView', params: { slug: company.slug } }">View</router-link>
+            </td>
+            <td class="mdc-data-table__cell" v-if="
+                  userStore.isSuperAdmin(currentRole) ||
+                  userStore.isSecureCheck(currentRole)
+                ">
+              <!-- Navigate to the edit page with the company ID as a parameter -->
+              <router-link :to="{ name: 'EditCreateCompany', params: { company_edit: company.id } }">Edit</router-link>
+            </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <div v-else class="d-flex justify-content-center py-3 table_compdata">
       <table v-if="companyList.length" class="mdc-data-table__table">
         <thead>
@@ -248,7 +336,13 @@ export default {
             <th class="mdc-data-table__header-cell">QRCode</th>
             <th class="mdc-data-table__header-cell">Logo</th>
             <th class="mdc-data-table__header-cell">Employees</th>
-            <th class="mdc-data-table__header-cell">Edit</th>
+            <th class="mdc-data-table__header-cell" 
+            v-if="
+                  userStore.isSuperAdmin(currentRole) ||
+                  userStore.isSecureCheck(currentRole) ||
+                  userStore.isSupervisor(currentRole)
+                "
+            >Edit</th>
           </tr>
         </thead>
         <tbody>
@@ -287,7 +381,11 @@ export default {
             <td>
               <router-link :to="{ name: 'EmployeeListView', params: { slug: log.slug } }">View</router-link>
             </td>
-            <td class="mdc-data-table__cell">
+            <td class="mdc-data-table__cell" v-if="
+                  userStore.isSuperAdmin(currentRole) ||
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isSecureCheck(currentRole)
+                ">
               <!-- Navigate to the edit page with the company ID as a parameter -->
               <router-link :to="{ name: 'EditCreateCompany', params: { company_edit: log.id } }">Edit</router-link>
             </td>

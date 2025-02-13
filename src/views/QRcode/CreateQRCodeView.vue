@@ -17,11 +17,14 @@ const router = useRouter();
 const isSuccess = ref(false);
 const {publicDir} = useGlobalStore();
 const email = ref();
-const type = ref();   
+const type = ref();
+const firstname = ref();    
+const lastname = ref();  
+const contact = ref(); 
 const uidn = ref();   
 const { createQR, statusCode,qrResponse} = useCreateQR();
 
-const domain = ref(route.params.domain || "scb");
+const domain = ref(route.params.domain || "scb-systems-africa");
 const goToMenu = () => {
   router.push({
     name: "Menu",
@@ -43,7 +46,7 @@ onMounted(() => {
 });
 
 const submit = async () => {
-  await createQR(email.value, type.value);
+  await createQR(email.value, type.value , firstname.value , lastname.value , contact.value);
 };
 
 watch(statusCode, (newStatus) => {
@@ -83,7 +86,6 @@ watch(statusCode, (newStatus) => {
     case 404:
       toast.info("L'utilisateur n'existe pas");
       statusCode.value = null;
-
       break;
     case 500:
       toast.info("Internal Server Error - Une erreur interne est survenue.");
@@ -149,6 +151,37 @@ watch(
             </router-link>
 
             <form @submit.prevent="submit" class="mt-5">
+
+              <div>
+                <label for="firstname">First Name </label><br />
+                <input
+                  type="text"
+                  id="firstname"
+                  v-model="firstname"
+                  class="input_style"
+                /><br />
+              </div>
+
+              <div>
+                <label for="lastname">last Name </label><br />
+                <input
+                  type="text"
+                  id="lastname"
+                  v-model="lastname"
+                  class="input_style"
+                /><br />
+              </div>
+
+              <div>
+                <label for="contact">Contact</label><br />
+                <input
+                  type="text"
+                  id="contact"
+                  v-model="contact"
+                  class="input_style"
+                /><br />
+              </div>
+
               <div>
                 <label for="contact">Email</label><br />
                 <input

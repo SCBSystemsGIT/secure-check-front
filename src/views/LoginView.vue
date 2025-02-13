@@ -27,7 +27,7 @@ watch(statusCode, (newStatus) => {
         //   domain: userInfo.value.company ?? "scb",
         // });
 
-        window.location = userInfo?.value?.company ??  "scb/menu";
+        window.location = userInfo?.value?.company ??  "scb-systems-africa/menu";
       }, 1500);
       break;
     case 201:
@@ -91,12 +91,12 @@ onMounted(async () => {
                 :alt="`${publicDir}/logo/${company?.logo}`"
             /></router-link> -->
             <!-- v-else -->
-            <a href="#" 
+            <!-- <a href="#" 
               ><img
                 src="@/assets/secure-check-logo.png"
                 class=""
                 alt="secure-check-logo"
-            /></a>
+            /></a> -->
           </div>
           <form action="">
             <div>

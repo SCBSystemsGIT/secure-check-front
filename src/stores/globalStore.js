@@ -3,14 +3,14 @@ import { defineStore } from "pinia";
 export const useGlobalStore = defineStore("global", {
   
   state: () => ({
-    baseUrl: "https://www.securecheck.info/api/public/index.php/api",
-    baseUrl_: "https://www.securecheck.info/api/public/index.php",
-    publicDir: "https://www.securecheck.info/api/public",
+    // baseUrl: "https://www.securecheck.info/api/public/index.php/api",
+    // baseUrl_: "https://www.securecheck.info/api/public/index.php",
+    // publicDir: "https://www.securecheck.info/api/public",
     
-    // baseUrl: "http://127.0.0.1:8000/api",
-    // publicDir: "http://127.0.0.1:8000",
+    baseUrl: "http://127.0.0.1:8000/api",
+    publicDir: "http://127.0.0.1:8000",
 
-    domain: "scb",
+    domain: "scb-systems-africa",
     logoPath: "",
     currentPath: "",
   }),
