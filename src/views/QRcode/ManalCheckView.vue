@@ -1,11 +1,21 @@
 <script setup>
 import { useNavigation } from "@/composables/useNavigation";
+import { useCompanies } from "@/services/useCompanies";
+// import { useGlobalStore } from "@/stores/globalStore";
+import { EventBus } from "@/utils/eventBus";
+import { watch } from "vue";
+import { onBeforeMount /*ref*/ } from "vue";
 import { useQrCode } from "@/services/useManualCheck";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 // import { toast } from "vue3-toastify";
 
+// const { publicDir } = useGlobalStore();
+// const { showCompany, company } = useCompanies();
+const { showCompany } = useCompanies();
+
+const company_slug = ref(localStorage.getItem("currentCompany"));
 const route = useRoute();
 const router = useRouter();
 const isSuccess = ref(false);
@@ -44,6 +54,31 @@ onMounted(() => {
     });
   }
 });
+
+onBeforeMount(async () => {
+  // Extraire l'hôte (domaine + port)
+  console.log("Host:", window.location.host);
+  // Extraire le chemin (path)
+  console.log("Path:", window.location.pathname);
+
+  if (window.location.pathname != "/sign-in") {
+    if (company_slug.value) {
+      await showCompany(company_slug.value);
+    } else {
+      company_slug.value = "";
+    }
+  }
+});
+
+
+
+// const distantData = ref();
+watch(
+  () => EventBus["company_slug"],
+  async (newValue) => {
+    await showCompany(localStorage.getItem("currentCompany") ?? newValue);
+  }
+);
 </script>
 
 <template>
@@ -51,14 +86,14 @@ onMounted(() => {
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
-          <div class="popup-logo" v-if="!isSuccess">
+          <!-- <div class="popup-logo" v-if="!isSuccess">
             <router-link to="/">
               <img
-                src="@/assets/secure-check-logo.png"
-                class=""
-                alt="secure-check-logo"
+                class="logo logo12333"
+                :src="`${publicDir}/logo/${company?.logo}`"
+                :alt="company?.logo"
             /></router-link>
-          </div>
+          </div> -->
 
           <div class="popup-logo" v-if="isSuccess">
             <div class="text-center py-2">

@@ -1,7 +1,7 @@
 <script setup>
 import { useCreateUser } from "@/services/createUser";
 import { useCompanies } from "@/services/useCompanies";
-import { useDepartement } from "@/services/useDepartement";
+//import { useDepartement } from "@/services/useDepartement";
 import { useUserStore } from "@/stores/useUserStore";
 import { onBeforeMount } from "vue";
 import { onMounted, ref, watch } from "vue";
@@ -10,7 +10,7 @@ import { toast } from "vue3-toastify";
 
 const { user, loading, errorMessage, successMessage, createUser, statusCode } =
   useCreateUser();
-const { departements, fetchDepartements } = useDepartement();
+//const { departements, fetchDepartements } = useDepartement();
 const router = useRouter();
 const { companies, fetchCompanies } = useCompanies();
 const submitForm = () => {
@@ -25,7 +25,7 @@ roles.value = JSON.parse(localStorage.getItem("userInfo"));
 currentRole.value = roles.value?.roles[0];
 
 onMounted(async () => {
-  await fetchDepartements();
+  //await fetchDepartements();
   await fetchCompanies();
 });
 // Watcher pour réagir aux changements du statusCode
@@ -81,7 +81,8 @@ const goToMenu = () => {
   });
 };
 
-const { showCompany, company } = useCompanies();
+// const { showCompany, company } = useCompanies();
+const { showCompany } = useCompanies();
 
 onBeforeMount(async () => {
   // Extraire l'hôte (domaine + port)
@@ -166,13 +167,13 @@ onBeforeMount(async () => {
                     value="ROLE_USER"
                     v-if="
                       userStore.isAdmin(currentRole) ||
-                      userStore.isSupervisor(currentRole) ||
+                      // userStore.isSupervisor(currentRole) ||
                       userStore.isManager(currentRole)||
                        userStore.isManager(currentRole)||
                       userStore.isSecureCheck(currentRole)
                     "
                   >
-                    Utilisateur
+                  Employee 
                   </option>
 
                   <option
@@ -184,7 +185,7 @@ onBeforeMount(async () => {
                       userStore.isSecureCheck(currentRole)
                     "
                   >
-                    Employé
+                    Employé (Front Desk)
                   </option>
 
                   <option
@@ -206,6 +207,7 @@ onBeforeMount(async () => {
                   >
                     Secure Check
                   </option>
+
                   <option
                     value="ROLE_MANAGER"
                     v-if="userStore.isAdmin(currentRole)"
@@ -216,6 +218,7 @@ onBeforeMount(async () => {
                   <option
                     value="ROLE_ADMIN"
                     v-if="userStore.isAdmin(currentRole)"
+
                   >
                     Admin
                   </option>
@@ -223,7 +226,6 @@ onBeforeMount(async () => {
                    value="ROLE_SUPER_ADMIN"
                    v-if="
                       userStore.isAdmin(currentRole) ||
-                      userStore.isSupervisor(currentRole) ||
                       userStore.isManager(currentRole)
                     "
                   
@@ -232,27 +234,8 @@ onBeforeMount(async () => {
               </div>
 
               <div>
-                <label for="department">Department</label><br />
-                <select
-                  v-model="user.department_id"
-                  id="department"
-                  name="department"
-                  class="form-control"
-                >
-                  <option
-                    v-for="departement in departements"
-                    :key="departement.id"
-                    :value="departement.id"
-                  >
-                    {{ departement.name }}
-                  </option></select
-                ><br />
-              </div>
-
-              <div>
                 <label for="company">Entreprise</label><br />
                 <select
-                  v-if="company?.slug == 'scb'"
                   v-model="user.company_id"
                   id="company"
                   name="company"
@@ -267,12 +250,12 @@ onBeforeMount(async () => {
                   </option>
                 </select>
 
-                <input
+                <!-- <input
                   v-else-if="!(company?.name)"
                   type="text"
                   id="name"
                   :value="company?.name"
-                />
+                /> -->
                 <!-- <br v-if="company" /> -->
               </div>
 

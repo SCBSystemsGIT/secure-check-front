@@ -31,7 +31,7 @@ const route = useRoute();
 // Pagination variables
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
-const show = (id) => {
+const show = (id, address, request_time , request_date ,organisationName, city, state, zipcode, country ) => {
   // router.push(`/waiting-validation/${id}`);
   // alert(id);
   // alert(domain.value);
@@ -42,6 +42,17 @@ const show = (id) => {
       domain: domain.value,
       id: id,
     },
+    state: { 
+      address: address,
+      request_time: request_time,
+      request_date: request_date,
+      organisationName: organisationName,
+      city: city,
+      state: state,
+      zipcode: zipcode,
+      country: country,
+      
+     },
   });
 };
 
@@ -121,11 +132,14 @@ onMounted(async () => {
     <div class="d-flex justify-content-center py-3">
       <ui-table
         :data="paginatedRequests"
-        :thead="['Visiteur', 'Host', 'Statut', 'Date Création', 'Action']"
+        :thead="['Visiteur', 'Email', 'Contact', 'Host', 'Statut', 'Date Création', 'Action']"
         :tbody="[
           {
             slot: 'visitor',
           },
+          { slot: 'email' },
+
+          { slot: 'contact' },
           'host',
           { slot: 'confirmed' },
           {
@@ -142,6 +156,14 @@ onMounted(async () => {
           {{ data.visitor.lastname }}
         </template>
 
+        <template #email="{ data }">
+          {{ data.visitor.email }}
+        </template>
+
+        <template #contact="{ data }">
+          {{ data.visitor.contact }}
+        </template>
+
         <template #request_date="{ data }">
           {{ formatDate(data.request_date) }}
         </template>
@@ -152,7 +174,7 @@ onMounted(async () => {
 
         <template #actions="{ data }">
           <!-- <ui-icon @click="show(data.id)" v-if="data.u" role="button"> edit </ui-icon> -->
-          <ui-icon role="button" @click="show(data.id)"> edit </ui-icon>
+          <ui-icon role="button" @click="show(data.id , data.visitor.address , data.visitor.request_time , data.visitor.request_date , data.visitor.organisationName,data.visitor.city, data.visitor.state, data.visitor.zipcode,  data.visitor.country )"> edit </ui-icon>
         </template>
 
         <ui-pagination

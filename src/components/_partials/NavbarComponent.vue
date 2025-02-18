@@ -61,26 +61,28 @@ onMounted(() => {
       <div class="row align-items-center">
         <div class="col col-6 col-md-6 top-bar-left">
           <div>
-            <router-link to="/" v-if="route.params.domain == 'scb'"
-              ><img
-                src="@/assets/secure-check-logo.png"
-                class=""
-                alt="secure-check-logo"
-            /></router-link>
-
-            <router-link to="/" v-else-if="company">
+            <a v-if="route.params.domain == 'scb'" href="/">
               <img
-                class="logo"
-                :src="`${publicDir}/logo/${company?.logo}`"
-                :alt="company?.logo"
-            /></router-link>
-
-            <router-link to="/" v-else
-              ><img
+                id="logoif"
                 src="@/assets/secure-check-logo.png"
                 class=""
                 alt="secure-check-logo"
-            /></router-link>
+              />
+            </a>
+            <a v-else :href="`/${company_slug}`">
+              <img
+                :src="`${publicDir}/logo/${company?.logo}`"
+                :alt="company_slug"
+              />
+            </a>
+
+            <!-- <router-link
+              :to="`/${company_slug ?? ''}`" v-else
+              ><img
+                src="@/assets/secure-check-logo.png"
+                class="logo12333"
+                id ="testelse" alt="secure-check-logo"
+            /></router-link> -->
           </div>
         </div>
         <div class="col col-6 col-md-6 top-bar-right">
@@ -115,18 +117,17 @@ onMounted(() => {
             <!-- :to="`/${company_slug ?? 'scb'}/request-meeting`" -->
             <router-link
               v-else
-
-              :to="`/${company_slug ?? 'scb'}/request-meeting`"
-
+              :to="`/request-meeting`"
               class="login-button"
             >
               Visite
             </router-link>
 
             <router-link
-              :to="`/${company_slug ?? 'scb'}/edit-company/${company_slug}`"
+              :to="`/${company_slug ?? 'scb-systems-africa'}/edit-company/${company_slug}`"
               class="login-button"
-              v-if="userStore.isManager(currentRole)"
+              v-if="userStore.isManager(currentRole) ||
+                    userStore.isSupervisor(currentRole)"
             >
               Modifier Entreprise
             </router-link>

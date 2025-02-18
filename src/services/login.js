@@ -28,29 +28,27 @@ export function useLogin() {
       localStorage.setItem("token", response.data.token);
       userStore.setToken(response.data.token);
 
-      // Fetch user info after successful login
-      let fetchResult = await fetchUserInfo();  // Wait for user info to be fetched
-      console.log({ fetchResult });
+      let fetchResult = fetchUserInfo();
+      console.log({ fetchResult: fetchResult });
 
       company_name.value = fetchResult;
+      // localStorage.setItem(
+      //   "roles",
+      //   JSON.stringify([
+      //     "ROLE_USER",
+      //     "ROLE_EMPLOYEE",
+      //     "ROLE_SUPERVISOR",
+      //     "ROLE_ADMIN",
+      //     "ROLE_SUPER_ADMIN",
+      //     "ROLE_SecureCheck",
+      //   ])
+      // );
 
       return response.data;
     } catch (error) {
-      // Enhanced error handling
-      if (error.response) {
-        // This handles HTTP-related errors (e.g., 400, 500)
-        errorMessage.value =
-          "Login failed: " + (error.response?.data?.message || "Unknown error");
-        statusCode.value = error.response.status;
-      } else if (error.request) {
-        // This handles errors where no response is received (e.g., network errors)
-        errorMessage.value = "Login failed: Network error. Please try again.";
-        statusCode.value = 0;  // Indicate no response was received
-      } else {
-        // This handles any other errors (e.g., bad request formation)
-        errorMessage.value = "Login failed: " + error.message;
-        statusCode.value = 0;
-      }
+      errorMessage.value =
+        "Login failed: " + (error.response?.data?.message || "Unknown error");
+      statusCode.value = error.response.status;
       console.error(error);
     } finally {
       loading.value = false;
@@ -61,11 +59,10 @@ export function useLogin() {
     try {
       const response = await apiClient.get("/user/info");
       userInfo.value = response.data;
+      console.log(userInfo.value);
       localStorage.setItem("userInfo", JSON.stringify(userInfo.value));
-      return response.data;  // Return user info for later use
     } catch (error) {
       console.error("Failed to fetch user info:", error);
-      return null;  // Return null if user info fetching fails
     }
   };
 

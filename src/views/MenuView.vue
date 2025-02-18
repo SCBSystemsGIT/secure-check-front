@@ -1,8 +1,13 @@
 <script setup>
+import { useCompanies } from "@/services/useCompanies";
 import { useUserStore } from "@/stores/useUserStore";
+// import { useGlobalStore } from "@/stores/globalStore";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";
+import { EventBus } from "@/utils/eventBus";
+import { watch } from "vue";
+import { onBeforeMount /*ref*/ } from "vue";
 
 // Utilisation du routeur pour récupérer le domaine courant
 const route = useRoute();
@@ -10,6 +15,11 @@ const domain = ref(route.params.domain || "scb");
 
 const userStore = useUserStore();
 const isAuthenticated = userStore.isAuthenticated();
+// const { publicDir } = useGlobalStore();
+// const { showCompany, company } = useCompanies();
+const { showCompany } = useCompanies();
+
+const company_slug = ref(localStorage.getItem("currentCompany"));
 const router = useRouter();
 const currentRole = ref();
 
@@ -30,6 +40,37 @@ onMounted(() => {
     });
   }
 });
+
+onBeforeMount(async () => {
+  // Extraire l'hôte (domaine + port)
+  console.log("Host:", window.location.host);
+  // Extraire le chemin (path)
+  console.log("Path:", window.location.pathname);
+
+  if (window.location.pathname != "/sign-in") {
+    if (company_slug.value) {
+      await showCompany(company_slug.value);
+    } else {
+      company_slug.value = "";
+    }
+  }
+});
+
+// const distantData = ref();
+watch(
+  () => EventBus["company_slug"],
+  async (newValue) => {
+    await showCompany(localStorage.getItem("currentCompany") ?? newValue);
+  }
+);
+const backButton = () => {
+  router.push({
+    name: "homePage",
+    params: {
+      domain: domain.value,
+    },
+  });
+};
 </script>
 
 <template>
@@ -37,20 +78,25 @@ onMounted(() => {
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
-          <div class="popup-logo">
+          <!-- <div class="popup-logo">
             <router-link
               :to="{ name: 'RequestMeeting', params: { domain: domain } }"
             >
               <img
-                src="@/assets/secure-check-logo.png"
-                class=""
-                alt="secure-check-logo"
+                class="logo logo12333"
+                :src="`${publicDir}/logo/${company?.logo}`"
+                :alt="company?.logo"
               />
             </router-link>
-          </div>
+          </div> -->
 
           <div class="selectcheck-all" v-if="isAuthenticated">
-            <h5><span>Veuillez sélectionner</span></h5>
+            <div
+              class="d-flex justify-content-center mb-4 gap-3 align-items-center"
+            >
+              <button class="back" @click="backButton()">Retour</button>
+              <h5><span>Veuillez sélectionner</span></h5>
+            </div>
             <div class="selectcheckintype-btns">
               <!-- Navigation avec domaine -->
               <router-link
@@ -60,7 +106,6 @@ onMounted(() => {
                   userStore.isEmployee(currentRole) ||
                   userStore.isAdmin(currentRole) ||
                   userStore.isSuperAdmin(currentRole) ||
-                  userStore.isSupervisor(currentRole) ||
                   userStore.isUser(currentRole) ||
                   userStore.isManager(currentRole)
                 "
@@ -73,7 +118,8 @@ onMounted(() => {
                 v-if="
                   userStore.isEmployee(currentRole) ||
                   userStore.isAdmin(currentRole) ||
-                  userStore.isSupervisor(currentRole)||
+                  userStore.isSupervisor(currentRole) ||
+                  userStore.isSuperAdmin(currentRole) ||
                   userStore.isSecureCheck(currentRole)
                 "
                 >Demandes</router-link
@@ -84,7 +130,6 @@ onMounted(() => {
                 v-if="
                   userStore.isAdmin(currentRole) ||
                   userStore.isEmployee(currentRole) ||
-                  userStore.isSupervisor(currentRole)||
                   userStore.isSecureCheck(currentRole)
                 "
                 >Manual Code</router-link
@@ -93,20 +138,21 @@ onMounted(() => {
               <router-link
                 v-if="
                   userStore.isAdmin(currentRole) ||
-                  userStore.isSupervisor(currentRole)||
+                  userStore.isSupervisor(currentRole) ||
                   userStore.isSecureCheck(currentRole)
                 "
                 :to="{ name: 'CreateEvent', params: { domain: domain } }"
                 class="mt-2"
               >
-                Créer Event
+                Create Event
               </router-link>
 
               <router-link
                 v-if="
                   userStore.isAdmin(currentRole) ||
                   userStore.isSupervisor(currentRole) ||
-                  userStore.isManager(currentRole)||
+                  userStore.isManager(currentRole) ||
+                  userStore.isSuperAdmin(currentRole) ||
                   userStore.isSecureCheck(currentRole)
                 "
                 :to="{ name: 'EventList', params: { domain: domain } }"
@@ -118,7 +164,8 @@ onMounted(() => {
               <router-link
                 v-if="
                   userStore.isAdmin(currentRole) ||
-                  userStore.isSupervisor(currentRole)||
+                  userStore.isSupervisor(currentRole) ||
+                  userStore.isSuperAdmin(currentRole) ||
                   userStore.isSecureCheck(currentRole)
                 "
                 :to="{ name: 'ListUser', params: { domain: domain } }"
@@ -130,7 +177,8 @@ onMounted(() => {
               <router-link
                 v-if="
                   userStore.isAdmin(currentRole) ||
-                  userStore.isManager(currentRole)||
+                  userStore.isManager(currentRole) ||
+                  userStore.isSupervisor(currentRole) ||
                   userStore.isSecureCheck(currentRole)
                 "
                 :to="{ name: 'CreateUser', params: { domain: domain } }"
@@ -142,8 +190,7 @@ onMounted(() => {
               <router-link
                 v-if="
                   userStore.isAdmin(currentRole) ||
-                  userStore.isSupervisor(currentRole) ||
-                  userStore.isManager(currentRole)||
+                  userStore.isManager(currentRole) ||
                   userStore.isSecureCheck(currentRole)
                 "
                 :to="{ name: 'CreateCompany', params: { domain: domain } }"
@@ -155,23 +202,36 @@ onMounted(() => {
               <router-link
                 v-if="
                   userStore.isAdmin(currentRole) ||
+                  userStore.isManager(currentRole) ||
+                  userStore.isSuperAdmin(currentRole) ||
+                  userStore.isSecureCheck(currentRole)
+                "
+                :to="{ name: 'CompanyList', params: { domain: domain } }"
+                class="mt-2"
+              >
+                Liste Entreprise
+              </router-link>
+
+              <router-link
+                v-if="
+                  userStore.isAdmin(currentRole) ||
                   userStore.isSupervisor(currentRole) ||
-                  userStore.isManager(currentRole)||
+                  userStore.isManager(currentRole) ||
                   userStore.isSecureCheck(currentRole)
                 "
                 :to="{ name: 'CreateQRCode', params: { domain: domain } }"
                 class="mt-2"
               >
-                + Création QRCode 
+                + QRCode creation
               </router-link>
               <!-- Add the Camera Button -->
-              <router-link
+               
+               <router-link
                 v-if="
                   userStore.isAdmin(currentRole) || 
                   userStore.isSupervisor(currentRole) || 
                   userStore.isManager(currentRole) || 
-                  userStore.isEmployee(currentRole)  ||
-                  userStore.isSecureCheck(currentRole)
+                  userStore.isEmployee(currentRole)  
                 "
                 :to="{ name: 'Camera', params: { domain: domain } }"
                 class="mt-2"
@@ -181,15 +241,31 @@ onMounted(() => {
 
               <router-link
                 v-if="
-                  userStore.isAdmin(currentRole) || 
-                  userStore.isSupervisor(currentRole) || 
-                  userStore.isManager(currentRole) || 
-                  userStore.isEmployee(currentRole)  
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isSupervisor(currentRole) ||
+                  userStore.isSuperAdmin(currentRole) ||
+                  userStore.isManager(currentRole) ||
+                  userStore.isSecureCheck(currentRole)
                 "
                 :to="{ name: 'DisplayVisitorCode', params: { domain: domain } }"
                 class="mt-2"
               >
-                Check Visitors logs
+                Liste des visiteurs
+              </router-link>
+              <router-link
+                v-if="
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isSupervisor(currentRole) ||
+                  userStore.isManager(currentRole) ||
+                  userStore.isSecureCheck(currentRole)
+                "
+                :to="{
+                  name: 'DisplayEventAttendence',
+                  params: { domain: domain },
+                }"
+                class="mt-2"
+              >
+                Participation à un événement d'entreprise
               </router-link>
             </div>
           </div>
@@ -215,5 +291,9 @@ onMounted(() => {
   top: 50%;
   position: absolute;
   left: 50%;
+}
+section.background-gradi.selectcheckintype .col.col-12.col-md-12.col-sm-12 {
+    transform: unset !important;
+    position: unset ! IMPORTANT;
 }
 </style>

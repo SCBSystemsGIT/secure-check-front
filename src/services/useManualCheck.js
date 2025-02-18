@@ -11,7 +11,6 @@ export function useQrCode() {
   const loading = ref(false);
   const error = ref(null);
   const { baseUrl_ } = useGlobalStore();
-  
 
   const router = useRouter();
 

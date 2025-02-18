@@ -3,8 +3,8 @@ import apiClient from "@/plugins/axios";
 export default {
   async fetchData() { // Add 'async' here
     try {
-      const response = await apiClient.get("/visitorlog"); // Replace with the correct API URL
-     // console.log('i am here',response.data);
+      const response = await apiClient.get("/companylist"); // Replace with the correct API URL
+      console.log('i am here',response.data);
       //alert(response);
       return response.data; 
     } catch (error) {

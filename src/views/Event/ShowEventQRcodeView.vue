@@ -11,7 +11,7 @@ import html2canvas from "html2canvas";
 const userStore = useUserStore();
 const route = useRoute();
 const { showEvent, event } = useEvent();
-const { company, showCompany } = useCompanies();
+const { showCompany, company } = useCompanies();
 
 const { publicDir } = useGlobalStore();
 const router = useRouter();
@@ -42,9 +42,15 @@ const captureDiv = () => {
       });
     });
 
-    // Capture après le chargement des images
     Promise.all(promises).then(() => {
-      html2canvas(capture.value, { useCORS: true }).then((canvas) => {
+      html2canvas(capture.value, {
+        useCORS: true,
+        allowTaint: true,
+        ignoreElements: (element) => {
+          // Ignore elements with the class 'capture-button' and 'menu-button'
+          return element.classList.contains("capture-button") || element.classList.contains("menu-button");
+        },
+      }).then((canvas) => {
         const imageData = canvas.toDataURL("image/png");
         image.value = imageData;
 
@@ -59,14 +65,10 @@ const captureDiv = () => {
   }
 };
 
-
-
 const { formatDate, formatTime } = useDate();
 const isAuthenticated = userStore.isAuthenticated();
 const domain = ref(route.params.domain || "scb");
 onMounted(() => {
-  // alert(route.params.slug)
-
   showEvent(route.params.slug);
   showCompany(domain.value);
 
@@ -83,156 +85,84 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="background-gradi request-meeting">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col col-12 col-md-12 col-sm-12 event-details" ref="capture">
-          <div class="popup-logo">
-            <div>
-              <router-link to="/" v-if="company && domain != 'scb'"
-                ><img
-                  class="logo_qr"
-                  :src="`${publicDir}/logo/${company?.logo}`"
-                  :alt="`${publicDir}/logo/${company?.logo}`"
-              /></router-link>
+  <section style="">
+    <div style="max-width: 700px; margin: auto; padding: 20px;">
+      <div>
+        <div style=" background: #37bbf0;  padding: 20px;" ref="capture">
+          <div>
+            <div class="company_logo">
+              <router-link 
+                :to="{ name: 'RequestMeeting', params: { domain: domain } }"
+              >
+                <img
+                    class="logo logo12333"
+                    :src="`${publicDir}/logo/${company?.logo}`"
+                    :alt="company?.logo"
+                />
+              </router-link>
+              <div style="
+              justify-content: flex-end; 
+              color: #fff;
+              padding: 10px;
+              gap: 10px;
+            ">
+              <h3 style="font-size: 18px; margin: 0; text-align: right;">
+                {{ formatTime(event?.time_event) }}
+              </h3>
+              <h3 style="font-size: 22px; font-weight: 400; margin: 0; text-transform: capitalize; text-align: right;">
+                {{ formatDate(event?.date_event) }}
+              </h3>
             </div>
-
-            <div>
+            </div>
+            
+            <div style="margin: 20px 0;">
+              <!-- <div style="margin-bottom: 17px; color: #fff;">
+                <b style="font-size: 18px;">Entreprise</b>
+                <h3 style="font-size: 16px; margin: 0;">{{ event?.company?.name }}</h3>
+              </div> -->
+              <div style="margin-bottom: 17px; color: #fff;">
+                <b style="font-size: 18px;">Event Name</b>
+                <h3 style="font-size: 16px; margin: 0;">{{ event?.name }}</h3>
+              </div>
+              <div style="margin-bottom: 17px; color: #fff;">
+                <b style="font-size: 18px;">Where</b>
+                <h3 style="font-size: 16px; margin: 0;">{{ event?.location }}</h3>
+              </div>
+              <div style="margin-bottom: 17px; color: #fff;">
+                <b style="font-size: 18px;">Ticket</b>
+                <h3 style="font-size: 16px; margin: 0;">Summit Registration</h3>
+              </div>
+            </div>
+            <div style="text-align: center;">
               <router-link :to="`/${route.params.slug}`">
                 <img
                   :src="`${publicDir}/qrcode-link/qrcode-${route.params.slug}.png`"
-                  :class="route.params.slug"
                   :alt="route.params.slug"
+                  style="border-radius: 12px; margin-top: 50px;"
                 />
               </router-link>
             </div>
-
-            <div class="text-center py-2">
-              <h3>Entreprise : {{ company?.name }}</h3>
+            <div style="margin-top: 20px; text-align: center;">
+              <!-- Add a class to the capture button to exclude it -->
+              <div
+                class="capture-button"
+                style="background: #b92b00; color: #fff; border-radius: 10px; padding: 20px 100px; font-weight: 600; font-size: 20px; display: inline-block; cursor: pointer; margin-right: 5px;"
+                @click="captureDiv"
+              >
+                Capture
+              </div>
+              <div
+                v-if="isAuthenticated"
+                class="menu-button"
+                style="background: #007bff; color: #fff; border-radius: 10px; padding: 20px 100px; font-weight: 600; font-size: 20px; display: inline-block; cursor: pointer; margin-top: 10px;"
+                @click="goToMenu()"
+              >
+                Menu
+              </div>
             </div>
-
-            <!-- <div class="text-center py-2">
-              <h3>Nom : {{ event?.name }}</h3>
-              <h3>Lieu : {{ event?.location }}</h3>
-              <h3>Date : {{ formatDate(event?.date_event) }}</h3>
-              <h3>Heure : {{ formatTime(event?.time_event) }}</h3>
-            </div> -->
-
-            <div class="event-details">
-              <h3 class="event-title">Nom : {{ event?.name }}</h3>
-              <h3 class="event-title">Lieu : {{ event?.location }}</h3>
-              <h3 class="event-title">Date : {{ formatDate(event?.date_event) }}</h3>
-              <h3 class="event-title">Heure : {{ formatTime(event?.time_event) }}</h3>
-            </div>
-
-
-            <img v-if="image" :src="image" alt="Captured Image" v-show="false" />
-
-            <div class="request-btn" @click="captureDiv" role="button">
-              <a>Capture </a>
-            </div>
-
-            <div
-              class="request-btn"
-              @click="goToMenu()"
-              v-if="isAuthenticated"
-              role="button"
-            >
-              <a>Menu </a>
-            </div>
-
           </div>
         </div>
       </div>
     </div>
   </section>
 </template>
-
-<style scoped>
-.request-btn-cannel {
-  margin: 10px auto 0px auto;
-  display: inline-block;
-  text-align: center;
-  width: 100%;
-}
-.request-btn-cannel a {
-  background: #b92b00;
-  color: #ffffff;
-  border-radius: 10px;
-  padding: 20px 100px;
-  font-weight: 600;
-  overflow: hidden;
-  margin: 0 auto;
-  float: left;
-  width: 100%;
-  font-size: 20px;
-}
-
-.request-btn a {
-  /*background: #b92b00;*/
-  color: #ffffff;
-  border-radius: 10px;
-  padding: 20px 100px;
-  font-weight: 600;
-  overflow: hidden;
-  margin: 0 auto;
-  float: left;
-  width: 100%;
-  font-size: 20px;
-}
-
-.request-btn-cannel a:hover {
-  background: #000000;
-  color: #ffffff;
-}
-
-.event-details {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  /*background-color: #f9f9f9;*/
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.event-title {
-  font-size: 1.5rem;
-  color: #333;
-  margin: 10px 0;
-}
-
-.event-title:nth-child(even) {
-  color: #007bff; /* Accent color for alternating text */
-}
-
-.event-details h3 {
-  font-weight: normal;
-}
-
-.event-details h3:not(:last-child) {
-  /*border-bottom: 1px solid #ddd;*/
-  padding-bottom: 10px;
-}
-
-.event-details {
-  animation: fadeIn 1s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.logo_qr {
-  height: 7rem !important;
-  width: 8rem !important;
-  margin-bottom: 22px;
-}
-</style>

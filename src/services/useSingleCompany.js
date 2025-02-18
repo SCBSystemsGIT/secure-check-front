@@ -3,8 +3,11 @@ import apiClient from "@/plugins/axios";
 export default {
   async fetchData() { // Add 'async' here
     try {
-      const response = await apiClient.get("/visitorlog"); // Replace with the correct API URL
-     // console.log('i am here',response.data);
+     // alert("Seletet");
+      const currentUrl = window.location.href;
+      const slug = currentUrl.split('/').pop(); // Get the last segment
+      const response = await apiClient.get("/singlecompanylist?url="+slug); // Replace with the correct API URL
+      console.log('i am here',response.data);
       //alert(response);
       return response.data; 
     } catch (error) {
