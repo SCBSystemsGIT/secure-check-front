@@ -26,14 +26,14 @@ const users = ref({
 });
 
 const fieldLabels = {
-  'users.name': 'Nom',
-  'users.firstname': 'Prénom(s)',
-  'users.email': 'Adresse mail',
-  'users.password': 'Mot de passe',
-  'users.title': 'Titre', 
-  'users.contact': 'Numéro de téléphone',
-  'users.role': 'Rôle',
-  'users.company': 'Entreprise'
+  'user.name': 'Nom',
+  'user.firstname': 'Prénom(s)',
+  'user.email': 'Adresse mail',
+  'user.password': 'Mot de passe',
+  'user.title': 'Titre', 
+  'user.contact': 'Numéro de téléphone',
+  'user.role': 'Rôle',
+  'user.company_id': 'Entreprise'
 };
 
 const validateEmail = (email) => {
@@ -75,13 +75,13 @@ const validateForm = () => {
   }
 
   // Vérification de l'email
-  if (!users.value.email || !validateEmail(users.value.email)) {
+  if (!user.value.email || !validateEmail(user.value.email)) {
     toast.error("Veuillez entrer une adresse e-mail valide.");
     return false;
   }
 
   // Vérification du contact (numéro de téléphone)
-  if (!users.value.contact || !validateContact(users.value.contact)) {
+  if (!user.value.contact || !validateContact(user.value.contact)) {
     toast.error("Veuillez entrer un numéro de téléphone valide (8 à 15 chiffres).");
     return false;
   }
@@ -126,6 +126,7 @@ onMounted(async () => {
 });
 // Watcher pour réagir aux changements du statusCode
 watch(statusCode, (newStatus) => {
+
   switch (newStatus) {
     case 200:
       toast.success("OK - Utilisateur créé avec succès.");
@@ -157,6 +158,9 @@ watch(statusCode, (newStatus) => {
       break;
     case 404:
       toast.info("Not Found - La ressource demandée n'existe pas.");
+      break;
+      case 409:
+      toast.warning("Un compte avec cet email existe déjà pour cette entreprise.");
       break;
     case 500:
       toast.info("Internal Server Error - Une erreur interne est survenue.");
