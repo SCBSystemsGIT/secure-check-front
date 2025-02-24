@@ -13,6 +13,16 @@ module.exports = defineConfig({
     }
   },
 
+  chainWebpack: (config) => {
+    config.module
+      .rule('js')
+      .exclude.add(/node_modules/)
+      .end()
+      .use('babel-loader')
+      .loader('babel-loader')
+      .end();
+  },
+
   // Si tu préfères utiliser chainWebpack :
   // chainWebpack: (config) => {
   //   config.resolve.alias

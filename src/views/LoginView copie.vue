@@ -8,7 +8,6 @@ import { watch } from "vue";
 import { ref } from "vue";
 // import { useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
-const inputFocused = ref(""); // Garde en mémoire l'input qui a le focus
 
 const { login, username, password, statusCode, company_name, userInfo } = useLogin();
 const loading = ref(false); // Variable pour suivre l'état du chargement
@@ -122,7 +121,7 @@ const handleSubmit = async () => {
   }
 
   loading.value = true;  // Démarre le loader
-  //console.log("Loading started", loading.value);
+  console.log("Loading started", loading.value);
 
   // Simulez un délai pour voir le loader (à supprimer dans la version réelle)
   await new Promise(resolve => setTimeout(resolve, 1000)); // Simule un délai de 1 seconde
@@ -134,92 +133,69 @@ const handleSubmit = async () => {
     toast.error("Une erreur est survenue lors de la connexion.");
   } finally {
     loading.value = false; // Arrête le loader
-    //console.log("Loading ended", loading.value);
+    console.log("Loading ended", loading.value);
   }
 };
 </script>
 
 <template>
-  <div class="login-page">
-    
-  
-    <section class="login-div-sec">
-      <div class="container login-div">
-        <div class="row">
-          <div class="col-md-6 col-left">
-            <div class="login-card-main">
-              <div class="login-card-inner">
-                <div class="img-area">
-                  <img src="@/assets/secure-check-effect-img.png" alt="secure-login-logo" />
-                </div>
+  <section class="background-gradi login-meeting">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col col-12 col-md-12 col-sm-12">
+          <div class="popup-logo">
+            <!-- <router-link to="/" v-if="company && domain != 'scb'"
+              ><img
+                class="logo"
+                :src="`${publicDir}/logo/${company?.logo}`"
+                :alt="`${publicDir}/logo/${company?.logo}`"
+            /></router-link> -->
+            <!-- v-else -->
+            <!-- <a href="#" 
+              ><img
+                src="@/assets/secure-check-logo.png"
+                class=""
+                alt="secure-check-logo"
+            /></a> -->
+          </div>
+          <form action="" @submit.prevent="handleSubmit">
+            <div>
+              <label for="client-email">Email</label>
+              <input
+                type="email"
+                id="client-email"
+                name="client-email"
+                v-model="username"
+              /><br />
+            </div>
+            <div>
+              <label for="pwd">Mot de passe</label>
+              <input type="password" id="pwd" name="pwd" v-model="password" />
+            </div>
+
+            <div class="submit-button">
+              <input 
+                type="submit" 
+                :value="loading ? '' : 'Soumettre'"
+                :disabled="loading" 
+              />
+
+              <div v-if="loading" class="loader-container">
+                <div class="loader"></div>
               </div>
             </div>
-          </div>
-          <div class="col-md-6 col-right">
-            <div class="detail-area">
-              <div class="detail-area-inner">
-                <div class="logo">
-                  <h1>Login</h1>
-                </div>
-                <form @submit.prevent="handleSubmit">
-                  <div class="form-input-box">
-                    <input
-                      type="email"
-                      id="client-email"
-                      name="client-email"
-                      v-model="username"
-                      @focus="inputFocused = 'username'"
-                      @blur="inputFocused = ''"
-                    />
-                    <label :class="{ active: inputFocused === 'username' || username }">Email</label>
-                  </div>
-
-                  <div class="form-input-box">
-                    <input
-                      type="password"
-                      id="pwd"
-                      name="pwd"
-                      v-model="password"
-                      @focus="inputFocused = 'password'"
-                      @blur="inputFocused = ''"
-                    />
-                    <label :class="{ active: inputFocused === 'password' || password }">Password</label>
-                  </div>
-                  <p><a href="#">Change Password</a></p>
-                  <!-- <div class="form-input-box">
-                    <input type="submit" value="Login" />
-                  </div> -->
-
-                  <div class="submit-button form-input-box">
-                    <input 
-                      type="submit" 
-                      :value="loading ? '' : 'Soumettre'"
-                      :disabled="loading" 
-                    />
-
-                    <div v-if="loading" class="loader-container">
-                      <div class="loader"></div>
-                    </div>
-                  </div>
-
-                </form>
-              </div>
-            </div>
-          </div>
+          </form>
         </div>
       </div>
-    </section>
-    
-    
-  </div>
+    </div>
+  </section>
 </template>
 
 <style scoped>
-
 .submit-button {
   display: flex;
-  align-items_: center;
-  justify-content_: center;
+  align-items: center;
+  justify-content: center;
   position: relative;
 }
 
@@ -261,45 +237,7 @@ input[type="submit"]:disabled {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-
-.form-input-box {
-  position: relative;
-  margin-bottom: 20px;
-}
-
-.form-input-box input {
-  width: 100%;
-  padding: 10px 10px 5px; /* Ajout d'un padding en bas pour éviter le chevauchement */
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  outline: none;
-  background: transparent;
-  position: relative;
-}
-
-.form-input-box label {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 16px;
-  color: #aaa;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  background: white; /* Assure que le texte ne chevauche pas */
-  padding: 0 5px;
-  margin-top :0 !important;
-}
-
-.form-input-box input:focus + label,
-.form-input-box label.active {
-  top: 13px;
-  font-size: 12px;
-  color: #3498db;
-}
 </style>
-
 
 
 

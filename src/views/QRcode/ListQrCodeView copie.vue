@@ -17,14 +17,14 @@ const formatDate = (dateString) => {
   });
 };
 
-/*const goToMenu = () => {
+const goToMenu = () => {
   router.push({
     name: "Menu",
     params: {
       domain: domain.value,
     },
   });
-};*/
+};
 
 const router = useRouter();
 const route = useRoute();
@@ -110,23 +110,7 @@ onMounted(async () => {
 });
 </script>
 
-
 <template>
-
-  <section class="secure-datatable-heading-back">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col col-12 col-md-12 col-sm-12">
-            <div class="left-back">
-              <router-link :to="{ name: 'Menu' }">
-                <img src="@/assets/back-arrow-table.png" alt="back-arrow" />
-              </router-link>
-            </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <div class="container">
     <!-- <div class="text-center py-4">
       <h3>Liste des demandes</h3>
@@ -134,7 +118,7 @@ onMounted(async () => {
     </div> -->
     <div class="d-flex justify-content-center align-items-center">
       <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
-        <!-- <button class="back" @click="goToMenu()">Retour</button> -->
+        <button class="back" @click="goToMenu()">Retour</button>
         <h3 class="mt-3" v-if="route?.params?.slug">Liste Participants</h3>
 
         <h3 class="mt-3" v-else>Liste des demandes</h3>

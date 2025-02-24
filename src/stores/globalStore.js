@@ -8,7 +8,7 @@ export const useGlobalStore = defineStore("global", {
     publicDir: "https://www.securecheck.info/api/public",*/
     
     baseUrl: "http://127.0.0.1:8000/api",
-    publicDir: "http://127.0.0.1:8080/",
+    publicDir: "http://127.0.0.1:8000/",
 
     domain: "scb",
     logoPath: "",

@@ -56,12 +56,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="top-bar">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col col-6 col-md-6 top-bar-left">
-          <div>
-            <a v-if="route.params.domain == 'scb'" href="/">
+  <section class="top-bar-navbar">
+      <div class="container">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+          <div class="container-fluid">
+            <a class="navbar-brand"  v-if="route.params.domain == 'scb'" href="/">
               <img
                 id="logoif"
                 src="@/assets/secure-check-logo.png"
@@ -69,73 +68,78 @@ onMounted(() => {
                 alt="secure-check-logo"
               />
             </a>
-            <a v-else :href="`/${company_slug}`">
+
+            <a class="navbar-brand" v-else :href="`/${company_slug}`">
               <img
                 :src="`${publicDir}/logo/${company?.logo}`"
                 :alt="company_slug"
               />
             </a>
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                  <a 
+                    @click="logout"
+                    v-if="isAuthenticated"
+                    class="nav-link active"
+                    role="button"
+                  >
+                    Se déconnecter
+                  </a>
+                  <router-link
+                    v-else-if="route.name !== 'Login'"
+                    to="/sign-in"
+                    class="nav-link active"
+                  >
+                    Se connecter
+                  </router-link>
+                  <router-link
+                    v-else
+                    to="/request-meeting"
+                    class="nav-link"
+                  >
+                    Visite
+                  </router-link>
+                </li>
 
-            <!-- <router-link
-              :to="`/${company_slug ?? ''}`" v-else
-              ><img
-                src="@/assets/secure-check-logo.png"
-                class="logo12333"
-                id ="testelse" alt="secure-check-logo"
-            /></router-link> -->
+                <li class="nav-item" v-if="userStore.isManager(currentRole) || userStore.isSupervisor(currentRole)">
+                  <router-link
+                    :to="`/${company_slug ?? 'scb-systems-africa'}/edit-company/${company_slug}`"
+                    class="nav-link"
+                  >
+                    Modifier entreprise
+                  </router-link>
+                </li>
+              </ul>
+
+            </div>
           </div>
-        </div>
-        <div class="col col-6 col-md-6 top-bar-right">
-          <div class="account-login-button">
-            <p v-show="false">
-              {{ `${roles}` }}
-              {{ `${publicDir}/logo/${company?.logo}` }}
-            </p>
-
-            <!-- <h1>
-              {{ distantData }}
-            </h1> -->
-            <a
-              @click="logout"
-              class="login-button"
-              v-if="isAuthenticated"
-              role="button"
-            >
-              Se Déconnecter
-            </a>
-
-            <!-- to="/sign-in" -->
-            <!-- :to="`/${company_slug ?? 'scb'}/sign-in`" -->
-            <router-link
-              v-else-if="route.name != 'Login'"
-              to="/sign-in"
-              class="login-button"
-            >
-              Se Connecter
-            </router-link>
-
-            <!-- :to="`/${company_slug ?? 'scb'}/request-meeting`" -->
-            <router-link
-              v-else
-              :to="`/request-meeting`"
-              class="login-button"
-            >
-              Visite
-            </router-link>
-
-            <router-link
-              :to="`/${company_slug ?? 'scb-systems-africa'}/edit-company/${company_slug}`"
-              class="login-button"
-              v-if="userStore.isManager(currentRole) ||
-                    userStore.isSupervisor(currentRole)"
-            >
-              Modifier Entreprise
-            </router-link>
-          </div>
-        </div>
+        </nav>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <!-- <section class="secure-datatable-heading-back">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col col-12 col-md-12 col-sm-12">
+            <div class="left-back"><a href="#"><img src="@/assets/back-arrow-table.png" class="" alt="back-arrow" /></a></div>
+              <div class="center-heading"></div>
+              <div class="right-hide"></div>
+            </div>
+          </div>
+      </div>
+    </section> -->
 </template>
 
 <style>
