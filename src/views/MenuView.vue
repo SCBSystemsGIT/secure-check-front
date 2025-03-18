@@ -90,27 +90,46 @@ watch(
     </div>
   </section>
 
-  <section class="hexa-secure-logo hexa-secure-logo-bottom text-center">
+  <section :class="{ 'hexa-secure-logo-bottom-super': userStore.isSupervisor(currentRole) }" class="hexa-secure-logo_menu hexa-secure-logo-bottom text-center">
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
-          <div class="controler-image"><img src="@/assets/secure-check-effect-img.png" class="" alt="secure-check-effect-img" />
+          <div class="controler-image"><img src="@/assets/Symbole_Plan_de_travail_1.png" class="" alt="secure-check-effect-img" />
+
+          <!-- <div class="controler-image"><img src="@/assets/secure-check-effect-img.png" class="secure_check_image" alt="secure-check-effect-img" /> -->
             <ul>
+
               <li 
-                v-if="
+                v-if="userStore.isAdmin(currentRole) || 
+                      userStore.isManager(currentRole) || 
+                      userStore.isSecureCheck(currentRole)"
+                :class="{ 'hidden': userStore.isSupervisor(currentRole) }"
+                class_="animate__animated animate__backInLeft animate__delay-3s animate__slow 3s"
+              >
+                <router-link 
+                  :to="{ name: 'DisplayEventAttendence', params: { domain: domain } }"
+                >
+                  <img src="@/assets/3.png" alt="Participer à un évènement d'entreprise" title="Participer à un évènement d'entreprise"/>
+                  <p>Participer à un évènement</p>
+                </router-link>
+              </li> 
+              
+              <li 
+              v-if="
                   userStore.isAdmin(currentRole) ||
                   userStore.isSupervisor(currentRole) ||
-                  userStore.isManager(currentRole) ||
                   userStore.isSuperAdmin(currentRole) ||
-                  userStore.isSecureCheck(currentRole)
+                  userStore.isManager(currentRole) 
                 "
-                class_="animate__animated animate__backInLeft animate__delay-1s animate__slow	1s"
+                class_="animate__animated animate__backInRight animate__delay-8s animate__slow 8s"
               >
-                <router-link :to="{ name: 'EventList', params: { domain: domain } }">
-                  <img src="@/assets/1.png" alt="Liste des Evènements" title="Liste des Evènements"/>
-                  <p>Event list</p>
-                </router-link>
-              </li>
+                <router-link 
+                  :to="{ name: 'UserAttendence', params: { domain: domain } }"
+                >
+                  <img src="@/assets/3.png" alt="Participer à un évènement d'entreprise" title="Participer à un évènement d'entreprise"/>
+                  <p> User Attendence</p>
+                </router-link>  
+              </li>  
 
               <li 
                 v-if="
@@ -126,22 +145,38 @@ watch(
                   <img src="@/assets/2.png" alt="Demande" title="Liste des Demandes de visites" />
                   <p>Demande</p>
                 </router-link>
-              </li>
+              </li> 
+
 
               <li 
                 v-if="
                   userStore.isAdmin(currentRole) ||
                   userStore.isSupervisor(currentRole) ||
                   userStore.isManager(currentRole) ||
+                  userStore.isSuperAdmin(currentRole) ||
                   userStore.isSecureCheck(currentRole)
                 "
-                class_="animate__animated animate__backInLeft animate__delay-3s animate__slow 3s"
+                class_="animate__animated animate__backInLeft animate__delay-1s animate__slow	1s"
               >
-                <router-link 
-                  :to="{ name: 'DisplayEventAttendence', params: { domain: domain } }"
-                >
-                  <img src="@/assets/3.png" alt="Participer à un évènement d'entreprise" title="Participer à un évènement d'entreprise"/>
-                  <p>Participer à un évènement</p>
+                <router-link :to="{ name: 'EventList', params: { domain: domain } }">
+                  <img src="@/assets/1.png" alt="Liste des Evènements" title="Liste des Evènements"/>
+                  <p>Event list</p>
+                </router-link>
+              </li> 
+              
+              <li 
+                v-if="
+                  userStore.isAdmin(currentRole) ||
+                  userStore.isManager(currentRole) ||
+                  userStore.isSuperAdmin(currentRole) ||
+                  userStore.isSecureCheck(currentRole)
+                "
+                :class="{ 'hidden': userStore.isSupervisor(currentRole) }"
+                class_="animate__animated animate__backInRight animate__delay-6s animate__slow 6s"
+              >
+                <router-link :to="{ name: 'CompanyList', params: { domain: domain } }">
+                  <img src="@/assets/Liste-Entreprise.png" alt="Liste Entreprise" title="Liste Entreprises"/>
+                  <p>Liste Entreprise</p>
                 </router-link>
               </li>
 
@@ -198,6 +233,7 @@ watch(
                   userStore.isEmployee(currentRole) ||
                   userStore.isSecureCheck(currentRole)
                 "
+                :class="{ 'hidden': userStore.isSupervisor(currentRole) }"
                 class_="animate__animated animate__backInLeft animate__delay-2s animate__slow 2s"
               >
                 <router-link :to="{ name: 'ManalCheck', params: { domain: domain } }">
@@ -223,10 +259,10 @@ watch(
               <li 
                 v-if="
                   userStore.isAdmin(currentRole) || 
-                  userStore.isSupervisor(currentRole) || 
                   userStore.isManager(currentRole) || 
                   userStore.isEmployee(currentRole)
                 "
+                :class="{ 'hidden': userStore.isSupervisor(currentRole) }"
                 class_="animate__animated animate__backInRight animate__delay-4s animate__slow 4s"
               >
                 <router-link :to="{ name: 'Camera', params: { domain: domain } }">
@@ -241,26 +277,12 @@ watch(
                   userStore.isManager(currentRole) ||
                   userStore.isSecureCheck(currentRole)
                 "
+                :class="{ 'hidden': userStore.isSupervisor(currentRole) }"
                 class_="animate__animated animate__backInRight animate__delay-5s animate__slow 5s"
               >
                 <router-link :to="{ name: 'CreateCompany', params: { domain: domain } }">
                   <img src="@/assets/entreprise.png" alt="Créer une Entreprise" title="Créer une Entreprise"/>
                   <p>+ Entreprise</p>
-                </router-link>
-              </li>
-              
-              <li 
-                v-if="
-                  userStore.isAdmin(currentRole) ||
-                  userStore.isManager(currentRole) ||
-                  userStore.isSuperAdmin(currentRole) ||
-                  userStore.isSecureCheck(currentRole)
-                "
-                class_="animate__animated animate__backInRight animate__delay-6s animate__slow 6s"
-              >
-                <router-link :to="{ name: 'CompanyList', params: { domain: domain } }">
-                  <img src="@/assets/Liste-Entreprise.png" alt="Liste Entreprise" title="Liste Entreprises"/>
-                  <p>Liste Entreprise</p>
                 </router-link>
               </li>
 
@@ -278,7 +300,7 @@ watch(
                   <img src="@/assets/seances.png" alt="Liste des visiteurs" title="Liste des visiteurs"/>
                   <p>Liste des visiteurs</p>
                 </router-link>
-              </li>
+              </li>   
 							
             </ul>
           </div>
@@ -307,6 +329,12 @@ watch(
 }
 section.background-gradi.selectcheckintype .col.col-12.col-md-12.col-sm-12 {
     transform: unset !important;
-    position: unset ! IMPORTANT;
+    position: unset !important;
 }
+/* .hexa-secure-logo-bottom ul li img {
+    max-width: 80px;
+    width: auto;
+} */
+
+
 </style>

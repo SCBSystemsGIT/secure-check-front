@@ -35,14 +35,14 @@ const submitForm = async () => {
 };
 
 const domain = ref(route.params.domain || "scb");
-const goToMenu = () => {
-  router.push({
-    name: "Menu",
-    params: {
-      domain: domain.value
-    },
-  });
-};
+// const goToMenu = () => {
+//   router.push({
+//     name: "Menu",
+//     params: {
+//       domain: domain.value
+//     },
+//   });
+// };
 
 onMounted(() => {
   if (domain.value) {
@@ -86,6 +86,17 @@ watch(
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
+            <div class="left-back">
+              <router-link :to="{ name: 'Menu' }">
+                <img src="@/assets/back-arrow-table.png" alt="back-arrow" />
+              </router-link>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col col-12 col-md-12 col-sm-12">
           <!-- <div class="popup-logo" v-if="!isSuccess">
             <router-link to="/">
               <img
@@ -105,19 +116,19 @@ watch(
             </div>
           </div>
 
-          <div v-if="!isSuccess">
+          <div class="main_box-sec" v-if="!isSuccess">
             <div class="d-flex justify-content-center align-items-center">
               <div
                 class="d-flex justify-content-start mb-4 gap-3 align-items-center"
               >
-                <button class="back" @click="goToMenu">
+                <!-- <button class="back" @click="goToMenu">
                   Retour
-                </button>
+                </button> -->
                 <h3 class="text-center py-3">Validation Manuelle UIDN</h3>
               </div>
             </div>
-
-            <input
+<div class="input_box-ec">
+  <input
               type="text"
               name="uidn"
               id="uidn"
@@ -126,18 +137,19 @@ watch(
               placeholder="ENTREZ UUID"
               required
             />
-
+</div>
+            
+          <div class="button_devide">
             <div
-              class="request-btn"
-              @click.prevent="submitForm()"
-              v-if="!isLoading"
-            >
-              <a role="button">Valider </a>
-            </div>
+                        class="request-btn"
+                        @click.prevent="submitForm()"
+                        v-if="!isLoading"
+                      >
+                        <a role="button">Valider </a>
+                      </div>
 
-            <div class="request-btn" @click="goToMenu()">
-              <a role="button">Menu </a>
-            </div>
+          </div>
+            
           </div>
         </div>
       </div>

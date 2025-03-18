@@ -26,6 +26,7 @@ export function useLogin() {
       statusCode.value = response.status;
 
       localStorage.setItem("token", response.data.token);
+      document.cookie = `token=${response.data.token}; path=/; Secure; SameSite=Strict`;
       userStore.setToken(response.data.token);
 
       let fetchResult = fetchUserInfo();

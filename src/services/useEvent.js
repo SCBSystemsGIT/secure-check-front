@@ -47,6 +47,7 @@ export function useEvent() {
     try {
       const response = await apiClient.get("/evenement/" + slug);
       event.value = response.data.data;
+      console.log("event.value",event.value);
       statusCode.value = response.status; // Capture du statusCode
       successMessage.value = "Événement Rétrouvé";
     } catch (error) {

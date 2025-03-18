@@ -3,7 +3,6 @@ import { onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import { defineOptions } from "vue";
 import Home from "./HomeView";
-
 const route = useRoute();
 
 const updateBodyClass = () => {

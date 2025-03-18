@@ -90,36 +90,47 @@ const submitForm = async () => {
 };
 
 // Navigate back to the menu
-const goToMenu = () => {
-  router.push({ name: "Menu", params: { domain: route.params.domain } });
-};
+// const goToMenu = () => {
+//   router.push({ name: "Menu", params: { domain: route.params.domain } });
+// };
 </script>
 
 <template>
   <section class="request-meeting">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col col-12 col-md-12 col-sm-12">
+            <div class="left-back">
+              <router-link :to="{ name: 'Menu' }">
+                <img src="@/assets/back-arrow-table.png" alt="back-arrow" />
+              </router-link>
+            </div>
+        </div>
+      </div>
+    </div>
     <div class="background-gradi">
       <section class="request-meeting meeting-form">
         <div class="row align-items-center">
           <div class="col col-12 col-md-12 col-sm-12">
             <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
-              <button class="back" @click="goToMenu">Retour</button>
+              <!-- <button class="back" @click="goToMenu">Retour</button> -->
               <h3>Editer l'Entreprise</h3>
             </div>
 
             <form @submit.prevent="submitForm" enctype="multipart/form-data">
               <div>
-                <label for="logo">Logo</label><br />
+                <label for="logo">Logo</label>
                 <input
                   type="file"
                   id="logo"
                   @change="onFileChange"
                   :class="{ error: errorMessage }"
-                /><br />
+                />
                 <p v-if="fileName">{{ fileName }}</p>
               </div>
 
               <div>
-                <label for="name">Nom</label><br />
+                <label for="name">Nom</label>
                 <input
                   type="text"
                   id="name"
@@ -127,21 +138,21 @@ const goToMenu = () => {
                   required
                   readonly
                   disabled
-                /><br />
+                />
               </div>
 
               <div>
-                <label for="id_number">Identification number</label><br />
+                <label for="id_number">Identification number</label>
                 <input
                   type="text"
                   id="id_number"
                   v-model="companyReq.id_number"
                   required
-                /><br />
+                />
               </div>
 
               <div>
-                <label for="number_of_employee">Number of employee</label><br />
+                <label for="number_of_employee">Number of employee</label>
                 <select
                   v-model="companyReq.number_of_employee"
                   id="number_of_employee"
@@ -156,40 +167,40 @@ const goToMenu = () => {
                   <option value="+1000">+1000</option>
 
                   </select
-                ><br />
+                >
               </div>
 
               <div>
-                <label for="address">Address</label><br />
+                <label for="address">Address</label>
                 <input
                   type="text"
                   id="address"
                   v-model="companyReq.address"
                   required
-                /><br />
+                />
               </div>
               
               <div>
-                <label for="city">City</label><br />
+                <label for="city">City</label>
                 <input
                   type="text"
                   id="city"
                   v-model="companyReq.city"
                   required
-                /><br />
+                />
               </div>
               <div>
-                <label for="state">Region/State</label><br />
+                <label for="state">Region/State</label>
                 <input
                   type="text"
                   id="state"
                   v-model="companyReq.state"
                   required
-                /><br />
+                />
               </div>
 
               <div>
-                <label for="country">Country</label><br />
+                <label for="country">Country</label>
                 <select
                   id="country"
                   v-model="companyReq.country"
@@ -392,71 +403,71 @@ const goToMenu = () => {
                   <option value="Yemen">Yemen</option>
                   <option value="Zambia">Zambia</option>
                   <option value="Zimbabwe">Zimbabwe</option>
-                </select><br />
+                </select>
               </div>
 
               <div>
-                <label for="zipcode">Zip Code </label><br />
+                <label for="zipcode">Zip Code </label>
                 <input
                   type="zipcode"
                   id="zipcode"
                   v-model="companyReq.zipcode"
                   required
-                /><br />
+                />
               </div>
 
               <div>
-                <label for="company_field">Company Field or Industry</label><br />
+                <label for="company_field">Company Field or Industry</label>
                 <input
                   type="text"
                   id="company_field"
                   v-model="companyReq.company_field"
                   required
-                /><br />
+                />
               </div>
 
               <div>
-                <label for="point_contact">Point of Contact</label><br />
+                <label for="point_contact">Point of Contact</label>
                 <input
                   type="text"
                   id="point_contact"
                   v-model="companyReq.point_contact"
                   required
-                /><br />
+                />
               </div>
 
               <div>
-                <label for="title">Titre</label><br />
+                <label for="title">Titre</label>
                 <input
                   type="text"
                   id="title"
                   v-model="companyReq.title"
                   required
-                /><br />
+                />
               </div>
 
               <div>
-                <label for="email">Email</label><br />
+                <label for="email">Email</label>
                 <input
                   type="email"
                   id="email"
                   v-model="companyReq.email"
                   required
-                /><br />
+                />
               </div>
 
               <div>
-                <label for="phone_number">Phone number</label><br />
+                <label for="phone_number">Phone number</label>
                 <input
                   type="text"
                   id="phone_number"
                   v-model="companyReq.phone_number"
                   required
-                /><br />
+                />
               </div>
 
              
-              <div class="submit-button">
+              <div class="event_button submit-button">
                 <input type="submit" value="Soumettre" />
               </div>
 

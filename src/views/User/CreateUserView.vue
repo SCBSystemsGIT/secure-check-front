@@ -211,7 +211,7 @@ onBeforeMount(async () => {
               <img src="@/assets/back-arrow-table.png" class="" alt="back-arrow" />
             </a> -->
 
-            <router-link :to="{ name: 'RequestMeeting' }">
+            <router-link :to="{ name: 'Menu' }">
               <img src="@/assets/back-arrow-table.png" alt="back-arrow" />
             </router-link>
 

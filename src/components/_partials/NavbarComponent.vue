@@ -22,6 +22,12 @@ const { publicDir } = useGlobalStore();
 const { showCompany, company } = useCompanies();
 const company_slug = ref(localStorage.getItem("currentCompany"));
 
+
+const path = window.location.pathname; 
+const pathParts = path.split('/'); 
+const company_event_slug = pathParts[2]; 
+console.log("Company Slug:", company_event_slug);
+
 onBeforeMount(async () => {
   // Extraire l'hôte (domaine + port)
   console.log("Host:", window.location.host);
@@ -31,7 +37,11 @@ onBeforeMount(async () => {
   if (window.location.pathname != "/sign-in") {
     if (company_slug.value) {
       await showCompany(company_slug.value);
-    } else {
+    }
+    else if(company_event_slug){
+      await showCompany(company_event_slug);
+    }
+     else {
       company_slug.value = "";
     }
   }
@@ -60,7 +70,11 @@ onMounted(() => {
       <div class="container">
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
           <div class="container-fluid">
-            <a class="navbar-brand"  v-if="route.params.domain == 'scb'" href="/">
+            <a
+              class="navbar-brand"
+              v-if="!route.params.domain || route.params.domain === 'null'"
+              href="/"
+            >
               <img
                 id="logoif"
                 src="@/assets/secure-check-logo.png"
@@ -68,11 +82,14 @@ onMounted(() => {
                 alt="secure-check-logo"
               />
             </a>
-
-            <a class="navbar-brand" v-else :href="`/${company_slug}`">
+            <a
+              class="navbar-brand"
+              v-else
+              :href="`/${route.params.domain}`"
+            >
               <img
                 :src="`${publicDir}/logo/${company?.logo}`"
-                :alt="company_slug"
+                :alt="route.params.domain"
               />
             </a>
             <button

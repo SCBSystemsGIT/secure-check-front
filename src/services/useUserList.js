@@ -73,11 +73,26 @@ export function useUserList() {
     }
   };
 
+  const deleteUser = async (userId) => {
+    try {
+      const response = await apiClient.delete(`/user/${userId}`);
+      if (response.status === 200) {
+        // Successfully deleted user, remove it from the list locally
+        users.value = users.value.filter(user => user.id !== userId);
+      }
+      return response; // Return the response for further handling
+    } catch (err) {
+      console.error("Error deleting user:", err);
+      throw err; // Propagate the error so it can be caught in the component
+    }
+  };
+
   return {
     users,
     loading,
     error,
     fetchUsers,
     fetchUsersComp,
+    deleteUser,
   };
 }

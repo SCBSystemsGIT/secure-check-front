@@ -23,7 +23,11 @@ import CompanyListView from "@/views/CompanyListView.vue";
 import DisplayEventAttendenceView from "@/views/DisplayEventAttendenceView.vue";
 import ShowCompanyQRcodeView from "@/views/ShowCompanyQRcodeView.vue";
 import EmployeeListView from '@/views/EmployeeListView.vue';
-
+import SuccessUserCheckinView from "@/views/SuccessUserCheckinView.vue";
+import SuccessUserCheckoutView from "@/views/SuccessUserCheckoutView.vue";
+import UserAttendenceView from "@/views/User/UserAttendenceView.vue";
+import RequestQrCodeView from "@/views/RequestQrCodeView.vue";
+import UserQrCodeDisableView from "@/views/User/UserQrCodeDisableView.vue";
 
 const routes = [
   {
@@ -31,6 +35,7 @@ const routes = [
     path: "/sign-in",
     name: "Login",
     component: Login,
+    alias: ["/"],
   },
   {
     path: "/:domain/meeting",
@@ -57,7 +62,6 @@ const routes = [
     path: "/:domain",
     name: "homePage",
     component: RequestMeetingView,
-    alias: ["/"],
   },
   {
     path: "/:domain/waiting-validation/:id",
@@ -100,7 +104,7 @@ const routes = [
     component: EventView,
   },
   {
-    path: "/company/:company_slug/event/:slug",
+    path: "/company/:domain/event/:slug",
     name: "JoinEvent",
     component: CreateVisitorView,
   },
@@ -110,15 +114,26 @@ const routes = [
     component: EventListView,
   },
   {
-    path: "/:domain/success-checkout/:uidn",
+    path: "/success-checkout/:uidn",
     name: "SuccessCheckout",
     component: SuccessCheckoutView,
   },
   {
-    path: "/:domain/success-checkin/:uidn",
+    path: "/success-checkin/:uidn",
     name: "SuccessCheckin",
     component: SuccessCheckinView,
   },
+  {
+    path: "/success-user-checkin/:uidn",
+    name: "SuccessUserCheckin",
+    component: SuccessUserCheckinView,
+  },
+  {
+    path: "/success-user-checkout/:uidn",
+    name: "SuccessUserCheckout",
+    component: SuccessUserCheckoutView,
+  },
+
   {
     path: "/:domain/create-company",
     name: "CreateCompany",
@@ -163,6 +178,22 @@ const routes = [
     path: "/:domain/event-attendences",
     name: "DisplayEventAttendence",
     component: DisplayEventAttendenceView,
+  },
+  {
+    path: "/:domain/user-check-ins",
+    name: "UserAttendence",
+    component: UserAttendenceView,
+  },
+  {
+    path: "/company/:domain/meeting-request-qr/:uidn",
+    name: "RequestQrCode",
+    component: RequestQrCodeView,
+  },
+
+  {
+    path: "/:domain/disable-user-qrcode/:id",
+    name: "UserQrCodeDisable",
+    component: UserQrCodeDisableView,
   },
 ];
 

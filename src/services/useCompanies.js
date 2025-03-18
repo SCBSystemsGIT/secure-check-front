@@ -129,6 +129,20 @@ export function useCompanies() {
     }
   };
 
+  const deleteCompany= async (companyId) => {
+    try {
+      const response = await apiClient.delete(`/company/delete/${companyId}`);
+      if (response.status === 200) {
+        // Successfully deleted user, remove it from the list locally
+        companies.value = companies.value.filter(company => company.id !== companyId);
+      }
+      return response; // Return the response for further handling
+    } catch (err) {
+      console.error("Error deleting user:", err);
+      throw err; // Propagate the error so it can be caught in the component
+    }
+  };
+
   return {
     companies,
     loading,
@@ -139,5 +153,6 @@ export function useCompanies() {
     updateCompany,
     statusCode,
     company,
+    deleteCompany,
   };
 }

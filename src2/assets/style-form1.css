@@ -1,0 +1,317 @@
+form {
+    width: 100%;
+    max-width: 750px;
+    background: transparent;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0;
+    backdrop-filter: none;
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto 60px auto;
+}
+.form-step {
+    display_: none;
+}
+.form-step.active {
+    display: block;
+}
+.form-step {
+    position: absolute;
+    width: 100%;
+    opacity: 0;
+    transform: scale(0.8) translateY(50px);
+    transition: all 0.5s ease;
+}
+
+form .form-step .divide-50 {
+    float: left;
+    width: 50%;
+    padding: 0px 20px 0px 20px;
+    margin: 0;
+    min-height: 95px;
+}
+form .form-step .divide-50 > label {
+    float: left;
+    width: 100%;
+    margin-top: 0;
+    color: #000000;
+    font-weight: 700;
+}
+form .form-step .divide-50 input[type="text"] {
+    background: transparent;
+    border: 1px solid #000000;
+    border-radius: 15px;
+}
+form .form-step .divide-50 .form-check label.form-check-label {
+    margin: 0;
+}
+form .form-step .divide-50 .form-check {
+    margin-top: 20px;
+    float: left;
+    width: 45%;
+    margin-right: 3%;
+}
+form .form-step .divide-50 .form-check input {
+    box-shadow: none;
+}
+form .form-step .divide-50 select {
+    background-color: transparent;
+    border: 1px solid #000000;
+    border-radius: 15px;
+    min-height: 50px;
+    margin-top: 0.5rem;
+    float: left;
+}
+
+form .form-step .divide-50 select:focus{
+	box-shadow:none;
+	    border: 1px solid #000000;
+}
+form .buttons {
+    float: left;
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+form .buttons button, form .buttons button:hover {
+    background: #000000;
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+form .form-step p label {
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+}
+.form-step.active {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    position: relative;
+}
+
+.step-header {
+    position: absolute;
+    top: -30px;
+    right: 30px;
+    background: #16a085;
+    color: #fff;
+    padding: 0.5em 1em;
+    border-radius: 30px;
+    font-weight: 600;
+    animation: slideIn 0.5s forwards;
+    display: none;
+}
+
+
+label {
+    display: block;
+    margin-top: 1em;
+    color: #555;
+    font-weight: 500;
+    animation: fadeInUp 0.5s ease-in-out;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="file"],
+input[type="password"],
+textarea,select {
+    width: 100%;
+    padding: 0.75em 1em;
+    margin-top: 0.5em;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.3s;
+    animation: fadeInUp 0.5s ease-in-out;
+}
+
+input:focus,
+textarea:focus {
+    border-color: #1abc9c;
+}
+
+input[type="checkbox"] {
+    margin-right: 0.5em;
+}
+
+.required {
+    color: red;
+    font-weight: bold;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2em;
+    animation: fadeInUp 0.5s ease-in-out;
+}
+
+button {
+    padding: 0.75em 2em;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.next-step,
+.prev-step {
+    background: #1abc9c;
+    color: #fff;
+}
+
+.next-step:hover,
+.prev-step:hover {
+    background: #16a085;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+button[type="submit"] {
+    background: #e74c3c;
+    color: #fff;
+    margin-left: auto;
+}
+
+button[type="submit"]:hover {
+    background: #c0392b;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+#summary p {
+    margin: 1em 0;
+    color: #333;
+    font-weight: 500;
+    animation: fadeInUp 0.5s ease-in-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+.smaller {
+  font-size:.8em;
+}
+
+.top {
+    margin-bottom:20px;
+}
+.bottom {
+    margin-top:20px;
+}
+
+  
+  #datetimecontainer {
+  width:600px;
+  background-color:#ffffff;
+  padding:40px;
+  border-radius:4px;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.15);
+  margin:20px auto;
+}
+
+.error {
+  background:orange;
+}
+
+#datetime {
+  background:#e5e5e5;
+  padding:0 10px;
+  color:#999;
+}
+
+#pass {
+  color:white;
+  background: green;
+}
+
+#fail {
+  color:white;
+  background: red;
+}
+
+.ui-datepicker-trigger {
+  position:relative;
+  top:6px;
+  left: 2px;
+  opacity:0.8;
+}
+
+form .form-step .divide-50 #container {
+    float: left;
+    width: 100%;
+    position: relative;
+}
+form .form-step .divide-50 img.ui-datepicker-trigger {
+    position: absolute;
+    top: 20px;
+    cursor: pointer;
+    left: calc(100% - 38px);
+}
+
+form .form-step .divide-50.custom-time #container {
+    float: left;
+    width: 100%;
+    border: 1px solid #000000 !important;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+}
+form .form-step .divide-50.custom-time select {
+    width: 48.5%;
+    border: 0;
+    padding: 0 10px 0 10px;
+    margin: 0;
+}
+form .form-step .divide-50.custom-time select:last-child {
+    float: right;
+}
+
+
+@media (min-width:0px) and (max-width:767px) {	
+form { padding: 5px; }
+form .form-step p { float: left; width: 100%; padding: 20px 20px 0px 20px; margin: 0; }
+
+
+form .form-step .divide-50 { float: left; width: 100%; padding: 0px 10px 0px 10px; margin: 0; min-height: 95px; }
+
+
+
+}
+
+

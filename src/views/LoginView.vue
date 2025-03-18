@@ -141,8 +141,6 @@ const handleSubmit = async () => {
 
 <template>
   <div class="login-page">
-    
-  
     <section class="login-div-sec">
       <div class="container login-div">
         <div class="row">

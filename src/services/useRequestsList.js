@@ -33,6 +33,21 @@ export function useRequestsList() {
     }
   };
 
+  const deleteVisitor = async (visitorId) => {
+    try {
+      const response = await apiClient.delete(`/visitor/delete/${visitorId}`);
+      if (response.status === 200) {
+        // Successfully deleted visitor, remove it from the list locally
+        requests.value = requests.value.filter(request => request.id !== visitorId);
+      }
+      return response; // Return the response for further handling
+    } catch (err) {
+      console.error("Error deleting visitor:", err);
+      throw err; // Propagate the error so it can be caught in the component
+    }
+  };
+
+
 //   onMounted(async() => {
 //     await fetchRequests();
 //   });
@@ -42,6 +57,7 @@ export function useRequestsList() {
     error,
     loading,
     fetchRequestsByComp,
-    fetchRequests
+    fetchRequests,
+    deleteVisitor
   };
 }

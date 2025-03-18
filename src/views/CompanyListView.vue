@@ -23,7 +23,7 @@ export default {
     const userStore = useUserStore();
     const roles = ref(JSON.parse(localStorage.getItem("userInfo")) || {});
     const currentRole = ref(roles?.value?.roles ? roles.value.roles[0] : "");
-    const { showCompany, company } = useCompanies();
+    const { showCompany, company ,deleteCompany} = useCompanies();
 
 
     console.log('roles',roles)
@@ -76,7 +76,7 @@ export default {
       const copied = ref(false);
       const host = process.env.FRONT_URL ?? window.location.host;
       // const lien = `${host}/${dataLink}`;
-      const lien = `https://${host}/${dataLink}`;
+       const lien = `https://${host}/${dataLink}`;
       navigator.clipboard.writeText(lien)
         .then(() => {
           copied.value = true;
@@ -165,9 +165,28 @@ export default {
     }
 };
 
+const handleDelete = async (companyId, companyName) => {
+  const isConfirmed = confirm(`Are you sure you want to delete ${companyName}?`);
+  if (!isConfirmed) return;
 
+  await toast.promise(
+    deleteCompany(companyId), // Async delete function
+    {
+      pending: `Deleting ${companyName}...`,
+      success: `User ${companyName} deleted successfully!`,
+      error: `Failed to delete ${companyName}.`,
+    },
+    {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 3000,
+      closeButton: true,
+    }
+  );
+  
+  // Refresh the page after successful deletion
+  await fetchEventData();
+};
 
-    // Fetch event data when the component is mounted
     onMounted(async() => {
       
       fetchEventData();
@@ -197,18 +216,35 @@ export default {
       userStore,
       currentRole,
       showCompany,
-      company
+      company,
+      handleDelete
     };
   },
 };
+
+
 </script>
 
 
 <template>
+
+<section class="secure-datatable-heading-back">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col col-12 col-md-12 col-sm-12">
+            <div class="left-back">
+              <router-link :to="{ name: 'Menu' }">
+                <img src="@/assets/back-arrow-table.png" alt="back-arrow" />
+              </router-link>
+            </div>
+        </div>
+      </div>
+    </div>
+  </section>
   <div class="container">
     <div class="d-flex justify-content-center align-items-center">
       <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
-        <button class="back" @click="goToMenu()">Retour</button>
+        <!-- <button class="back" @click="goToMenu()">Retour</button> -->
         <h3 class="mt-3" v-if="route?.params?.slug">Liste Participants</h3>
         <h3 class="mt-3" v-else>Lista de Entreprise </h3>
       </div>
@@ -336,13 +372,15 @@ export default {
             <th class="mdc-data-table__header-cell">QRCode</th>
             <th class="mdc-data-table__header-cell">Logo</th>
             <th class="mdc-data-table__header-cell">Employees</th>
-            <th class="mdc-data-table__header-cell" 
+            <th class="mdc-data-table__header-cell">Edit</th>
+            <th class="mdc-data-table__header-cell">Delete</th>
+            <!-- <th class="mdc-data-table__header-cell" 
             v-if="
                   userStore.isSuperAdmin(currentRole) ||
                   userStore.isSecureCheck(currentRole) ||
                   userStore.isSupervisor(currentRole)
                 "
-            >Edit</th>
+            >Edit</th> -->
           </tr>
         </thead>
         <tbody>
@@ -388,6 +426,11 @@ export default {
                 ">
               <!-- Navigate to the edit page with the company ID as a parameter -->
               <router-link :to="{ name: 'EditCreateCompany', params: { company_edit: log.id } }">Edit</router-link>
+            </td>
+            <td class="mdc-data-table__cell" v-if="userStore.isAdmin(currentRole)">
+              <button @click="handleDelete(log.id , log.name)" class="btn">
+                <img src="@/assets/delete-icon.png" alt="delete" width="30" height="30"/>
+              </button>
             </td>
           </tr>
         </tbody>

@@ -8,10 +8,17 @@ import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 
 // Importation des données depuis les services et composables
+// const { events, loading, error, fetchEventsByComp, fetchEvents, deleteEvent } =
+//   useEventList();
 const { events, loading, error, fetchEventsByComp, fetchEvents } =
   useEventList();
 const { formatDate, formatTime } = useDate();
 const { publicDir } = useGlobalStore();
+
+
+const roles = ref(JSON.parse(localStorage.getItem("userInfo")) || {});
+const userStore = useUserStore();
+const currentRole = ref(roles?.value?.roles ? roles.value.roles[0] : "");
 
 // Définitions des colonnes pour le tableau
 const thead = ref([
@@ -26,6 +33,7 @@ const thead = ref([
   "Lien",
   "Participants",
   "QRCode",
+  // (currentRole.value === "ROLE_ADMIN" ? "Delete" : ""),
 ]);
 
 // Correspondance des propriétés de l'utilisateur
@@ -41,6 +49,7 @@ const tbody = ref([
   { slot: "link" },
   { slot: "participants" },
   { slot: "QRCode" },
+  // (currentRole.value === "ROLE_ADMIN" ? "Delete" : ""),
 ]);
 
 // const open = ref(true);
@@ -83,7 +92,9 @@ const showEventQR = (slug) => {
 const copyContent = (dataLink) => {
   const copied = ref(false);
   let host = process.env.FRONT_URL ?? window.location.host;
-  let lien = `${host}/company/${dataLink.company.slug}/event/${dataLink.slug}`;
+  // let lien = `${host}/company/${dataLink.company.slug}/event/${dataLink.slug}`;
+  let lien = `https://${host}/company/${dataLink.company.slug}/event/${dataLink.slug}`;
+  
 
   navigator.clipboard
     .writeText(lien)
@@ -101,18 +112,37 @@ const copyContent = (dataLink) => {
     });
 };
 
-const goToMenu = () => {
-  router.push({
-    name: "Menu",
-    params: {
-      domain: domain.value,
-    },
-  });
-};
+// const goToMenu = () => {
+//   router.push({
+//     name: "Menu",
+//     params: {
+//       domain: domain.value,
+//     },
+//   });
+// };
 
-const roles = ref(JSON.parse(localStorage.getItem("userInfo")) || {});
-const userStore = useUserStore();
-const currentRole = ref(roles?.value?.roles ? roles.value.roles[0] : "");
+// const handleDelete = async (eventId, eventName) => {
+//   const isConfirmed = confirm(`Are you sure you want to delete ${eventName}?`);
+//   if (!isConfirmed) return;
+
+//   await toast.promise(
+//     deleteEvent(eventId), // Async delete function
+//     {
+//       pending: `Deleting ${eventName}...`,
+//       success: `User ${eventName} deleted successfully!`,
+//       error: `Failed to delete ${eventName}.`,
+//     },
+//     {
+//       position: toast.POSITION.TOP_CENTER,
+//       autoClose: 3000,
+//       closeButton: true,
+//     }
+//   );
+  
+//   // Refresh the page after successful deletion
+//   await fetchEvents();
+// };
+
 
 onMounted(() => {
   
@@ -137,10 +167,23 @@ onMounted(() => {
 </script>
 
 <template>
+   <section class="secure-datatable-heading-back">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col col-12 col-md-12 col-sm-12">
+            <div class="left-back">
+              <router-link :to="{ name: 'Menu' }">
+                <img src="@/assets/back-arrow-table.png" alt="back-arrow" />
+              </router-link>
+            </div>
+        </div>
+      </div>
+    </div>
+  </section>
   <div class="container">
     <div class="d-flex justify-content-center align-items-center">
       <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
-        <button class="back" @click="goToMenu()">Retour</button>
+        <!-- <button class="back" @click="goToMenu()">Retour</button> -->
         <h3 class="text-center">Liste des Evenements</h3>
       </div>
     </div>
@@ -215,6 +258,9 @@ onMounted(() => {
           <p v-else>Pas de QRcode</p>
           <!-- </ui-icon> -->
         </template>
+        <!-- <template #delete="{ data }" v-if="currentRole === 'ROLE_ADMIN'">
+          <ui-icon role="button" @click="handleDelete(data.id , data.departement.name)">delete</ui-icon>
+        </template> -->
       </ui-table>
     </div>
 
@@ -239,5 +285,9 @@ a {
   float: left;
   width: 100%;
   font-size: 20px;
+}
+button {
+  margin: 0 10px;
+  padding: 5px 10px;
 }
 </style>

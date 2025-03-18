@@ -4,8 +4,15 @@ import { useRequestsList } from "@/services/useRequestsList";
 import { useRoute, useRouter } from "vue-router";
 import { useEvent } from "@/services/useEvent";
 import { useUserStore } from "@/stores/useUserStore";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css"; // Ensure this is imported
 
-const { requests, error, fetchRequestsByComp, fetchRequests } = useRequestsList();
+const { requests, error, fetchRequestsByComp, fetchRequests ,deleteVisitor} = useRequestsList();
+const router = useRouter();
+const route = useRoute();
+const userStore = useUserStore();
+
+
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleDateString("fr-FR", {
@@ -17,24 +24,65 @@ const formatDate = (dateString) => {
   });
 };
 
-/*const goToMenu = () => {
-  router.push({
-    name: "Menu",
-    params: {
-      domain: domain.value,
-    },
-  });
-};*/
+// const goToMenu = () => {
+//   router.push({ name: "Menu", params: { domain: domain.value } });
+// };
 
-const router = useRouter();
-const route = useRoute();
-// Pagination variables
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
-const show = (id, address, request_time , request_date ,organisationName, city, state, zipcode, country ) => {
-  // router.push(`/waiting-validation/${id}`);
-  // alert(id);
-  // alert(domain.value);
+
+const roles = ref(JSON.parse(localStorage.getItem("userInfo")) || {});
+const currentRole = ref(roles?.value?.roles ? roles.value.roles[0] : "");
+
+const tableHeaders = computed(() => {
+  const headers = [
+    "Visiteur",
+    "Email",
+    (event_slug !== "list-qrcode-events" ? "Host" : []),
+    (event_slug !== "list-qrcode-events" ? "Reason" : []),
+    "Contact",
+    "Statut",
+    "Date Création"
+  ];
+
+  if (currentRole.value !== "ROLE_SUPERVISOR" || event_slug == "list-qrcode-events") {
+    headers.push("Action");
+  }
+  if(currentRole.value === "ROLE_ADMIN") {
+    headers.push("Delete");
+  }
+  return headers;
+});
+
+console.log("Path-event", window.location.pathname);
+const path = window.location.pathname;
+const segments = path.split("/"); 
+const event_slug = segments[2]; 
+console.log(event_slug);
+
+const tableBody = computed(() => {
+  const body = [
+    { slot: "visitor" },
+    { slot: "email" },
+    (event_slug !== "list-qrcode-events" ? "host" : []),
+    (event_slug !== "list-qrcode-events" ? "reason" : []),
+    { slot: "contact" },
+    { slot: "confirmed" },
+    { slot: "request_date" },
+  ];
+
+  if (currentRole.value !== "ROLE_SUPERVISOR") {
+    body.push({ slot: "actions" });
+  }
+  if(currentRole.value === "ROLE_ADMIN") {
+    body.push({ slot: "delete" });
+  }
+  return body;
+});
+
+
+
+const show = (id, firstname, lastname, address, request_time , request_date ,organisationName, city, state, zipcode, country ) => {
 
   router.push({
     name: "WaitingValidation",
@@ -43,6 +91,8 @@ const show = (id, address, request_time , request_date ,organisationName, city, 
       id: id,
     },
     state: { 
+      firstname: firstname,
+      lastname: lastname,
       address: address,
       request_time: request_time,
       request_date: request_date,
@@ -56,7 +106,6 @@ const show = (id, address, request_time , request_date ,organisationName, city, 
   });
 };
 
-// Computed property for paginated data
 const paginatedRequests = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
   const end = start + itemsPerPage.value;
@@ -64,19 +113,7 @@ const paginatedRequests = computed(() => {
     ? filteredRequests.value.slice(start, end)
     : requests.value.slice(start, end);
 });
-
-// Calculate the total number of pages
-// const totalPages = computed(() =>
-//   Math.ceil(requests.value.length / itemsPerPage.value)
-// );
-
-// Function to change page
-// const changePage = (page) => {
-//   if (page >= 1 && page <= totalPages.value) {
-//     currentPage.value = page;
-//   }
-// };
-
+console.log('requestid234344',paginatedRequests);
 const { showEvent, event } = useEvent();
 const filteredRequests = computed(() => {
   return requests.value.filter(
@@ -84,30 +121,46 @@ const filteredRequests = computed(() => {
   );
 });
 
-const roles = ref(JSON.parse(localStorage.getItem("userInfo")) || {});
-const userStore = useUserStore();
-const currentRole = ref(roles?.value?.roles ? roles.value.roles[0] : "");
-
 const domain = ref(route.params.domain || "scb");
 onMounted(async () => {
-  // console.log({ req: typeof requests.value });
-
   if (route?.params?.slug) {
     await showEvent(route?.params?.slug);
-    console.log({ requests: requests });
-    console.log({ event: event.value });
   }
 
   if (!userStore.isAdmin(currentRole.value)) {
-    // fetchEventsByComp(domsain.value);
     await fetchRequestsByComp(domain.value);
-  } else {
-    // fetchEvents();
+    requests.value = filteredRequests.value;
+    console.log("asfdf",requests.value);
+  }  else {
     await fetchRequests();
+    requests.value = filteredRequests.value;
+    console.log("asfdf",requests.value);
   }
 
-  requests.value = filteredRequests.value;
+ 
 });
+
+const handleDelete = async (visitorId, visitorName) => {
+  const isConfirmed = confirm(`Are you sure you want to delete ${visitorName}?`);
+  if (!isConfirmed) return;
+
+  await toast.promise(
+    deleteVisitor(visitorId), // Async delete function
+    {
+      pending: `Deleting ${visitorName}...`,
+      success: `User ${visitorName} deleted successfully!`,
+      error: `Failed to delete ${visitorName}.`,
+    },
+    {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 3000,
+      closeButton: true,
+    }
+  );
+  
+  // Refresh the page after successful deletion
+  await fetchRequests();
+};
 </script>
 
 
@@ -134,7 +187,6 @@ onMounted(async () => {
     </div> -->
     <div class="d-flex justify-content-center align-items-center">
       <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
-        <!-- <button class="back" @click="goToMenu()">Retour</button> -->
         <h3 class="mt-3" v-if="route?.params?.slug">Liste Participants</h3>
 
         <h3 class="mt-3" v-else>Liste des demandes</h3>
@@ -148,25 +200,10 @@ onMounted(async () => {
     <div class="d-flex justify-content-center py-3">
       <ui-table
         :data="paginatedRequests"
-        :thead="['Visiteur', 'Email', 'Contact', 'Host', 'Statut', 'Date Création', 'Action']"
-        :tbody="[
-          {
-            slot: 'visitor',
-          },
-          { slot: 'email' },
-
-          { slot: 'contact' },
-          'host',
-          { slot: 'confirmed' },
-          {
-            slot: 'request_date',
-          },
-          {
-            slot: 'actions',
-          },
-        ]"
+        :thead="tableHeaders"
+        :tbody="tableBody"
       >
-        <!-- Utilisation des slots si supportés -->
+
         <template #visitor="{ data }">
           {{ data.visitor.firstname }}
           {{ data.visitor.lastname }}
@@ -188,9 +225,12 @@ onMounted(async () => {
           {{ data.confirmed ? "Confirmé" : "En attente" }}
         </template>
 
-        <template #actions="{ data }">
-          <!-- <ui-icon @click="show(data.id)" v-if="data.u" role="button"> edit </ui-icon> -->
-          <ui-icon role="button" @click="show(data.id , data.visitor.address , data.visitor.request_time , data.visitor.request_date , data.visitor.organisationName,data.visitor.city, data.visitor.state, data.visitor.zipcode,  data.visitor.country )"> edit </ui-icon>
+        <template #actions="{ data }" v-if="currentRole !== 'ROLE_SUPERVISOR'  && event_slug !== 'list-qrcode-events'" >
+          <ui-icon v-if="currentRole !== 'ROLE_SUPERVISOR'&& data.confirmed !=true && data.status !=true " role="button" @click="show(data.id, data.visitor.firstname, data.visitor.lastname, data.visitor.address , data.visitor.request_time , data.visitor.request_date , data.visitor.organisationName,data.visitor.city, data.visitor.state, data.visitor.zipcode,  data.visitor.country )"> edit </ui-icon>
+        </template>
+
+        <template #delete="{ data }" v-if="currentRole === 'ROLE_ADMIN'">
+          <ui-icon role="button" @click="handleDelete(data.id , data.visitor.firstname,)">delete</ui-icon>
         </template>
 
         <ui-pagination
@@ -204,27 +244,6 @@ onMounted(async () => {
     </div>
 
     <div v-if="error">{{ error }}</div>
-
-    <!-- Pagination Control -->
-    <!-- <div class="pagination mb-3">
-      <button
-        class="btn btn-secondary"
-        @click="changePage(currentPage - 1)"
-        :disabled="currentPage === 1"
-      >
-        Précédent
-      </button>
-      <span v-if="!route.params.slug"
-        >Page {{ currentPage }} sur {{ totalPages }}</span
-      >
-      <button
-        class="btn btn-secondary"
-        @click="changePage(currentPage + 1)"
-        :disabled="currentPage === totalPages"
-      >
-        Suivant
-      </button>
-    </div> -->
   </div>
 </template>
 
