@@ -10,15 +10,14 @@ export function useUpdateRequest() {
   const updateRequest = async (id, requestData) => {
     isLoading.value = true;
     error.value = null;
-
     try {
       const response = await apiClient.put(
-
         `/requests/update/${id}`,
         requestData
       );
       isLoading.value = false;
       uidn.value = response.data.data.uidn;
+     
 
       return response.data;
     } catch (err) {
@@ -32,7 +31,7 @@ export function useUpdateRequest() {
     isLoading,
     error,
     updateRequest,
-    uidn
+    uidn,
   };
   
 }

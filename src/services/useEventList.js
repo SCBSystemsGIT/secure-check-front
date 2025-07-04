@@ -34,6 +34,29 @@ export function useEventList() {
     }
   };
 
+
+    const deleteEvent = async (eventId) => {
+      try {
+        const response = await apiClient.delete(`/evenement/delete/${eventId}`);
+        if (response.status === 200) {
+          // Successfully deleted event, remove it from the list locally
+          events.value = events.value.filter(event => event.id !== eventId);
+          return {
+            success: true,
+            message: 'Event deleted successfully'
+          };
+        }
+        return response;
+      } catch (err) {
+        console.error("Error deleting event:", err);
+        return {
+          success: false,
+          message: err.response?.data?.message || 'Error deleting event'
+        };
+      }
+    };
+  
+
   // onMounted(() => {
   //   fetchEvents();
   // });
@@ -44,5 +67,6 @@ export function useEventList() {
     error,
     fetchEvents,
     fetchEventsByComp,
+    deleteEvent,
   };
 }

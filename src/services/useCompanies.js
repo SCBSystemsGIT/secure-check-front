@@ -54,9 +54,30 @@ export function useCompanies() {
   const updateCompany = async (data, id) => {
     loading.value = true;
     errorMessage.value = null;
-
+  
     try {
-      const response = await apiClient.put(`/company/${id}`,data); // Remplacez par l'URL correcte de votre API
+      // Create a new FormData object
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("address", data.address);
+      formData.append("id_number", data.id_number);
+      formData.append("point_contact", data.point_contact);
+      formData.append("email", data.email);
+      formData.append("phone_number", data.phone_number);
+      formData.append("company_field", data.company_field);
+      formData.append("country", data.country);
+      formData.append("city", data.city);
+      formData.append("number_of_employee", data.number_of_employee);
+      formData.append("zipcode", data.zipcode);
+      formData.append("logo", data.logo);
+      formData.append("state", data.state);
+      formData.append("title", data.title);
+      // Send the FormData object
+      const response = await apiClient.post(`/company/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       company.value = response.data.data;
       statusCode.value = response.status;
     } catch (error) {
@@ -67,7 +88,7 @@ export function useCompanies() {
       loading.value = false;
     }
   };
-
+  
   const postCompany = async (data) => {
     loading.value = true;
     errorMessage.value = null;
@@ -76,7 +97,18 @@ export function useCompanies() {
       // Crée un objet FormData
       const formData = new FormData();
       formData.append("name", data.name);
-      formData.append("description", data.description);
+      formData.append("address", data.address);
+      formData.append("id_number", data.id_number);
+      formData.append("point_contact", data.point_contact);
+      formData.append("email", data.email);
+      formData.append("phone_number", data.phone_number);
+      formData.append("company_field", data.company_field);
+      formData.append("country", data.country);
+      formData.append("city", data.city);
+      formData.append("state", data.state);
+      formData.append("title", data.title);
+      formData.append("number_of_employee", data.number_of_employee);
+      formData.append("zipcode", data.zipcode);
       formData.append("logo", data.logo); // Assurez-vous que `data.logo` est un fichier (Blob)
 
       // Envoyer la requête POST avec formData
@@ -97,6 +129,20 @@ export function useCompanies() {
     }
   };
 
+  const deleteCompany= async (companyId) => {
+    try {
+      const response = await apiClient.delete(`/company/delete/${companyId}`);
+      if (response.status === 200) {
+        // Successfully deleted user, remove it from the list locally
+        companies.value = companies.value.filter(company => company.id !== companyId);
+      }
+      return response; // Return the response for further handling
+    } catch (err) {
+      console.error("Error deleting user:", err);
+      throw err; // Propagate the error so it can be caught in the component
+    }
+  };
+
   return {
     companies,
     loading,
@@ -107,5 +153,6 @@ export function useCompanies() {
     updateCompany,
     statusCode,
     company,
+    deleteCompany,
   };
 }

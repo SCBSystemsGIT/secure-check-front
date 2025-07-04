@@ -1,11 +1,21 @@
 <script setup>
 import { useNavigation } from "@/composables/useNavigation";
+import { useCompanies } from "@/services/useCompanies";
+// import { useGlobalStore } from "@/stores/globalStore";
+import { EventBus } from "@/utils/eventBus";
+import { watch } from "vue";
+import { onBeforeMount /*ref*/ } from "vue";
 import { useQrCode } from "@/services/useManualCheck";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 // import { toast } from "vue3-toastify";
 
+// const { publicDir } = useGlobalStore();
+// const { showCompany, company } = useCompanies();
+const { showCompany } = useCompanies();
+
+const company_slug = ref(localStorage.getItem("currentCompany"));
 const route = useRoute();
 const router = useRouter();
 const isSuccess = ref(false);
@@ -25,14 +35,14 @@ const submitForm = async () => {
 };
 
 const domain = ref(route.params.domain || "scb");
-const goToMenu = () => {
-  router.push({
-    name: "Menu",
-    params: {
-      domain: domain.value
-    },
-  });
-};
+// const goToMenu = () => {
+//   router.push({
+//     name: "Menu",
+//     params: {
+//       domain: domain.value
+//     },
+//   });
+// };
 
 onMounted(() => {
   if (domain.value) {
@@ -44,6 +54,31 @@ onMounted(() => {
     });
   }
 });
+
+onBeforeMount(async () => {
+  // Extraire l'hôte (domaine + port)
+  console.log("Host:", window.location.host);
+  // Extraire le chemin (path)
+  console.log("Path:", window.location.pathname);
+
+  if (window.location.pathname != "/sign-in") {
+    if (company_slug.value) {
+      await showCompany(company_slug.value);
+    } else {
+      company_slug.value = "";
+    }
+  }
+});
+
+
+
+// const distantData = ref();
+watch(
+  () => EventBus["company_slug"],
+  async (newValue) => {
+    await showCompany(localStorage.getItem("currentCompany") ?? newValue);
+  }
+);
 </script>
 
 <template>
@@ -51,14 +86,25 @@ onMounted(() => {
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
-          <div class="popup-logo" v-if="!isSuccess">
+            <div class="left-back">
+              <router-link :to="{ name: 'Menu' }">
+                <img src="@/assets/back-arrow-table.png" alt="back-arrow" />
+              </router-link>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col col-12 col-md-12 col-sm-12">
+          <!-- <div class="popup-logo" v-if="!isSuccess">
             <router-link to="/">
               <img
-                src="@/assets/secure-check-logo.png"
-                class=""
-                alt="secure-check-logo"
+                class="logo logo12333"
+                :src="`${publicDir}/logo/${company?.logo}`"
+                :alt="company?.logo"
             /></router-link>
-          </div>
+          </div> -->
 
           <div class="popup-logo" v-if="isSuccess">
             <div class="text-center py-2">
@@ -70,19 +116,19 @@ onMounted(() => {
             </div>
           </div>
 
-          <div v-if="!isSuccess">
+          <div class="main_box-sec" v-if="!isSuccess">
             <div class="d-flex justify-content-center align-items-center">
               <div
                 class="d-flex justify-content-start mb-4 gap-3 align-items-center"
               >
-                <button class="back" @click="goToMenu">
+                <!-- <button class="back" @click="goToMenu">
                   Retour
-                </button>
+                </button> -->
                 <h3 class="text-center py-3">Validation Manuelle UIDN</h3>
               </div>
             </div>
-
-            <input
+<div class="input_box-ec">
+  <input
               type="text"
               name="uidn"
               id="uidn"
@@ -91,18 +137,19 @@ onMounted(() => {
               placeholder="ENTREZ UUID"
               required
             />
-
+</div>
+            
+          <div class="button_devide">
             <div
-              class="request-btn"
-              @click.prevent="submitForm()"
-              v-if="!isLoading"
-            >
-              <a role="button">Valider </a>
-            </div>
+                        class="request-btn"
+                        @click.prevent="submitForm()"
+                        v-if="!isLoading"
+                      >
+                        <a role="button">Valider </a>
+                      </div>
 
-            <div class="request-btn" @click="goToMenu()">
-              <a role="button">Menu </a>
-            </div>
+          </div>
+            
           </div>
         </div>
       </div>

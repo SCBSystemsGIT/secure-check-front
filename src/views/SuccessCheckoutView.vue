@@ -1,38 +1,91 @@
 <script setup>
-import { toast } from "vue3-toastify";
+// import { toast } from "vue3-toastify";
 import { useGlobalStore } from "@/stores/globalStore";
-import { onMounted } from "vue";
-import { useRoute } from "vue-router";
-import { useRouter } from "vue-router";
+import {ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+// import { useRoute } from "vue-router";
+import myService from "@/services/visitorcode";
+import { useUserStore } from "@/stores/useUserStore";
+
 
 const { publicDir } = useGlobalStore();
 const route = useRoute();
+const message = ref("");
+const error = ref(null);
+const visitorLogs = ref([]);
 const router = useRouter();
+const userStore = useUserStore();
+// const domain = ref(route?.params?.domain || "scb");
+// const router = useRouter();
 
-onMounted(() => {
-  if (route.params.uidn) {
-    toast.info("Bien joué");
-  } else {
-    router.push("/");
-  }
-});
+// onMounted(() => {
+//   if (route.params.uidn) {
+//     toast.success("Thank you! Your check-in has been successfully recorded.");
+//   } else {
+//     router.push("/");
+//   }
+// });
+
+const domain = ref(route.params.domain || "scb");
+const goToMenu = () => {
+  router.push({
+    name: "Menu",
+    params: { domain: domain.value, id: route.params.id },
+  });
+};
+
+const isAuthenticated = userStore.isAuthenticated();
+
+  const uidn = route.params.uidn;
+  console.log("dfddfgdfg",uidn);
+
+    const fetchVisitorLogData = async () => {
+      try {
+        let response;
+          response = await myService.fetchVisitorCheckInData(uidn);
+          console.log("Fetched All Visitor Logs:", response.image); 
+        visitorLogs.value = response;
+        message.value = "Data fetched successfully!";
+      } catch (err) {
+        error.value = "Failed to fetch data.";
+        console.error(err);
+      }
+    };
+
+    onMounted(() => {
+      fetchVisitorLogData();
+    });
+
 </script>
 
 <template>
-  <section class="background-gradi request-meeting">
+  <section class="background-gradi request-meeting qr_thanks">
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
-          <div class="popup-logo">
+          <div class="popup-logo text-center">
             <router-link to="/">
               <img
                 src="@/assets/success-svgrepo-com.svg"
-                class=""
-                :alt="`${publicDir}/qrcode/qrcode-${uidn}.png`"
+                class="success-icon"
+                alt="Success Icon"
               />
             </router-link>
-            <div class="text-center py-2">
-              <h3>CheckOut éffectué</h3>
+
+            <div class="text-center py-3">
+              <img
+                v-if="visitorLogs.image"
+                :src="`${publicDir}/request_image/${visitorLogs.image}`"
+                class="visitor-image"
+                alt="Visitor Check-in Image"
+              />
+              <h2>🎉 Thank you for your visit!</h2>
+              <p class="thank-you-message">
+                Your check-out has been successfully recorded
+              </p>
+              <button class="btn-back" v-if="isAuthenticated" @click="goToMenu">
+                Return to Home
+              </button>
             </div>
           </div>
         </div>
@@ -42,40 +95,44 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.request-btn-cannel {
-  margin: 10px auto 0px auto;
+.success-icon {
+  width: 100px;
+  height: auto;
+}
+.thank-you-message {
+  font-size: 18px;
+  color: #333;
+  margin-top: 10px;
+}
+.btn-back {
   display: inline-block;
-  text-align: center;
-  width: 100%;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #000;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
 }
-.request-btn-cannel a {
-  background: #b92b00;
-  color: #ffffff;
-  border-radius: 10px;
-  padding: 20px 100px;
-  font-weight: 600;
-  overflow: hidden;
-  margin: 0 auto;
-  float: left;
-  width: 100%;
-  font-size: 20px;
+.btn-back:hover {
+  background: #000;
 }
-
-.request-btn a {
-  /*background: #b92b00;*/
-  color: #ffffff;
-  border-radius: 10px;
-  padding: 20px 100px;
-  font-weight: 600;
-  overflow: hidden;
-  margin: 0 auto;
-  float: left;
-  width: 100%;
-  font-size: 20px;
+.qr_thanks {
+    height: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 30px;
 }
 
-.request-btn-cannel a:hover {
-  background: #000000;
-  color: #ffffff;
+.popup-logo.text-center .text-center.py-3 img.visitor-image {
+    margin-bottom: 20px;
+}
+
+@media(max-width: 680px){
+  .popup-logo.text-center .text-center.py-3 img.visitor-image {
+    width: 100%;
+}
 }
 </style>

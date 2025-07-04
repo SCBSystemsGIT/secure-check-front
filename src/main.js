@@ -9,6 +9,7 @@ import piniaPluginPersistedstate from "pinia-plugin-persist";
 import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
 import DataTable from "datatables.net-vue3";
 import DataTablesLib from "datatables.net";
+import "@/assets/style-form1.css";
 
 
 DataTable.use(DataTablesLib);

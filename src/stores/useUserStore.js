@@ -50,7 +50,6 @@ export const useUserStore = defineStore(
       //     "ROLE_SUPERVISOR",
       //     "ROLE_ADMIN",
       //     "ROLE_SUPER_ADMIN",
-
       //     "ROLE_SecureCheck",
       //   ])
       // );
@@ -68,6 +67,7 @@ export const useUserStore = defineStore(
         const response = await apiClient.get("/user/info");
         userInfo.value = response.data;
         localStorage.setItem("userInfo", JSON.stringify(userInfo.value));
+        console.log("teter12", response);
       } catch (error) {
         console.error("Failed to fetch user info:", error);
       }
@@ -90,19 +90,20 @@ export const useUserStore = defineStore(
     const isEmployee = (role) => role == "ROLE_EMPLOYEE";
     const isUser = (role) => role == "ROLE_USER";
     const isManager = (role) => role == "ROLE_MANAGER";
-
     const isSecureCheck = (role) => role == "ROLE_SecureCheck";
-    
+
     const router = useRouter();
     const logout = () => {
       token.value = null;
       userInfo.value = null;
       roles.value = [];
       localStorage.removeItem("token");
+      localStorage.removeItem("currentCompany");
       localStorage.removeItem("roles");
       localStorage.removeItem("userInfo");
       localStorage.removeItem("roles_list");
       //   axios.defaults.headers.common["Authorization"] = "";
+      document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; Secure; SameSite=Strict";
       toast.info("Déconnecté");
       router.push("/sign-in");
       window.location = "/sign-in";
@@ -124,7 +125,6 @@ export const useUserStore = defineStore(
       isEmployee,
       isUser,
       isManager,
-
       isSecureCheck
     };
   },

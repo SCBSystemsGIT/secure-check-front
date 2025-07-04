@@ -19,20 +19,31 @@ const logout = () => {
 
 const isAuthenticated = userStore.isAuthenticated();
 const { publicDir } = useGlobalStore();
+console.log("Public Directory:", publicDir);
 const { showCompany, company } = useCompanies();
 const company_slug = ref(localStorage.getItem("currentCompany"));
 
-onBeforeMount(async () => {
-  // Extraire l'hôte (domaine + port)
-  console.log("Host:", window.location.host);
-  // Extraire le chemin (path)
-  console.log("Path:", window.location.pathname);
 
-  if (window.location.pathname != "/sign-in") {
+const path = window.location.pathname; 
+const pathParts = path.split('/'); 
+const company_event_slug = pathParts[2]; 
+console.log("Company Slug:", company_event_slug);
+
+onBeforeMount(async () => {
+  if (window.location.pathname !== "/sign-in") {
+    // Extract the slug from the path
+    const pathParts = window.location.pathname.split("/");
+    const company_event_slug = pathParts[1]; // Adjusted to get it reliably from the path
+    console.log("Company Event Slug:", company_event_slug);
+
+    const savedSlug = localStorage.getItem("currentCompany");
+
+    // Set the slug to the ref (only if not already saved)
+    company_slug.value = savedSlug || company_event_slug || "";
+
+    // Load the company
     if (company_slug.value) {
       await showCompany(company_slug.value);
-    } else {
-      company_slug.value = "";
     }
   }
 });
@@ -56,85 +67,97 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="top-bar">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col col-6 col-md-6 top-bar-left">
-          <div>
-            <router-link to="/" v-if="route.params.domain == 'scb'"
-              ><img
-                src="@/assets/secure-check-logo.png"
-                class=""
-                alt="secure-check-logo"
-            /></router-link>
-
-            <router-link to="/" v-else-if="company">
-              <img
-                class="logo"
-                :src="`${publicDir}/logo/${company?.logo}`"
-                :alt="company?.logo"
-            /></router-link>
-
-            <router-link to="/" v-else
-              ><img
-                src="@/assets/secure-check-logo.png"
-                class=""
-                alt="secure-check-logo"
-            /></router-link>
-          </div>
-        </div>
-        <div class="col col-6 col-md-6 top-bar-right">
-          <div class="account-login-button">
-            <p v-show="false">
-              {{ `${roles}` }}
-              {{ `${publicDir}/logo/${company?.logo}` }}
-            </p>
-
-            <!-- <h1>
-              {{ distantData }}
-            </h1> -->
+  <section class="top-bar-navbar">
+      <div class="container">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+          <div class="container-fluid">
             <a
-              @click="logout"
-              class="login-button"
-              v-if="isAuthenticated"
-              role="button"
+              class="navbar-brand"
+              v-if="!route.params.domain || route.params.domain === 'null'"
+              href="/"
             >
-              Se Déconnecter
+              <img
+                id="logoif"
+                src="@/assets/secure-check-logo.png"
+                class=""
+                alt="secure-check-logo"
+              />
             </a>
-
-            <!-- to="/sign-in" -->
-            <!-- :to="`/${company_slug ?? 'scb'}/sign-in`" -->
-            <router-link
-              v-else-if="route.name != 'Login'"
-              to="/sign-in"
-              class="login-button"
-            >
-              Se Connecter
-            </router-link>
-
-            <!-- :to="`/${company_slug ?? 'scb'}/request-meeting`" -->
-            <router-link
+            <a
+              class="navbar-brand"
               v-else
-
-              :to="`/${company_slug ?? 'scb'}/request-meeting`"
-
-              class="login-button"
+              :href="`/${route.params.domain}`"
             >
-              Visite
-            </router-link>
-
-            <router-link
-              :to="`/${company_slug ?? 'scb'}/edit-company/${company_slug}`"
-              class="login-button"
-              v-if="userStore.isManager(currentRole)"
+              <img
+                :src="`${publicDir}/logo/${company?.logo}`"
+                :alt="route.params.domain"
+              />
+            </a>
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
             >
-              Modifier Entreprise
-            </router-link>
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                  <a 
+                    @click="logout"
+                    v-if="isAuthenticated"
+                    class="nav-link active"
+                    role="button"
+                  >
+                    Se déconnecter
+                  </a>
+                  <router-link
+                    v-else-if="route.name !== 'Login'"
+                    to="/sign-in"
+                    class="nav-link active"
+                  >
+                    Se connecter
+                  </router-link>
+                  <router-link
+                    v-else
+                    to="/request-meeting"
+                    class="nav-link"
+                  >
+                    Visite
+                  </router-link>
+                </li>
+
+                <li class="nav-item" v-if="userStore.isManager(currentRole) || userStore.isSupervisor(currentRole)">
+                  <router-link
+      :to="`/${company?.slug || company_slug || 'scb-systems-africa'}/edit-company/${company?.slug || company_slug || 'scb-systems-africa'}`"
+      class="nav-link"
+    >
+                    Modifier entreprise
+                  </router-link>
+                </li>
+              </ul>
+
+            </div>
           </div>
-        </div>
+        </nav>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <!-- <section class="secure-datatable-heading-back">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col col-12 col-md-12 col-sm-12">
+            <div class="left-back"><a href="#"><img src="@/assets/back-arrow-table.png" class="" alt="back-arrow" /></a></div>
+              <div class="center-heading"></div>
+              <div class="right-hide"></div>
+            </div>
+          </div>
+      </div>
+    </section> -->
 </template>
 
 <style>

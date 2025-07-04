@@ -1,47 +1,50 @@
 <script>
-import myService from "@/services/visitorcode"; // Adjust the path based on your project structure
+import myService from "@/services/visitorcode";
 import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
+import { useGlobalStore } from "@/stores/globalStore";
 
 export default {
   name: "DisplayCodeView",
   setup() {
-    const router = useRouter();
+    const { publicDir } = useGlobalStore();
     const route = useRoute();
     const domain = ref(route?.params?.domain || "scb");
     const visitorLogs = ref([]);
     const message = ref("");
     const error = ref(null);
+    
+    // Image Modal
+    const selectedImage = ref(null);
 
-    // Function to fetch event data
+    const openImageModal = (imagePath) => {
+      selectedImage.value = imagePath;
+    };
+
+    const closeImageModal = () => {
+      selectedImage.value = null;
+    };
+
+    const userInfo = ref(JSON.parse(localStorage.getItem("userInfo")) || {});
+    const roles = ref(userInfo.value?.roles || []);
+    const isAdmin = ref(roles.value.includes("ROLE_ADMIN"));
+
     const fetchEventData = async () => {
       try {
-        const response = await myService.fetchData(); // Fetch the data from the service
-        console.log('Fetched Response:', response);
-        visitorLogs.value = response; // Store the fetched logs in the ref
-        message.value = "Data fetched successfully!"; // Set a success message
+        let response;
+        if (isAdmin.value) {
+          response = await myService.fetchData();
+        } else {
+          response = await myService.fetchVisitorLogCom(domain.value);
+        }
+        visitorLogs.value = response;
+        message.value = "Data fetched successfully!";
       } catch (err) {
-        error.value = "Failed to fetch data."; // Set an error message if the fetch fails
+        error.value = "Failed to fetch data.";
         console.error(err);
       }
     };
 
-    // Function to handle other service method
-    // const handleOtherService = (param) => {
-    //   message.value = myService.anotherServiceMethod(param);
-    // };
-
-    // Function to navigate to Menu page
-    const goToMenu = () => {
-      router.push({
-        name: "Menu",
-        params: {
-          domain: domain.value,
-        },
-      });
-    };
-
-    // Fetch event data when the component is mounted
     onMounted(() => {
       fetchEventData();
     });
@@ -51,59 +54,83 @@ export default {
       visitorLogs,
       message,
       error,
-      goToMenu,
+      publicDir,
+      isAdmin,
+      selectedImage,
+      openImageModal,
+      closeImageModal,
     };
   },
 };
 </script>
 
-
 <template>
-  <div class="container">
-    <!-- Back Button and Header -->
-    <div class="d-flex justify-content-center align-items-center">
-      <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
-        <button class="back" @click="goToMenu()">Retour</button>
-        <h3 class="mt-3" v-if="route?.params?.slug">Liste Participants</h3>
-        <h3 class="mt-3" v-else>Lista de Check in</h3>
+  <section class="secure-datatable-heading-back">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col col-12 col-md-12 col-sm-12">
+          <div class="left-back">
+            <router-link :to="{ name: 'Menu' }">
+              <img src="@/assets/back-arrow-table.png" alt="back-arrow" />
+            </router-link>
+          </div>
+        </div>
       </div>
     </div>
+  </section>
 
-    <!-- Event Name Display -->
-    <div class="text-center">
-      <h4 v-if="route?.params?.slug">Evenements : {{ event?.name }}</h4>
+  <div class="event_container">
+    <div class="container">
+      <div class="d-flex justify-content-center align-items-center">
+        <h3 class="mt-3">Liste Check in</h3>
+      </div>
+
+      <div class="d-flex justify-content-center py-3">
+        <table v-if="visitorLogs.length" class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Visitor Name</th>
+              <th>Visitor Email</th>
+              <th>Image</th>
+              <th>Created At</th>
+              <th>Check In</th>
+              <th>Check Out</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(log, index) in visitorLogs" :key="log.id">
+              <td>{{ index + 1 }}</td>
+              <td>{{ log.visitor_name }} {{ log.visitor_lastname }}</td>
+              <td>{{ log.visitor_email }}</td>
+              <td>
+                <img
+                  :src="`${publicDir}/request_image/${log.image}`"
+                  height="75"
+                  width="75"
+                  class="clickable-image"
+                  @click="openImageModal(`${publicDir}/request_image/${log.image}`)"
+                  alt="No img"
+                />
+              </td>
+              <td>{{ log.created_at }}</td>
+              <td>{{ log.check_in_time }}</td>
+              <td>{{ log.check_out_time }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Full Image Modal -->
+      <div v-if="selectedImage" class="modal-overlay" @click="closeImageModal">
+        <button class="close-button" @click="closeImageModal">&times;</button>
+        <div class="modal-content" @click.stop>
+          <img :src="selectedImage" alt="Full Image" class="full-image" />
+        </div>
+      </div>
     </div>
-
-    <!-- Visitor Logs Table -->
-    <div class="d-flex justify-content-center py-3">
-      <table v-if="visitorLogs.length" class="table table-striped">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Visitor Id</th>
-            <th>Created At</th>
-            <th>Check In</th>
-            <th>Check Out</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="log in visitorLogs" :key="log.id">
-            <td>{{ log.id }}</td>
-            <td>{{ log.visitor_id }}</td>
-            <td>{{ log.created_at }}</td>
-            <td>{{ log.check_in_time }}</td>
-            <td>{{ log.check_out_time }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Success or Error Message -->
-    <!-- <div v-if="message" class="alert alert-success">{{ message }}</div>
-    <div v-if="error" class="alert alert-danger">{{ error }}</div> -->
   </div>
 </template>
-
 
 <style scoped>
 .pagination {
@@ -126,5 +153,64 @@ th, td {
 }
 th {
   background-color: #f4f4f4;
+}
+
+.event_container {
+  height: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #00000000;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.full-image {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 5px;
+}
+.clickable-image {
+  cursor: pointer;
+  margin: 20px 0;
+}
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgb(0, 0, 0);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  font-size: 30px;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 99999;
 }
 </style>

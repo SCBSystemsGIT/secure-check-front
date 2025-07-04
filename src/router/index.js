@@ -8,6 +8,7 @@ import WaitingValidationView from "@/views/waitingValidationView.vue";
 import ListQrCodeView from "@/views/QRcode/ListQrCodeView.vue";
 import QrCodeView from "@/views/QRcode/QrCodeView.vue";
 import CreateQRCodeView from "@/views/QRcode/CreateQRCodeView.vue";
+import CreateQRMembreView from "@/views/QRcode/CreateQRMembreView.vue";
 import ManalCheckView from "@/views/QRcode/ManalCheckView.vue";
 import ListUserView from "@/views/User/ListUserView.vue";
 import EventView from "@/views/Event/EventView.vue";
@@ -22,6 +23,18 @@ import DisplayVisitorCodeView from "@/views/DisplayVisitorCodeView.vue";
 import CompanyListView from "@/views/CompanyListView.vue";
 import DisplayEventAttendenceView from "@/views/DisplayEventAttendenceView.vue";
 import ShowCompanyQRcodeView from "@/views/ShowCompanyQRcodeView.vue";
+import EmployeeListView from '@/views/EmployeeListView.vue';
+import MembresListView from '@/views/MembresListView.vue';
+import SuccessUserCheckinView from "@/views/SuccessUserCheckinView.vue";
+import SuccessUserCheckoutView from "@/views/SuccessUserCheckoutView.vue";
+import UserAttendenceView from "@/views/User/UserAttendenceView.vue";
+import RequestQrCodeView from "@/views/RequestQrCodeView.vue";
+import UserQrCodeDisableView from "@/views/User/UserQrCodeDisableView.vue";
+import ScanPage from '@/views/ScanQR.vue';
+import ScanUserQRCode from '@/views/ScanUserQRCode.vue';
+import QrCodeListView from "@/views/QRcode/QrCodeListView.vue";
+import QrDetails from "@/views/QRcode/QrDetails.vue";
+
 
 const routes = [
   {
@@ -29,6 +42,7 @@ const routes = [
     path: "/sign-in",
     name: "Login",
     component: Login,
+    alias: ["/"],
   },
   {
     path: "/:domain/meeting",
@@ -50,6 +64,11 @@ const routes = [
     name: "RequestMeeting",
     component: RequestMeetingView,
     alias: ["/", "/:domain"],
+  },
+  {
+    path: "/:domain",
+    name: "homePage",
+    component: RequestMeetingView,
   },
   {
     path: "/:domain/waiting-validation/:id",
@@ -92,7 +111,7 @@ const routes = [
     component: EventView,
   },
   {
-    path: "/company/:company_slug/event/:slug",
+    path: "/company/:domain/event/:slug",
     name: "JoinEvent",
     component: CreateVisitorView,
   },
@@ -102,15 +121,27 @@ const routes = [
     component: EventListView,
   },
   {
-    path: "/:domain/success-checkout/:uidn",
+    path: "/success-checkout/:uidn",
     name: "SuccessCheckout",
     component: SuccessCheckoutView,
   },
   {
-    path: "/:domain/success-checkin/:uidn",
+    path: "/success-checkin/:uidn",
     name: "SuccessCheckin",
     component: SuccessCheckinView,
+    meta: { requiresAuth: true }, 
   },
+  {
+    path: "/success-user-checkin/:uidn",
+    name: "SuccessUserCheckin",
+    component: SuccessUserCheckinView,
+  },
+  {
+    path: "/success-user-checkout/:uidn",
+    name: "SuccessUserCheckout",
+    component: SuccessUserCheckoutView,
+  },
+
   {
     path: "/:domain/create-company",
     name: "CreateCompany",
@@ -127,6 +158,16 @@ const routes = [
     component: CompanyListView,
   },
   {
+    path: '/company/:slug/',
+    name: 'EmployeeListView',
+    component: EmployeeListView,
+  },
+  {
+    path: '/company/:slug/members',
+    name: 'MembresListView',
+    component: MembresListView,
+  },
+  {
     path: "/:domain/show-company-qrcode/:slug",
     name: "ShowCompanyQRcode",
     component: ShowCompanyQRcodeView,
@@ -135,6 +176,11 @@ const routes = [
     path: "/:domain/create-qr",
     name: "CreateQRCode",
     component: CreateQRCodeView,
+  },
+  {
+    path: "/:domain/create-membre-qr",
+    name: "CreateQRMembre",
+    component: CreateQRMembreView,
   },
   {
     path: "/:domain/camera",
@@ -151,11 +197,67 @@ const routes = [
     name: "DisplayEventAttendence",
     component: DisplayEventAttendenceView,
   },
+  {
+    path: "/:domain/user-check-ins",
+    name: "UserAttendence",
+    component: UserAttendenceView,
+  },
+  {
+    path: "/company/:domain/meeting-request-qr/:uidn",
+    name: "RequestQrCode",
+    component: RequestQrCodeView,
+  },
+
+  {
+    path: "/:domain/disable-user-qrcode/:id",
+    name: "UserQrCodeDisable",
+    component: UserQrCodeDisableView,
+  },
+  {
+    path: '/user-check-in-out',
+    name: 'UserCheckInOut',
+    component: () => import('@/views/User/UserCheckInOut.vue') // your component path
+  },
+  {
+    path: '/scan/:uidn',
+    name: 'ScanPage',
+    component: ScanPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/scan-user-qrcode/:uidn',
+    name: 'ScanUserQRCode',
+    component: ScanUserQRCode,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: "/:domain/qr-code-list",
+    name: "QrCodeList",
+    component: QrCodeListView,
+  },
+  {
+    path: '/qr-details',
+    name: 'QrDetails',
+    component: QrDetails,
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const token = localStorage.getItem('token');
+
+  if (requiresAuth && (!token || token.length < 10)) {
+    next({ name: 'Login' });
+  } else {
+    next(); // Continue
+  }
+});
+
 
 export default router;

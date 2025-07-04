@@ -9,13 +9,12 @@ export function useLogin() {
   const errorMessage = ref(null);
   const statusCode = ref(null);
   const userStore = useUserStore();
-  const company_name = ref(null);
   const userInfo = ref(null);
 
   const login = async () => {
     loading.value = true;
     errorMessage.value = null;
-    statusCode.value = null; // Réinitialiser le code de statut
+    statusCode.value = null;
 
     try {
       const response = await apiClient.post("/login_check", {
@@ -24,33 +23,18 @@ export function useLogin() {
       });
 
       statusCode.value = response.status;
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+      document.cookie = `token=${token}; path=/; Secure; SameSite=Strict`;
+      userStore.setToken(token);
 
-      localStorage.setItem("token", response.data.token);
-      userStore.setToken(response.data.token);
-
-      // Fetch user info after successful login
-      let fetchResult = await fetchUserInfo();  // Wait for user info to be fetched
-      console.log({ fetchResult });
-
-      company_name.value = fetchResult;
+      // Await fetching the user info
+      await fetchUserInfo();
 
       return response.data;
     } catch (error) {
-      // Enhanced error handling
-      if (error.response) {
-        // This handles HTTP-related errors (e.g., 400, 500)
-        errorMessage.value =
-          "Login failed: " + (error.response?.data?.message || "Unknown error");
-        statusCode.value = error.response.status;
-      } else if (error.request) {
-        // This handles errors where no response is received (e.g., network errors)
-        errorMessage.value = "Login failed: Network error. Please try again.";
-        statusCode.value = 0;  // Indicate no response was received
-      } else {
-        // This handles any other errors (e.g., bad request formation)
-        errorMessage.value = "Login failed: " + error.message;
-        statusCode.value = 0;
-      }
+      statusCode.value = error.response?.status || 500;
+      errorMessage.value = "Login failed: " + (error.response?.data?.message || "Unknown error");
       console.error(error);
     } finally {
       loading.value = false;
@@ -61,11 +45,10 @@ export function useLogin() {
     try {
       const response = await apiClient.get("/user/info");
       userInfo.value = response.data;
-      localStorage.setItem("userInfo", JSON.stringify(userInfo.value));
-      return response.data;  // Return user info for later use
+      localStorage.setItem("userInfo", JSON.stringify(response.data));
+      console.log("User info:", userInfo.value);
     } catch (error) {
       console.error("Failed to fetch user info:", error);
-      return null;  // Return null if user info fetching fails
     }
   };
 
@@ -75,7 +58,6 @@ export function useLogin() {
     loading,
     errorMessage,
     statusCode,
-    company_name,
     userInfo,
     login,
   };

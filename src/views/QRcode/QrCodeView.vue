@@ -1,6 +1,10 @@
 <script setup>
 // import { useQrCode } from "@/services/useManualCheck";
 import { /*defineProps,*/ onMounted, ref } from "vue";
+import { watch } from "vue";
+import { onBeforeMount /*ref*/ } from "vue";
+import { EventBus } from "@/utils/eventBus";
+import { useCompanies } from "@/services/useCompanies";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 
@@ -12,6 +16,8 @@ const isSuccess = ref(false);
 //   uidn: String,
 // });
 
+const { showCompany, company } = useCompanies();
+const company_slug = ref(localStorage.getItem("currentCompany"));
 const domain = ref(route.params.domain || "scb");
 const goToMenu = () => {
   router.push({
@@ -32,6 +38,30 @@ onMounted(() => {
     });
   }
 });
+onBeforeMount(async () => {
+  // Extraire l'hôte (domaine + port)
+  console.log("Host:", window.location.host);
+  // Extraire le chemin (path)
+  console.log("Path:", window.location.pathname);
+
+  if (window.location.pathname != "/sign-in") {
+    if (company_slug.value) {
+      await showCompany(company_slug.value);
+    } else {
+      company_slug.value = "";
+    }
+  }
+});
+
+
+
+// const distantData = ref();
+watch(
+  () => EventBus["company_slug"],
+  async (newValue) => {
+    await showCompany(localStorage.getItem("currentCompany") ?? newValue);
+  }
+);
 </script>
 
 <template>
@@ -42,9 +72,9 @@ onMounted(() => {
           <div class="popup-logo" v-if="!isSuccess">
             <router-link to="/">
               <img
-                src="@/assets/secure-check-logo.png"
-                class=""
-                alt="secure-check-logo"
+                class="logo logo12333"
+                :src="`${publicDir}/logo/${company?.logo}`"
+                :alt="company?.logo"
             /></router-link>
           </div>
 
