@@ -397,7 +397,6 @@ class Helpers extends AbstractController
 
         $message = new SendEmailMessage($email);
         $this->bus->dispatch($message);
-
         try {
             $this->mailer->send($email);
             return new JsonResponse(['status' => 'success', 'message' => 'Email sent successfully']);
