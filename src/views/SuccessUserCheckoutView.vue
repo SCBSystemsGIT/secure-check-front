@@ -2,8 +2,9 @@
 // import { toast } from "vue3-toastify";
 import { useGlobalStore } from "@/stores/globalStore";
 import {ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute , useRouter } from "vue-router";
 import myService from "@/services/visitorcode";
+import { useUserStore } from "@/stores/useUserStore";
 
 const { publicDir } = useGlobalStore();
 const route = useRoute();
@@ -11,6 +12,7 @@ const message = ref("");
 const error = ref(null);
 const visitorLogs = ref([]);
 const uidn = route.params.uidn;
+const userStore = useUserStore();
 // const route = useRoute();
 // const router = useRouter();
 
@@ -21,6 +23,17 @@ const uidn = route.params.uidn;
 //     router.push("/");
 //   }
 // });
+
+const domain = ref(route.params.domain || "scb");
+const router = useRouter();
+const goToMenu = () => {
+  router.push({
+    name: "Menu",
+    params: { domain: domain.value, id: route.params.id },
+  });
+};
+
+const isAuthenticated = userStore.isAuthenticated();
 
 const fetchUserLogData = async () => {
       try {
@@ -65,7 +78,9 @@ const fetchUserLogData = async () => {
               <p class="thank-you-message">
                 Your check-out has been successfully recorded.
               </p>
-              <router-link to="/" class="btn-back">Return to Home</router-link>
+              <button class="btn-back" v-if="isAuthenticated" @click="goToMenu">
+                Return to Home
+              </button>
             </div>
           </div>
         </div>

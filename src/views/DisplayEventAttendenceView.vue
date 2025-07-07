@@ -1,7 +1,9 @@
 <script>
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useGlobalStore } from "@/stores/globalStore";
 import myService from "@/services/useEventsAttendenceList";
+
 
 export default {
   name: "DisplayEventAttendence",
@@ -21,6 +23,7 @@ export default {
     console.log("Current User Role:", roles.value);
     console.log("Is Admin:", isAdmin.value);
 
+    const { publicDir } = useGlobalStore();
     // Function to fetch and process event data
     const fetchEventData = async () => {
       try {
@@ -71,6 +74,15 @@ export default {
     onMounted(() => {
       fetchEventData();
     });
+    const selectedImage = ref(null);
+
+    const openImageModal = (imagePath) => {
+      selectedImage.value = imagePath;
+    };
+
+    const closeImageModal = () => {
+      selectedImage.value = null;
+    };
 
     return {
       domain,
@@ -79,9 +91,16 @@ export default {
       error,
       goToMenu,
       isAdmin,
+      publicDir,
+      openImageModal,
+      closeImageModal,
+      selectedImage,
     };
   },
 };
+
+
+
 </script>
 
 
@@ -123,6 +142,7 @@ export default {
             <th>Visitor Id</th>
             <th>Visitor Name</th>
             <th>Email</th>
+            <th>Image</th>
             <th>Visitor Address</th>
             <th>Event Name</th>
             <th>Event Location</th>
@@ -136,6 +156,16 @@ export default {
             <!-- <td>{{ log.id }}</td> -->
             <td>{{ log.firstname }}</td>
             <td>{{ log.email }}</td>
+            <td>
+              <img 
+                :src="`${publicDir}/request_image/${log.request_image || 'default.png'}`" 
+                :alt="log.request_image ? 'Visitor Image' : 'No Image'" 
+                height="75" 
+                width="75" 
+                class="clickable-image"
+                @click="openImageModal(`${publicDir}/request_image/${log.request_image}`)"
+              />
+            </td>
             <td>{{ log.address }}</td>
             <td>{{ log.eventName }}</td>
             <td>{{ log.eventLocation }}</td>
@@ -149,6 +179,12 @@ export default {
     <!-- Success or Error Message -->
     
   </div>
+  <div v-if="selectedImage" class="modal-overlay" @click="closeImageModal">
+      <button class="close-button" @click="closeImageModal">&times;</button>
+      <div class="modal-content" @click.stop>
+        <img :src="selectedImage" alt="Full Image" class="full-image" />
+      </div>
+    </div>
 </div>
 </template>
 <style scoped >
@@ -160,4 +196,54 @@ export default {
     justify-content: center;
     flex-direction: column;
 }
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #00000000;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.full-image {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 5px;
+}
+.clickable-image {
+  cursor: pointer;
+  margin: 20px 0;
+}
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgb(0, 0, 0);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  font-size: 30px;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 99999;
+}
+
 </style>

@@ -4,7 +4,7 @@ export default {
   async fetchData() { // Add 'async' here
     try {
       const response = await apiClient.get("/companylist"); // Replace with the correct API URL
-      console.log('i am here',response.data);
+      //console.log("Données reçues :", response.data); 
       //alert(response);
       return response.data; 
     } catch (error) {
@@ -12,9 +12,6 @@ export default {
       throw new Error("Failed to fetch visitor code data.");
     }
   },
-
-  
-
 
   anotherServiceMethod(param) {
     return `Processed ${param}`;

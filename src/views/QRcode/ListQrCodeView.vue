@@ -6,11 +6,13 @@ import { useEvent } from "@/services/useEvent";
 import { useUserStore } from "@/stores/useUserStore";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css"; // Ensure this is imported
+import { useGlobalStore } from "@/stores/globalStore";
 
 const { requests, error, fetchRequestsByComp, fetchRequests ,deleteVisitor} = useRequestsList();
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
+const { publicDir } = useGlobalStore();
 
 
 const formatDate = (dateString) => {
@@ -28,24 +30,46 @@ const formatDate = (dateString) => {
 //   router.push({ name: "Menu", params: { domain: domain.value } });
 // };
 
+// const selectedImage = ref(null);
+
+// const openImageModal = (imagePath) => {
+//   selectedImage.value = imagePath;
+// };
+// const closeImageModal = () => {
+//       selectedImage.value = null;
+//     };
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 
 const roles = ref(JSON.parse(localStorage.getItem("userInfo")) || {});
 const currentRole = ref(roles?.value?.roles ? roles.value.roles[0] : "");
 
+const formatDateTime = (dateString) => {
+  if (!dateString) return "N/A";
+  const date = new Date(dateString);
+  return date.toLocaleString("fr-FR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
 const tableHeaders = computed(() => {
   const headers = [
     "Visiteur",
     "Email",
+    "Contact",
+    "Image",
     (event_slug !== "list-qrcode-events" ? "Host" : []),
     (event_slug !== "list-qrcode-events" ? "Reason" : []),
-    "Contact",
+    (event_slug == "list-qrcode-events" ? "checkIn" : []),
     "Statut",
     "Date Création"
   ];
 
-  if (currentRole.value !== "ROLE_SUPERVISOR" || event_slug == "list-qrcode-events") {
+  if (currentRole.value !== "ROLE_SUPERVISOR" || event_slug !== "list-qrcode-events") {
     headers.push("Action");
   }
   if(currentRole.value === "ROLE_ADMIN") {
@@ -64,23 +88,27 @@ const tableBody = computed(() => {
   const body = [
     { slot: "visitor" },
     { slot: "email" },
+    { slot: "contact" },
+    { slot: "image" },
     (event_slug !== "list-qrcode-events" ? "host" : []),
     (event_slug !== "list-qrcode-events" ? "reason" : []),
-    { slot: "contact" },
+    { slot: "checkIn" },
     { slot: "confirmed" },
     { slot: "request_date" },
   ];
 
-  if (currentRole.value !== "ROLE_SUPERVISOR") {
+  if (currentRole.value !== "ROLE_SUPERVISOR" || event_slug === "list-qrcode-events") {
     body.push({ slot: "actions" });
   }
-  if(currentRole.value === "ROLE_ADMIN") {
+  if(currentRole.value === "ROLE_ADMIN"  )  {
     body.push({ slot: "delete" });
   }
   return body;
 });
 
-
+const goBack = () => {
+  router.go(-1); 
+};
 
 const show = (id, firstname, lastname, address, request_time , request_date ,organisationName, city, state, zipcode, country ) => {
 
@@ -161,6 +189,18 @@ const handleDelete = async (visitorId, visitorName) => {
   // Refresh the page after successful deletion
   await fetchRequests();
 };
+
+const selectedImage = ref(null);
+
+    const openImageModal = (imagePath) => {
+      selectedImage.value = imagePath;
+    };
+
+    const closeImageModal = () => {
+      selectedImage.value = null;
+    };
+
+
 </script>
 
 
@@ -170,10 +210,13 @@ const handleDelete = async (visitorId, visitorName) => {
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
-            <div class="left-back">
+            <div class="left-back" v-if="event_slug !== 'list-qrcode-events'">
               <router-link :to="{ name: 'Menu' }">
                 <img src="@/assets/back-arrow-table.png" alt="back-arrow" />
               </router-link>
+            </div>
+            <div class="left-back" v-else>
+              <button class="employee_back" @click="goBack()"><img src="@/assets/back-arrow-table.png" alt="back-arrow" /></button>
             </div>
         </div>
       </div>
@@ -216,11 +259,26 @@ const handleDelete = async (visitorId, visitorName) => {
         <template #contact="{ data }">
           {{ data.visitor.contact }}
         </template>
-
+        
+        <template #image="{ data }">
+          <img 
+            :src="`${publicDir}/request_image/${data?.visitor?.request_image || 'default.png'}`" 
+            :alt="data?.visitor?.request_image ? 'Visitor Image' : 'No Image'" 
+            height="75" 
+            width="75" 
+            class="clickable-image"
+            @click="openImageModal(`${publicDir}/request_image/${data?.visitor?.request_image}`)"
+          />
+        </template>
+        
         <template #request_date="{ data }">
           {{ formatDate(data.request_date) }}
         </template>
-
+        
+        <template #checkIn="{ data }" v-if= "event_slug === 'list-qrcode-events'">
+          {{ formatDateTime(data.visitor.checkIns[0]?.check_in_time) || 'No Check-in Data' }}
+        </template>
+        
         <template #confirmed="{ data }">
           {{ data.confirmed ? "Confirmé" : "En attente" }}
         </template>
@@ -242,9 +300,15 @@ const handleDelete = async (visitorId, visitorName) => {
         ></ui-pagination>
       </ui-table>
     </div>
-
     <div v-if="error">{{ error }}</div>
+    <div v-if="selectedImage" class="modal-overlay" @click="closeImageModal">
+      <button class="close-button" @click="closeImageModal">&times;</button>
+      <div class="modal-content" @click.stop>
+        <img :src="selectedImage" alt="Full Image" class="full-image" />
+      </div>
+    </div>
   </div>
+  
 </template>
 
 <style scoped>
@@ -258,4 +322,59 @@ button {
   margin: 0 10px;
   padding: 5px 10px;
 }
+.left-back .employee_back {
+    background: transparent;
+    padding: 0 !important;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #00000000;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.full-image {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 5px;
+}
+.clickable-image {
+  cursor: pointer;
+  margin: 20px 0;
+}
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgb(0, 0, 0);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  font-size: 30px;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 99999;
+}
+
 </style>

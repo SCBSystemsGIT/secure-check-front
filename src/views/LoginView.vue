@@ -29,7 +29,7 @@ watch(statusCode, (newStatus) => {
         //   domain: userInfo.value.company ?? "scb",
         // });
 
-        window.location = userInfo?.value?.company ??  "scb";
+         window.location = userInfo?.value?.company ??  "scb";
       }, 1500);
       break;
     case 201:

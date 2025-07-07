@@ -70,36 +70,33 @@ onBeforeMount(async () => {
             </div>
           </div>
       </section>
-      <section class="secure-menu-button text-center mt-3">
+      <section class="secure-menu-button text-center">
           <div class="container">
             <div class="row align-items-center g-0">
-              <div :class="isAuthenticated && (userStore.isAdmin(currentRole) || userStore.isEmployee(currentRole)) ? 'col-6' : 'col-12'">
-                  <div class="request-btn" 
-                      v-if="userStore.isEmployee(currentRole) || userStore.isAdmin(currentRole) || userStore.isManager(currentRole)">
-                      <router-link :to="{ name: 'CreateVisitor', params: { domain: domain } }">
-                          Request-meeting
-                      </router-link>
-                  </div>
-
-                  <div class="request-btn" v-else-if="userStore.isSupervisor(currentRole)"></div>
-                  <div class="request-btn" v-else-if="userStore.isSecureCheck(currentRole)"></div>
-
-                  <div class="request-btn" v-else>
-                      <router-link :to="{ name: 'CreateVisitor', params: { domain: domain } }">
-                          Request-meeting
-                      </router-link>
-                  </div>
+              <div :class="isAuthenticated ? 'col-6' : 'col-12'">
+                <div class="request-btn" v-if="userStore.isEmployee(currentRole) || userStore.isAdmin(currentRole) || userStore.isManager(currentRole)">
+                  <router-link :to="{ name: 'CreateVisitor', params: { domain: domain } }">
+                    Request-meeting
+                  </router-link>
+                </div>
+                
+                <div class="request-btn" v-else-if="userStore.isSupervisor(currentRole)"></div>
+                <div class="request-btn" v-else-if="userStore.isSecureCheck(currentRole)"></div>
+                
+                <div class="request-btn" v-else>
+                  <router-link :to="{ name: 'CreateVisitor', params: { domain: domain } }">
+                    Request-meeting
+                  </router-link>
+                </div>
               </div>
 
-              <div :class="isAuthenticated && (userStore.isAdmin(currentRole) || userStore.isEmployee(currentRole)) ? 'col-6' : 'col-12'">
-                  <div class="request-btn" 
-                      v-if="userStore.isEmployee(currentRole) || userStore.isAdmin(currentRole) || userStore.isManager(currentRole) || userStore.isSupervisor(currentRole) || userStore.isSecureCheck(currentRole)">
-                      <router-link :to="{ name: 'Menu', params: { domain: domain } }">
-                          Menu
-                      </router-link>
-                  </div>
+              <div :class="isAuthenticated ? 'col-6' : 'col-12'">
+                <div class="request-btn" v-if="userStore.isEmployee(currentRole) || userStore.isAdmin(currentRole) || userStore.isManager(currentRole) || userStore.isSupervisor(currentRole) || userStore.isSecureCheck(currentRole)">
+                  <router-link :to="{ name: 'Menu', params: { domain: domain } }">
+                    Menu
+                  </router-link>
+                </div>
               </div>
-
             </div>
           </div>
       </section>			

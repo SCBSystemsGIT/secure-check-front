@@ -24,11 +24,11 @@
       const fetchEmployees = async () => {
         try {
           const companyResponse = await apiClient.get(`/company/${companyId}`);
-          company.value = companyResponse.data;  
+          company.value = companyResponse.data.data; 
           
           const employeesResponse = await apiClient.get(`/user/list/${companyId}`);
           employeeList.value = employeesResponse.data;  
-          console.log('employeeList',employeeList)
+          //console.log('employeeList',employeeList)
         } catch (err) {
           console.error('Error fetching employees:', err);
         }
@@ -36,7 +36,7 @@
   
       // Go back to the previous page
       const goBack = () => {
-        router.go(-1);  // Go back to the previous page
+        router.go(-1); 
       };
   
       // Fetch employee data when the component is mounted
@@ -70,7 +70,7 @@
     <div class="container">
       <div class="d-flex justify-content-center align-items-center mb-4">
        
-        <h3 class="mt-3">{{ company.name }} Employee List</h3>
+        <h3 class="mt-3">{{ company.name }} - Liste des Employés</h3>
       </div>
   
       <div v-if="employeeList.length">

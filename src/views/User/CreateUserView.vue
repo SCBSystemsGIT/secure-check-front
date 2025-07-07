@@ -7,6 +7,7 @@ import { onBeforeMount } from "vue";
 import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
+import { computed } from "vue";
 
 const { user, loading, errorMessage, successMessage, createUser, statusCode } =
   useCreateUser();
@@ -115,14 +116,21 @@ const submitForm = async () => {
 
 const userStore = useUserStore();
 const currentRole = ref();
+const company_id = ref(); 
 
 const roles = ref();
 roles.value = JSON.parse(localStorage.getItem("userInfo"));
+const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 currentRole.value = roles.value?.roles[0];
+const userCompanyId = ref(userInfo?.company_id || "");
+console.log("userCompanyId",userCompanyId);
 
 onMounted(async () => {
   //await fetchDepartements();
   await fetchCompanies();
+  if (currentRole.value !== 'ROLE_ADMIN' && userCompanyId.value) {
+    company_id.value = userCompanyId.value;
+  }
 });
 // Watcher pour réagir aux changements du statusCode
 watch(statusCode, (newStatus) => {
@@ -198,6 +206,9 @@ onBeforeMount(async () => {
       company_slug = "";
     }
   }
+});
+const filteredCompanies = computed(() => {
+  return companies.value.filter(company => company?.id === userCompanyId.value);
 });
 </script>
 
@@ -315,7 +326,7 @@ onBeforeMount(async () => {
                             @blur="inputFocused = ''"
                           >
                             <option value="" disabled selected>Sélectionner un Rôle</option>
-                            <option
+                            <!-- <option
                               value="ROLE_USER"
                               v-if="
                                 userStore.isAdmin(currentRole) ||
@@ -326,7 +337,8 @@ onBeforeMount(async () => {
                               "
                             >
                               Employee 
-                            </option>
+                            </option> -->
+                            
 
                             <option
                               value="ROLE_EMPLOYEE"
@@ -386,7 +398,7 @@ onBeforeMount(async () => {
                            </select>
                         </div>
 
-                        <div class="divide-50">
+                        <div class="divide-50" v-if = "currentRole === 'ROLE_ADMIN' || currentRole === 'ROLE_SecureCheck' ">
                           <label for="">Entreprise : <span class="required">*</span></label>
                           <select 
                             id="role"
@@ -406,8 +418,28 @@ onBeforeMount(async () => {
                             </option>
                            </select>
                         </div>
+                        <div class="divide-50" v-else>
+                          <label for="">Entreprise : <span class="required">*</span></label>
+                          <select 
+                            id="role"
+                            v-model="user.company_id" 
+                            class="form-select" 
+                            aria-label="Default select example"
+                            @focus="inputFocused = 'company_id'"
+                            @blur="inputFocused = ''"
 
-                        <div class="divide-50">
+                          >
+                            <option
+                              v-for="company in filteredCompanies"
+                              :key="company?.id"
+                              :value="company?.id"
+                            >
+                              {{ company?.name }}
+                            </option>
+                          </select>
+                        </div>
+
+                        <!-- <div class="divide-50">
                           <label for="status">Statut</label>
                           <div class="form-check">
                             <input 
@@ -420,7 +452,7 @@ onBeforeMount(async () => {
                               {{ user.status ? "Actif" : "Inactif" }}
                             </label>
                           </div>
-                        </div>
+                        </div> -->
 
                         <!-- Submit Button with loader -->
                         <div class="buttons">

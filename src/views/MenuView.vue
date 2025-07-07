@@ -55,7 +55,7 @@ onBeforeMount(async () => {
     }
   }
 });
-
+console.log("isemployee",userStore.isEmployee(currentRole));
 // const distantData = ref();
 watch(
   () => EventBus["company_slug"],
@@ -90,7 +90,13 @@ watch(
     </div>
   </section>
 
-  <section :class="{ 'hexa-secure-logo-bottom-super': userStore.isSupervisor(currentRole) }" class="hexa-secure-logo_menu hexa-secure-logo-bottom text-center">
+  <section 
+  :class="{
+    'hexa-secure-logo-bottom-super': userStore.isSupervisor(currentRole),
+    'hexa-secure-logo-frontdesk': userStore.isEmployee(currentRole)
+  }"
+  class="hexa-secure-logo_menu hexa-secure-logo-bottom text-center"
+>
     <div class="container">
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
@@ -104,7 +110,7 @@ watch(
                       userStore.isManager(currentRole) || 
                       userStore.isSecureCheck(currentRole)"
                 :class="{ 'hidden': userStore.isSupervisor(currentRole) }"
-                class_="animate__animated animate__backInLeft animate__delay-3s animate__slow 3s"
+                class="animate__animated animate__backInLeft animate__delay-3s animate__slow 3s"
               >
                 <router-link 
                   :to="{ name: 'DisplayEventAttendence', params: { domain: domain } }"
@@ -127,7 +133,7 @@ watch(
                   :to="{ name: 'UserAttendence', params: { domain: domain } }"
                 >
                   <img src="@/assets/3.png" alt="Participer à un évènement d'entreprise" title="Participer à un évènement d'entreprise"/>
-                  <p> User Attendence</p>
+                  <p> Liste de présence</p>
                 </router-link>  
               </li>  
 
@@ -252,7 +258,7 @@ watch(
               >
                 <router-link :to="{ name: 'CreateEvent', params: { domain: domain } }">
                   <img src="@/assets/creer-un-evenement.png" alt="Créer un évènement" title="Créer un évènement"/>
-                  <p>Créer un Event</p>
+                  <p>Créer un Evènement</p>
                 </router-link>
               </li>
 
@@ -301,7 +307,33 @@ watch(
                   <p>Liste des visiteurs</p>
                 </router-link>
               </li>   
-							
+              <li 
+                v-if="
+                 userStore.isAdmin(currentRole)||
+                 userStore.isSupervisor(currentRole) ||
+                 userStore.isSecureCheck(currentRole) 
+                 "
+                class_="animate__animated animate__backInRight animate__delay-8s animate__slow 8s"
+              >
+                <router-link :to="{ name: 'QrCodeList', params: { domain: domain } }">
+                  <img src="@/assets/seances.png" alt="Liste des QR Codes Employés" title="Liste des QR Codes Employés"/>
+                  <p>Liste QR Code</p>
+                </router-link>
+              </li>
+              <li 
+                v-if="userStore.isAdmin(currentRole) || 
+                      userStore.isManager(currentRole) || 
+                      userStore.isSecureCheck(currentRole)"
+                :class="{ 'hidden': userStore.isSupervisor(currentRole) }"
+                class_="animate__animated animate__backInLeft animate__delay-3s animate__slow 3s"
+              >
+                <router-link 
+                  :to="{ name: 'CreateQRMembre', params: { domain: domain } }"
+                >
+                  <img src="@/assets/3.png" alt="Créer une carte de Membre" title="Créer une carte de Membre"/>
+                  <p>Carte Membre</p>
+                </router-link>
+              </li>
             </ul>
           </div>
         </div>

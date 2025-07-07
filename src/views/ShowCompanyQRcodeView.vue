@@ -108,7 +108,7 @@ export default {
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
             <div class="left-back">
-              <router-link :to="{ name: 'Menu' }">
+              <router-link :to="{ name: 'CompanyList' }">
                 <img src="@/assets/back-arrow-table.png" alt="back-arrow" />
               </router-link>
             </div>
@@ -128,6 +128,19 @@ export default {
               v-for="(company, index) in companyList"
               :key="index"
             >
+            <div class="scanner-left mb-4">
+              <router-link
+                :to="{ name: 'RequestMeeting', params: { domain: domain } }"
+              >
+                <img
+                  class="logo logo12333"
+                  :src="`${publicDir}/logo/${company?.logo}`"
+                  :alt="company?.logo"
+                />
+              </router-link>
+              <!-- <img src="images/logo-e-white.png" class="" alt="logo-e-white" /> -->
+            </div>
+
               <div data-v-3f0f1f51="">
                 <b data-v-3f0f1f51=""> Nom de l'entreprise</b>
                 <h3 data-v-3f0f1f51="" class="event-title">
@@ -135,7 +148,7 @@ export default {
                 </h3>
               </div>
               <div data-v-3f0f1f51="">
-                <b data-v-3f0f1f51=""> Limace </b>
+                <b data-v-3f0f1f51=""> Slug </b>
                 <h3 data-v-3f0f1f51="" class="event-title">
                   {{ company.slug }}
                 </h3>

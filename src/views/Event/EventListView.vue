@@ -28,7 +28,6 @@ const thead = ref([
   "Lieu",
   "Date",
   "Heure",
-  "Département",
   "Date de Création",
   "Lien",
   "Participants",
@@ -44,7 +43,6 @@ const tbody = ref([
   "location",
   { slot: "date_event" },
   { slot: "time_event" },
-  { slot: "departement" },
   { slot: "created_at" },
   { slot: "link" },
   { slot: "participants" },
@@ -204,9 +202,6 @@ onMounted(() => {
 
     <div class="d-flex justify-content-center py-3" v-if="!showUserEvent">
       <ui-table :data="events" :thead="thead" :tbody="tbody">
-        <template #departement="{ data }">
-          {{ data.departement.name }}
-        </template>
 
         <template #date_event="{ data }">
           {{ formatDate(data.date_event) }}

@@ -10,19 +10,18 @@ import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 import { toast } from "vue3-toastify";
 import html2canvas from "html2canvas";
+import { computed } from "vue";
 
 // const { showCompany, company } = useCompanies();
 // const { showCompany , companies ,fetchCompanies  , company} = useCompanies();
-const { showCompany , companies ,fetchCompanies 
-
- } = useCompanies();
+const { showCompany , companies ,fetchCompanies } = useCompanies();
 const company_slug = ref(localStorage.getItem("currentCompany"));
 const route = useRoute();
 const router = useRouter();
 const isSuccess = ref(false);
 const { publicDir } = useGlobalStore();
 const email = ref();
-const type = ref();
+const type = ref("permanent");
 const firstname = ref();
 const lastname = ref();
 const contact = ref();
@@ -33,6 +32,13 @@ const uidn = ref();
 const capture = ref(null);
 const image = ref(null);
 const { createQR, statusCode, qrResponse } = useCreateQR();
+
+const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+const currentRole = ref(userInfo?.roles?.[0] || "");
+console.log("currentrole",currentRole);
+const userCompanyId = ref(userInfo?.company_id || "");
+console.log("userCompanyId",userCompanyId);
+// const userCompanyName = ref(userInfo?.company || "");
 
 const domain = ref(route.params.domain || "scb");
 // const goToMenu = () => {
@@ -59,6 +65,9 @@ onMounted(() => {
 onMounted(async () => {
   //await fetchDepartements();
   await fetchCompanies();
+  if (currentRole.value !== 'ROLE_ADMIN' && userCompanyId.value) {
+    company_id.value = userCompanyId.value;
+  }
 });
 
 const selectedCompany = ref(null);
@@ -170,6 +179,7 @@ onBeforeMount(async () => {
       company_slug.value = "";
     }
   }
+ 
 });
 
 // const distantData = ref();
@@ -202,6 +212,12 @@ const captureDiv = () => {
     document.body.removeChild(link);
   });
 };
+
+
+
+const filteredCompanies = computed(() => {
+  return companies.value.filter(company => company?.id === userCompanyId.value);
+});
 </script>
 
 <template>
@@ -225,7 +241,7 @@ const captureDiv = () => {
           <div v-if="!isSuccess">
             <div class="box12" style="display: flex">
               <!-- <button @click="goToMenu" class="back">Retour</button> -->
-              <h3 class="text-center">Création QRCode</h3>
+              <h3 class="text-center">Créer un QRCode</h3>
             </div>
 
             <form @submit.prevent="submit" class="mt-5">
@@ -255,6 +271,7 @@ const captureDiv = () => {
                   type="text"
                   id="contact"
                   v-model="contact"
+                   @input="contact = contact.replace(/\D/g, '')"
                   class="input_style"
                 />
               </div>
@@ -282,8 +299,8 @@ const captureDiv = () => {
               <div>
                 <label for="type_qr">QR Type</label>
                 <select v-model="type" id="type_qr" class="input_style">
-                  <option value="permanent">Permanent</option>
-                  <option value="temporaire">Temporaire</option>
+                  <option value="permanent" >Permanent</option>
+                  <!-- <option value="temporaire">Temporaire</option> -->
                 </select>
               </div>
 
@@ -297,7 +314,7 @@ const captureDiv = () => {
                 />
               </div>
 
-              <div>
+              <div v-if = "currentRole === 'ROLE_ADMIN' || currentRole === 'ROLE_SecureCheck'">
                 <label for=""
                   >Entreprise</label
                 >
@@ -319,6 +336,24 @@ const captureDiv = () => {
                   </option>
                 </select>
               </div>
+              <div v-else>
+                <label for="role">Entreprise</label>
+                <select
+                  id="role"
+                  v-model="company_id"
+                  class="form-select"
+                  aria-label="Default select example"
+                  :disabled="true"
+                >
+                  <option
+                    v-for="company in filteredCompanies"
+                    :key="company?.id"
+                    :value="company?.id"
+                  >
+                    {{ company?.name }}
+                  </option>
+                </select>
+              </div>
 
               <div>
                 <label for="user_document">User Document</label>
@@ -328,6 +363,7 @@ const captureDiv = () => {
                   @change="handleDocumentUpload"
                   accept=".pdf,.doc,.docx,image/*"
                   class="input_style"
+                  required
                 />
                 <small v-if="fileName" class="file-name">Selected file: {{ fileName }}</small>
               </div>
@@ -357,7 +393,6 @@ const captureDiv = () => {
               </div>
             </div>
             <div class="user-details">
-              <!-- <p><strong>Company:</strong> {{ selectedCompany?.name }}</p> -->
               <p><strong>Name:</strong> {{ firstname }} {{ lastname }}</p>
               <p><strong>Email:</strong> {{ email }}</p>
               <p><strong>Contact:</strong> {{ contact }}</p>
@@ -370,7 +405,7 @@ const captureDiv = () => {
             <h3>{{ uidn }}</h3>
           </div>
           <div v-if="isSuccess" class="user_Qr_code" @click="captureDiv" role="button">
-              <a href="">Capture</a>
+              <a href="#">Capture</a>
             </div>
         </div>
       </div>

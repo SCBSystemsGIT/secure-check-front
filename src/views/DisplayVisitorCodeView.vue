@@ -82,7 +82,7 @@ export default {
   <div class="event_container">
     <div class="container">
       <div class="d-flex justify-content-center align-items-center">
-        <h3 class="mt-3">Lista de Check in</h3>
+        <h3 class="mt-3">Liste Check in</h3>
       </div>
 
       <div class="d-flex justify-content-center py-3">

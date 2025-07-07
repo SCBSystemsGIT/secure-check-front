@@ -24,7 +24,7 @@ export const useGlobalStore = defineStore("global", {
     },
     setCurrentPath(path) {
       this.currentPath = path;
-    },
+    } ,
   },
 
   getters: {

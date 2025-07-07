@@ -67,6 +67,7 @@ export const useUserStore = defineStore(
         const response = await apiClient.get("/user/info");
         userInfo.value = response.data;
         localStorage.setItem("userInfo", JSON.stringify(userInfo.value));
+        console.log("teter12", response);
       } catch (error) {
         console.error("Failed to fetch user info:", error);
       }

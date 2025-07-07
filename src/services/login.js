@@ -9,13 +9,12 @@ export function useLogin() {
   const errorMessage = ref(null);
   const statusCode = ref(null);
   const userStore = useUserStore();
-  const company_name = ref(null);
   const userInfo = ref(null);
 
   const login = async () => {
     loading.value = true;
     errorMessage.value = null;
-    statusCode.value = null; // Réinitialiser le code de statut
+    statusCode.value = null;
 
     try {
       const response = await apiClient.post("/login_check", {
@@ -24,32 +23,18 @@ export function useLogin() {
       });
 
       statusCode.value = response.status;
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+      document.cookie = `token=${token}; path=/; Secure; SameSite=Strict`;
+      userStore.setToken(token);
 
-      localStorage.setItem("token", response.data.token);
-      document.cookie = `token=${response.data.token}; path=/; Secure; SameSite=Strict`;
-      userStore.setToken(response.data.token);
-
-      let fetchResult = fetchUserInfo();
-      console.log({ fetchResult: fetchResult });
-
-      company_name.value = fetchResult;
-      // localStorage.setItem(
-      //   "roles",
-      //   JSON.stringify([
-      //     "ROLE_USER",
-      //     "ROLE_EMPLOYEE",
-      //     "ROLE_SUPERVISOR",
-      //     "ROLE_ADMIN",
-      //     "ROLE_SUPER_ADMIN",
-      //     "ROLE_SecureCheck",
-      //   ])
-      // );
+      // Await fetching the user info
+      await fetchUserInfo();
 
       return response.data;
     } catch (error) {
-      errorMessage.value =
-        "Login failed: " + (error.response?.data?.message || "Unknown error");
-      statusCode.value = error.response.status;
+      statusCode.value = error.response?.status || 500;
+      errorMessage.value = "Login failed: " + (error.response?.data?.message || "Unknown error");
       console.error(error);
     } finally {
       loading.value = false;
@@ -60,8 +45,8 @@ export function useLogin() {
     try {
       const response = await apiClient.get("/user/info");
       userInfo.value = response.data;
-      console.log(userInfo.value);
-      localStorage.setItem("userInfo", JSON.stringify(userInfo.value));
+      localStorage.setItem("userInfo", JSON.stringify(response.data));
+      console.log("User info:", userInfo.value);
     } catch (error) {
       console.error("Failed to fetch user info:", error);
     }
@@ -73,7 +58,6 @@ export function useLogin() {
     loading,
     errorMessage,
     statusCode,
-    company_name,
     userInfo,
     login,
   };

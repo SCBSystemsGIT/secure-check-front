@@ -19,6 +19,7 @@ const logout = () => {
 
 const isAuthenticated = userStore.isAuthenticated();
 const { publicDir } = useGlobalStore();
+console.log("Public Directory:", publicDir);
 const { showCompany, company } = useCompanies();
 const company_slug = ref(localStorage.getItem("currentCompany"));
 
@@ -29,20 +30,20 @@ const company_event_slug = pathParts[2];
 console.log("Company Slug:", company_event_slug);
 
 onBeforeMount(async () => {
-  // Extraire l'hôte (domaine + port)
-  console.log("Host:", window.location.host);
-  // Extraire le chemin (path)
-  console.log("Path:", window.location.pathname);
+  if (window.location.pathname !== "/sign-in") {
+    // Extract the slug from the path
+    const pathParts = window.location.pathname.split("/");
+    const company_event_slug = pathParts[1]; // Adjusted to get it reliably from the path
+    console.log("Company Event Slug:", company_event_slug);
 
-  if (window.location.pathname != "/sign-in") {
+    const savedSlug = localStorage.getItem("currentCompany");
+
+    // Set the slug to the ref (only if not already saved)
+    company_slug.value = savedSlug || company_event_slug || "";
+
+    // Load the company
     if (company_slug.value) {
       await showCompany(company_slug.value);
-    }
-    else if(company_event_slug){
-      await showCompany(company_event_slug);
-    }
-     else {
-      company_slug.value = "";
     }
   }
 });
@@ -132,9 +133,9 @@ onMounted(() => {
 
                 <li class="nav-item" v-if="userStore.isManager(currentRole) || userStore.isSupervisor(currentRole)">
                   <router-link
-                    :to="`/${company_slug ?? 'scb-systems-africa'}/edit-company/${company_slug}`"
-                    class="nav-link"
-                  >
+      :to="`/${company?.slug || company_slug || 'scb-systems-africa'}/edit-company/${company?.slug || company_slug || 'scb-systems-africa'}`"
+      class="nav-link"
+    >
                     Modifier entreprise
                   </router-link>
                 </li>

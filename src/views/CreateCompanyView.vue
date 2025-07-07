@@ -162,7 +162,7 @@ onBeforeMount(async () => {
               class="d-flex justify-content-start mb-4 gap-3 align-items-center"
             >
               <!-- <button class="back" @click="goToMenu">Retour</button> -->
-              <h3>Création Entreprise</h3>
+              <h3>Créer une Entreprise</h3>
             </div>
 
             <form @submit.prevent="submitForm" enctype="multipart/form-data">

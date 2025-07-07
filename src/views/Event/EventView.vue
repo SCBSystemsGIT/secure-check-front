@@ -196,7 +196,6 @@ watch(statusCode, (newStatus) => {
                   type="text"
                   id="name"
                   v-model="event.name"
-                  placeholder="Diner Gala SIKIHHK"
                   required
                 />
               </div>
@@ -208,7 +207,6 @@ watch(statusCode, (newStatus) => {
                   type="text"
                   id="location"
                   v-model="event.location"
-                  placeholder="SOCOCE"
                   required
                 />
               </div>
@@ -220,7 +218,6 @@ watch(statusCode, (newStatus) => {
                   type="text"
                   id="address_name"
                   v-model="event.address_name"
-                  placeholder="Marcory"
                   required
                 />
               </div>

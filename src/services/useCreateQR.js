@@ -6,6 +6,7 @@ export function useCreateQR() {
   const qrResponse = ref(null);
   const error = ref(null);
   const statusCode = ref(null);
+  const qrCodes = ref([]);
 
   const createQR = async (email, type, firstname, lastname, contact, title, dateExp, company_id, userDocument = null) => {
     try {
@@ -57,12 +58,32 @@ export function useCreateQR() {
     }
   };
 
+  const loading = ref(false);
+  const errorMessage = ref(null);
+
+  const fetchQrCodeList = async () => {
+    loading.value = true;
+    errorMessage.value = null;
+    try {
+      const response = await apiClient.get("/qruser-list"); // Remplacez par l'URL correcte de votre API
+      qrCodes.value = response.data;
+    } catch (error) {
+      errorMessage.value =
+        "something went wrong.";
+      console.error(error);
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     qrResponse,
     error,
     statusCode,
     createQR,
     getUserQrById,
-    updateUserQr
+    updateUserQr,
+    fetchQrCodeList,
+    qrCodes
   };
 }

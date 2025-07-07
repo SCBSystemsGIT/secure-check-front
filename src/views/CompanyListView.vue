@@ -133,8 +133,8 @@ export default {
             console.error("ID is required for updating the record.");
             return;
         }
-        console.log("Form data being sent:", formData.value);
-        console.log("File being sent:", file.value);
+        //console.log("Form data being sent:", formData.value);
+        //console.log("File being sent:", file.value);
 
         // Prepare form data to be sent in the PUT request
         const formDataToSend = new FormData();
@@ -246,7 +246,7 @@ const handleDelete = async (companyId, companyName) => {
       <div class="d-flex justify-content-start mb-4 gap-3 align-items-center">
         <!-- <button class="back" @click="goToMenu()">Retour</button> -->
         <h3 class="mt-3" v-if="route?.params?.slug">Liste Participants</h3>
-        <h3 class="mt-3" v-else>Lista de Entreprise </h3>
+        <h3 class="mt-3" v-else>Liste des Compagnies </h3>
       </div>
     </div>
 
@@ -300,11 +300,12 @@ const handleDelete = async (companyId, companyName) => {
             <tr class="mdc-data-table__header-row">
               <th class="mdc-data-table__header-cell">ID</th>
               <th class="mdc-data-table__header-cell">Nom de l'entreprise</th>
-              <th class="mdc-data-table__header-cell">Limace</th>
+              <th class="mdc-data-table__header-cell">Slug</th>
               <th class="mdc-data-table__header-cell">Lien</th>
               <th class="mdc-data-table__header-cell">QRCode</th>
               <th class="mdc-data-table__header-cell">Logo</th>
               <th class="mdc-data-table__header-cell">Employees</th>
+              <th class="mdc-data-table__header-cell">Membres</th>
               <th class="mdc-data-table__header-cell" 
                   v-if="userStore.isSuperAdmin(currentRole) ||
                   userStore.isSecureCheck(currentRole)">
@@ -345,15 +346,18 @@ const handleDelete = async (companyId, companyName) => {
                 :alt="company.logo"
               />
             </td>
-            <td>
-              <router-link :to="{ name: 'EmployeeListView', params: { slug: company.slug } }">View</router-link>
+            <td style="text-align: center;">
+              <router-link :to="{ name: 'EmployeeListView', params: { slug: company.slug } }"><i class="fas fa-user"></i></router-link>
+            </td>
+            <td style="text-align: center;">
+              <router-link :to="{ name: 'EmployeeListView', params: { slug: company.slug } }"><i class="fas fa-user text-success"></i></router-link>
             </td>
             <td class="mdc-data-table__cell" v-if="
                   userStore.isSuperAdmin(currentRole) ||
                   userStore.isSecureCheck(currentRole)
                 ">
               <!-- Navigate to the edit page with the company ID as a parameter -->
-              <router-link :to="{ name: 'EditCreateCompany', params: { company_edit: company.id } }">Edit</router-link>
+              <router-link :to="{ name: 'EditCreateCompany', params: { company_edit: company.id } }"><i class="fas fa-pen text-danger"></i></router-link>
             </td>
             </tr>
           </tbody>
@@ -367,11 +371,12 @@ const handleDelete = async (companyId, companyName) => {
           <tr class="mdc-data-table__header-row">
             <th class="mdc-data-table__header-cell">ID</th>
             <th class="mdc-data-table__header-cell">Nom de l'entreprise</th>
-            <th class="mdc-data-table__header-cell">Limace</th>
+            <th class="mdc-data-table__header-cell">Slug</th>
             <th class="mdc-data-table__header-cell">Lien</th>
             <th class="mdc-data-table__header-cell">QRCode</th>
             <th class="mdc-data-table__header-cell">Logo</th>
-            <th class="mdc-data-table__header-cell">Employees</th>
+            <th class="mdc-data-table__header-cell" style="text-align: center;">Employees</th>
+             <th class="mdc-data-table__header-cell" style="text-align: center;">Membres</th>
             <th class="mdc-data-table__header-cell">Edit</th>
             <th class="mdc-data-table__header-cell">Delete</th>
             <!-- <th class="mdc-data-table__header-cell" 
@@ -416,16 +421,25 @@ const handleDelete = async (companyId, companyName) => {
                 :alt="log.logo"
               />
             </td>
-            <td>
-              <router-link :to="{ name: 'EmployeeListView', params: { slug: log.slug } }">View</router-link>
+            <td style="text-align: center;">
+              <router-link :to="{ name: 'EmployeeListView', params: { slug: log.slug } }"><i class="fas fa-user"></i></router-link>
             </td>
+            <td style="text-align: center;">
+            <router-link :to="{ name: 'MembresListView', params: { slug: log.slug } }">
+              <i 
+                class="fas fa-user text-success" 
+                :alt="log.member_count" 
+                :title="log.member_count"
+              ></i>
+            </router-link>
+          </td>
             <td class="mdc-data-table__cell" v-if="
                   userStore.isSuperAdmin(currentRole) ||
                   userStore.isAdmin(currentRole) ||
                   userStore.isSecureCheck(currentRole)
                 ">
               <!-- Navigate to the edit page with the company ID as a parameter -->
-              <router-link :to="{ name: 'EditCreateCompany', params: { company_edit: log.id } }">Edit</router-link>
+              <router-link :to="{ name: 'EditCreateCompany', params: { company_edit: log.id } }"><i class="fas fa-pen text-danger"></i></router-link>
             </td>
             <td class="mdc-data-table__cell" v-if="userStore.isAdmin(currentRole)">
               <button @click="handleDelete(log.id , log.name)" class="btn">

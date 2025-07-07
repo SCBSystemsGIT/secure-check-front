@@ -101,7 +101,7 @@ const submitForm = async () => {
       <div class="row align-items-center">
         <div class="col col-12 col-md-12 col-sm-12">
             <div class="left-back">
-              <router-link :to="{ name: 'Menu' }">
+              <router-link :to="{ name: 'CompanyList' }">
                 <img src="@/assets/back-arrow-table.png" alt="back-arrow" />
               </router-link>
             </div>
