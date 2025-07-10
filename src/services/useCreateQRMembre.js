@@ -1,6 +1,6 @@
 // src/composables/useCreateQR.js
 import { ref } from 'vue';
-import apiClient from "@/plugins/axios";
+import apiClient from "@/plugins/axioss";
 
 export function useCreateQRMembre() {
   const qrResponse = ref(null);

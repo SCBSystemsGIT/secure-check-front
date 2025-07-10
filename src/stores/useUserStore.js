@@ -2,7 +2,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import axios from "axios";
-import apiClient from "@/plugins/axios";
+import apiClient from "@/plugins/axioss";
 import { toast } from "vue3-toastify";
 import { useRouter } from "vue-router";
 
@@ -67,7 +67,7 @@ export const useUserStore = defineStore(
         const response = await apiClient.get("/user/info");
         userInfo.value = response.data;
         localStorage.setItem("userInfo", JSON.stringify(userInfo.value));
-        console.log("teter12", response);
+        //console.log("teter12", response);
       } catch (error) {
         console.error("Failed to fetch user info:", error);
       }

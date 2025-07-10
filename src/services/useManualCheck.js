@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
-import apiClient from "@/plugins/axios";
+import apiClient from "@/plugins/axioss";
 // import { useGlobalStore } from "@/stores/globalStore";
 
 export function useQrCode() {

@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import apiClient from "@/plugins/axios"; // Assurez-vous que votre instance Axios est correctement configurée
+import apiClient from "@/plugins/axioss"; // Assurez-vous que votre instance Axios est correctement configurée
 
 export function useCreateUser() {
   const user = ref({

@@ -1,4 +1,4 @@
-import apiClient from "@/plugins/axios";
+import apiClient from "@/plugins/axioss";
 import { ref } from "vue";
 import { useUserStore } from "@/stores/useUserStore";
 
@@ -46,7 +46,7 @@ export function useLogin() {
       const response = await apiClient.get("/user/info");
       userInfo.value = response.data;
       localStorage.setItem("userInfo", JSON.stringify(response.data));
-      console.log("User info:", userInfo.value);
+      //console.log("User info:", userInfo.value);
     } catch (error) {
       console.error("Failed to fetch user info:", error);
     }

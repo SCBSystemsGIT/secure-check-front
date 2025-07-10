@@ -1,5 +1,5 @@
 import { ref} from "vue";
-import apiClient from "@/plugins/axios";
+import apiClient from "@/plugins/axioss";
 
 export function useEventList() {
   const events = ref([]);

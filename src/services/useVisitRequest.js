@@ -1,6 +1,6 @@
 // useVisitRequest.js
 import { ref } from "vue";
-import apiClient from "@/plugins/axios";
+import apiClient from "@/plugins/axioss";
 
 export function useVisitRequest() {
   const loading = ref(false);

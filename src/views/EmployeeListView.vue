@@ -3,7 +3,7 @@
   <script>
   import { ref, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import apiClient from '@/plugins/axios';
+  import apiClient from '@/plugins/axioss';
   
   export default {
     name: 'EmployeeListView',

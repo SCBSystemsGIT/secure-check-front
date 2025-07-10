@@ -1,6 +1,6 @@
 // src/services/useUserInfo.js
 import { ref } from 'vue';
-import apiClient from '@/plugins/axios';
+import apiClient from '@/plugins/axioss';
 
 export const useUserInfo = () => {
   const userInfo = ref(null);

@@ -1,4 +1,4 @@
-import apiClient from "@/plugins/axios";
+import apiClient from "@/plugins/axioss";
 
 // services/myService.js
 export default {

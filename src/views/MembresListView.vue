@@ -3,7 +3,7 @@
   <script>
   import { ref, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import apiClient from '@/plugins/axios';
+  import apiClient from '@/plugins/axioss';
   import { useGlobalStore } from "@/stores/globalStore";
   import jsPDF from 'jspdf';
   import html2canvas from "html2canvas";
@@ -319,7 +319,7 @@
     }
 
     .popup-content {
-      background: white;
+      background: rgba(200, 200, 200, 0.3);
       padding: 20px;
       max-width: 800px;
       width: 90%;

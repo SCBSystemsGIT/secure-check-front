@@ -1,6 +1,6 @@
 // src/composables/useRequestsList.js
 import { ref } from "vue";
-import apiClient from "@/plugins/axios";
+import apiClient from "@/plugins/axioss";
 
 export function useRequestsList() {
   const requests = ref([]);

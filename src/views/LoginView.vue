@@ -21,7 +21,7 @@ watch(statusCode, (newStatus) => {
       toast.success("Connexion réussie.");
       // console.log(">__________>");
       console.log({ company_name });
-      // console.log({ userInfo });
+      //console.log({ userInfo });
 
       setTimeout(() => {
         // router.push({
@@ -29,7 +29,7 @@ watch(statusCode, (newStatus) => {
         //   domain: userInfo.value.company ?? "scb",
         // });
 
-         window.location = userInfo?.value?.company ??  "scb";
+        window.location = userInfo?.value?.company ??  "scb";
       }, 1500);
       break;
     case 201:

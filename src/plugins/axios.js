@@ -1,5 +1,6 @@
 // apiClient.js
 import axios from 'axios';
+import router from '@/router'; // Assurez-vous que ceci pointe vers ton router Vue
 
 // Créez une instance Axios
 const apiClient = axios.create({
@@ -9,21 +10,37 @@ const apiClient = axios.create({
   },
 });
 
-// Ajoutez un intercepteur de requêtes
+// Intercepteur de requêtes (ajout du token)
 apiClient.interceptors.request.use(
   (config) => {
-    // Récupérer le token depuis localStorage
     const token = localStorage.getItem('token');
-    console.log('Token:', token); // Vérifiez si le token est récupéré
-
-    // Si un token est présent, l'ajouter aux en-têtes de la requête
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
   },
+  (error) => Promise.reject(error)
+);
+
+// Intercepteur de réponses (détection token expiré)
+apiClient.interceptors.response.use(
+  (response) => response,
   (error) => {
+    const { response } = error;
+
+    if (
+      response &&
+      response.status === 401 &&
+      response.data?.message === 'Votre Token a expiré, veuillez le renouveler.'
+    ) {
+      // Supprimer les données locales
+      localStorage.removeItem('token');
+      localStorage.removeItem('userInfo');
+
+      // Rediriger vers la page de login
+      router.push({ name: 'Login' }); // ⚠️ Remplace par le vrai nom de ta route
+    }
+
     return Promise.reject(error);
   }
 );

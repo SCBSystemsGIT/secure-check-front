@@ -1,5 +1,5 @@
 <script>
-import apiClient from "@/plugins/axios";
+import apiClient from "@/plugins/axioss";
 import myService from "@/services/useCompanyList";
 import { ref, computed, onMounted ,onBeforeMount } from "vue";
 import { useRouter, useRoute } from "vue-router";
